@@ -1,21 +1,26 @@
-﻿using System;
+﻿using IniParser;
+using IniParser.Model;
+using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace AutomaticSummaryCreator
 {
     /// <summary>
     /// Stellt die Daten der Ini-Datei zur Verfügung.
+    /// https://github.com/rickyah/ini-parser
     /// </summary>
-    public class Ini
+    public class Configuration
     {
         /// <summary>
-        /// Pfad zur Ini-Datei.
+        /// Pfad zur Quelldatei mit den Konfigurationen.
         /// </summary>
-        public string IniPath
-        {
-            get;
-            protected set;
-        }
+        private string sourcePath;
+
+        /// <summary>
+        /// Das Objekt, welches den Zugriff auf die Ini-Datei verwaltet.
+        /// </summary>
+        private IniData data;
 
         /// <summary>
         /// Liest oder schreibt den XML-Pfad aus/in die Ini-Datei.
@@ -24,11 +29,11 @@ namespace AutomaticSummaryCreator
         {
             get
             {
-                return ini.WertLesen("xml", "path");
+                return data["xml"]["path"];
             }
             set
             {
-                ini.WertSchreiben("xml", "path", value);
+                data["xml"]["path"] = value;
             }
         }
 
@@ -39,11 +44,11 @@ namespace AutomaticSummaryCreator
         {
             get
             {
-                return ini.WertLesen("excel", "path");
+                return data["excel"]["path"];
             }
             set
             {
-                ini.WertSchreiben("excel", "path", value);
+                data["excel"]["path"] = value;
             }
         }
 
@@ -54,11 +59,11 @@ namespace AutomaticSummaryCreator
         {
             get
             {
-                return ini.WertLesen("excel", "sheetName");
+                return data["excel"]["sheetName"];
             }
             set
             {
-                ini.WertSchreiben("excel", "sheetName", value);
+                data["excel"]["sheetName"] = value;
             }
         }
 
@@ -70,12 +75,13 @@ namespace AutomaticSummaryCreator
             get
             {
                 int id = -1;
-                Int32.TryParse(ini.WertLesen("excel", "idRow"), out id);
+                var idRow = data["excel"]["idRow"];
+                Int32.TryParse(idRow, out id);
                 return id;
             }
             set
             {
-                ini.WertSchreiben("excel", "idRow", value.ToString());
+                data["excel"]["idRow"] = value.ToString();
             }
         }
 
@@ -83,35 +89,32 @@ namespace AutomaticSummaryCreator
         {
             get
             {
-                return ini.WertLesen("excelSource", "directory");
+                return data["excelSource"]["directory"];
             }
             set
             {
-                ini.WertSchreiben("excelSource", "directory", value);
+                data["excelSource"]["directory"] = value;
             }
         }
-
-        /// <summary>
-        /// Das Objekt, welches den Zugriff auf die Ini-Datei verwaltet.
-        /// </summary>
-        protected INI.IINIDatei ini;
 
         /// <summary>
         /// Stellt das Ini-Objekt zur Verfügung und erstellt sie neu, falls sie nicht vorhanden ist.
         /// </summary>
         /// <param name="path">Pfad zur INI-Datei.</param>
-        public Ini(string path)
+        public Configuration(string path)
         {
-            this.IniPath = path;
+            Debug.Assert(Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute), "Path to configuration file isn't valid.");
 
-            if(!File.Exists(IniPath))
+            sourcePath = path;
+
+            if (File.Exists(path))
             {
-                using(File.Create(IniPath)) { }
-                ini = new INI.INIDatei(IniPath);
+                var parser = new FileIniDataParser();
+                data = parser.ReadFile(path);
+            } else {
+                data = new IniData();
                 SetDefault();
             }
-            else
-                ini = new INI.INIDatei(IniPath);
         }
 
         /// <summary>
@@ -124,6 +127,20 @@ namespace AutomaticSummaryCreator
             SheetName = "Heizungsablesung täglich";
             SheetIdRow = 4;
             ExcelSourceDirectory = @"P:\200_Infrastruktur\07_Energie\15 Ablesungen Smart-me";
+        }
+
+        /// <summary>
+        /// Speichert die Konfigurationen.
+        /// </summary>
+        public void Save()
+        {
+            if(!File.Exists(sourcePath))
+            {
+                File.Create(sourcePath);
+            }
+
+            var parser = new FileIniDataParser();
+            parser.WriteFile(sourcePath, data);
         }
     }
 }

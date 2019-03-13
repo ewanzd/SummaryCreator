@@ -1,5 +1,4 @@
 ﻿using AutomaticSummaryCreator.Data;
-using BasicLibrary;
 using BasicLibrary.Unit;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace AutomaticSummaryCreator.Source
             bool first = true;
 
             // Holt die Daten Zeile für Zeile aus der Datei
-            foreach(var row in CsvSource.ReadFile(file, ";"))
+            foreach(var row in CsvSource.ReadFile(file, ';'))
             {
                 // Titelzeile auswerten
                 if(first)
@@ -84,18 +83,20 @@ namespace AutomaticSummaryCreator.Source
         /// Get all rows from file with IEnumerable.
         /// </summary>
         /// <param name="path">The path to the file.</param>
-        /// <param name="splitter">The delimiter for split the row in cells.</param>
+        /// <param name="separator">The delimiter for split the row in cells.</param>
         /// <returns>Return a row at array with cells as string[].</returns>
-        public static IEnumerable<string[]> ReadFile(string path, string splitter)
+        public static IEnumerable<string[]> ReadFile(string path, char separator)
         {
             if(!File.Exists(path))
+            {
                 throw new FileNotFoundException("Datei nicht gefunden", path);
+            }
 
             using(StreamReader reader = new StreamReader(path))
             {
                 while(reader.EndOfStream == false)
                 {
-                    yield return reader.ReadLine().Split(splitter.ToCharArray());
+                    yield return reader.ReadLine().Split(separator);
                 }
             }
         }

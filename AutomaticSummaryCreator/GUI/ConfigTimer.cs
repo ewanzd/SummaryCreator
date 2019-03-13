@@ -19,22 +19,22 @@ namespace AutomaticSummaryCreator.GUI
         /// <summary>
         /// Wichtige Konfigurationsdaten für den Vorgang.
         /// </summary>
-        Ini ini;
+        private Configuration configuration;
 
         /// <summary>
         /// Verfügbare Zeit, bis der Vorgang gestartet wird.
         /// </summary>
-        int sec;
+        private int sec;
 
         /// <summary>
         /// Restliche Zeit, bis der Vorgang gestartet wird.
         /// </summary>
-        TimeSpan restTime;
+        private TimeSpan restTime;
 
         /// <summary>
         /// Intervall, in dem der Tick ausgeführt wird.
         /// </summary>
-        TimeSpan interval = new TimeSpan(0, 0, 0, 0, 100);
+        private TimeSpan interval = new TimeSpan(0, 0, 0, 0, 100);
 
         /// <summary>
         /// Den Intervall abrufen oder anpassen.
@@ -65,7 +65,7 @@ namespace AutomaticSummaryCreator.GUI
         /// Startet die Form mit seinem Timer.
         /// </summary>
         /// <param name="sec">Verfügbare Zeit, bis der Vorgang gestartet wird.</param>
-        public ConfigTimer(int sec, Ini ini)
+        public ConfigTimer(int sec, Configuration ini)
         {
             if(ini == null)
                 throw new ArgumentNullException("ini");
@@ -78,7 +78,7 @@ namespace AutomaticSummaryCreator.GUI
             InitializeComponent();
 
             // Ini-Datei setzen
-            this.ini = ini;
+            this.configuration = ini;
 
             // Timerdaten setzen
             this.sec = sec;
@@ -144,11 +144,11 @@ namespace AutomaticSummaryCreator.GUI
             }
 
             // Daten abspeichern
-            ini.ExcelPath = excel;
-            ini.XmlPath = xml;
-            ini.SheetName = table;
-            ini.SheetIdRow = idInt;
-            ini.ExcelSourceDirectory = counter;
+            configuration.ExcelPath = excel;
+            configuration.XmlPath = xml;
+            configuration.SheetName = table;
+            configuration.SheetIdRow = idInt;
+            configuration.ExcelSourceDirectory = counter;
         }
 
         /// <summary>

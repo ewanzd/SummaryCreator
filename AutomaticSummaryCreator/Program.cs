@@ -1,12 +1,6 @@
-﻿using AutomaticSummaryCreator.Data;
-using AutomaticSummaryCreator.Excel;
+﻿using AutomaticSummaryCreator.Excel;
 using AutomaticSummaryCreator.GUI;
-using AutomaticSummaryCreator.Source;
-using BasicLibrary;
-using BasicLibrary.Excel;
-using BasicLibrary.Unit;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,7 +46,7 @@ namespace AutomaticSummaryCreator
         /// <summary>
         /// Konfigurationsdaten.
         /// </summary>
-        private Ini ini;
+        private Configuration configuration;
 
         /// <summary>
         /// Ein Fenster mit einem Countdown und der Möglichkeit, die Konfigurationsdaten anzupassen.
@@ -65,7 +59,7 @@ namespace AutomaticSummaryCreator
         public Root()
         {
             // Inipfad festlegen
-            ini = new Ini(Program.IniPath);
+            configuration = new Configuration(Program.IniPath);
         }
 
         /// <summary>
@@ -75,7 +69,7 @@ namespace AutomaticSummaryCreator
             : this()
         {
             // Setzt die Ereignisse und startet das Fenster
-            meteo = new ConfigTimer(sec, ini);
+            meteo = new ConfigTimer(sec, configuration);
             meteo.Start += meteo_Start;
             meteo.Exit += meteo_Exit;
             meteo.Show();
@@ -90,10 +84,10 @@ namespace AutomaticSummaryCreator
             EvaluationCounter counter = new EvaluationCounter();
 
             // Speichert das Verzeichnis, wo sich die Excel-Dateien der Zähler befinden
-            DirectoryInfo directory = new DirectoryInfo(ini.ExcelSourceDirectory);
+            DirectoryInfo directory = new DirectoryInfo(configuration.ExcelSourceDirectory);
 
             // Ladet alle .csv Dateien in diesem Verzeichnis
-            foreach(System.IO.FileInfo file in directory.GetFiles())
+            foreach(FileInfo file in directory.GetFiles())
                 if(file.Extension == ".csv")
                     counter.LoadData(file.FullName);
 
@@ -116,7 +110,7 @@ namespace AutomaticSummaryCreator
             EvaluationMeteo meteo = new EvaluationMeteo();
 
             // Ladet alle Meteodaten in dieserDatei
-            meteo.LoadData(ini.XmlPath);
+            meteo.LoadData(configuration.XmlPath);
 
             // Speichert alle Meteo-Daten für den heutigen Tag
             meteo.SaveData(insert, meteo.Data.Produced.ToShortDateString());
@@ -135,7 +129,7 @@ namespace AutomaticSummaryCreator
                 try
                 {
                     // Erstellt eine Klasse, die für das korrekte Einfügen der Daten zuständig ist
-                    insert = new SheetDataInsert(ini.ExcelPath, ini.SheetName, ini.SheetIdRow);
+                    insert = new SheetDataInsert(configuration.ExcelPath, configuration.SheetName, configuration.SheetIdRow);
 
                     // Erstellt die Auswertung der Zähler
                     ExecuteCounter(insert);
