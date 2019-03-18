@@ -1,33 +1,25 @@
 ﻿using AutomaticSummaryCreator.Data;
 using AutomaticSummaryCreator.Excel;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomaticSummaryCreator
 {
     /// <summary>
     /// Verwaltet die Meteo-Daten.
     /// </summary>
-    public class EvaluationMeteo : Evaluation
+    public sealed class EvaluationMeteo : IEvaluation
     {
         /// <summary>
         /// Datencontainer.
         /// </summary>
-        public MeteoData Data
-        {
-            get;
-            set;
-        }
+        public MeteoData Data { get; set; }
 
         /// <summary>
         /// Ladet alle Daten der angegebenen XML-Datei.
         /// </summary>
         /// <param name="path">Pfad zu der XML-Datei.</param>
-        public override void LoadData(string path)
+        public void LoadData(string path)
         {
             // Lädt die XML-Datei herunter
             XmlLoad xml = new XmlLoad(path);
@@ -41,12 +33,12 @@ namespace AutomaticSummaryCreator
         /// </summary>
         /// <param name="insert">Daten über den angegebenen Insert speichern.</param>
         /// <param name="targetRow">ID der Zeile, in der die Werte gespeichert werden soll.</param>
-        public override void SaveData(SheetDataInsert insert, string targetRow)
+        public void SaveData(SheetDataInsert insert, string targetRow)
         {
             if(Data == null)
                 throw new Exception("Keine Daten verfügbar");
 
-            insert.Insert(insert_GetData, targetRow);
+            insert.Insert(InsertGetData, targetRow);
         }
 
         /// <summary>
@@ -55,7 +47,7 @@ namespace AutomaticSummaryCreator
         /// <param name="colId">Bezeichnung für die angesprochene Spalte.</param>
         /// <param name="rowId">Bezeichnung für die angesprochene Zeile.</param>
         /// <returns>Ausgewerteter Wert.</returns>
-        protected virtual string insert_GetData(string colId, string rowId)
+        private string InsertGetData(string colId, string rowId)
         {
             // id teilen in name und tag
             string[] splitId = colId.Split('-');

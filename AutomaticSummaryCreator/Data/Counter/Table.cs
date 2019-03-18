@@ -35,7 +35,7 @@ namespace AutomaticSummaryCreator.Data
             {
                 // Gibt die Zeit der erste Zeile zurück.
                 // Es ist ratsam zuerst Sort aufzurufen
-                return rows.First().DateTime;
+                return rows.First().CapturedAt;
             }
         }
 
@@ -48,7 +48,7 @@ namespace AutomaticSummaryCreator.Data
             {
                 // Gibt die Zeit der letzten Zeile zurück.
                 // Es ist ratsam zuerst Sort aufzurufen
-                return rows.Last().DateTime;
+                return rows.Last().CapturedAt;
             }
         }
 
@@ -68,7 +68,7 @@ namespace AutomaticSummaryCreator.Data
         public override void Sort()
         {
             // Sortiert die Liste nach der Zeit
-            rows.OrderBy(x => x.DateTime);
+            rows.OrderBy(x => x.CapturedAt);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace AutomaticSummaryCreator.Data
         public override Row FirstRow(DateTime start, DateTime end)
         {
             // Gibt die erste Zeile zurück.
-            return rows.Where(x => x.DateTime >= start && x.DateTime < end).First();
+            return rows.Where(x => x.CapturedAt >= start && x.CapturedAt < end).First();
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace AutomaticSummaryCreator.Data
             foreach(var item in rows)
             {
                 // Prüft, ob der aktuelle Wert der Zeile grösser ist als der nächste Intervall
-                while(item.DateTime >= next)
+                while(item.CapturedAt >= next)
                 {
                     // Springt zum nächsten Intervall
                     next += interval;
@@ -128,7 +128,7 @@ namespace AutomaticSummaryCreator.Data
                     lastRowOfInterval = null;
                 }
                 // Speichert die aktuelle Zeile als erster Wert des Intervalls wenn sie grösser als die Startzeit ist
-                if(item.DateTime >= start)
+                if(item.CapturedAt >= start)
                     lastRowOfInterval = item;
             }
 

@@ -102,18 +102,18 @@ namespace AutomaticSummaryCreator.Data
 
             // Neue Zeile erstellen
             Row returnRow = new Row();
-            int sum = 0;
+            double sum = 0.0;
 
             // Zeilen zusammenrechnen und Datum anpassen
             foreach(var row in rows)
             {
-                if(returnRow.DateTime < row.DateTime)
-                    returnRow.DateTime = row.DateTime;
-                sum += row[0];
+                if(returnRow.CapturedAt < row.CapturedAt)
+                    returnRow.CapturedAt = row.CapturedAt;
+                sum += row.Value;
             }
 
             // Summe der Zeile hinzufügen
-            returnRow.Add(sum);
+            returnRow.Value = sum;
 
             // Neue Zeile zurückgeben
             return returnRow;
@@ -148,7 +148,7 @@ namespace AutomaticSummaryCreator.Data
             Row row = new Row();
 
             // Summe aller Tabellen und Gruppen
-            int sum = 0;
+            double sum = 0.0;
 
             // Ruft den letzten Wert innerhalb der Start- und Endzeit ab
             foreach(var table in container)
@@ -160,16 +160,16 @@ namespace AutomaticSummaryCreator.Data
                 if(temp != null)
                 {
                     // Speicher die höchste Zeit in der neuen Zeile
-                    if(row.DateTime < temp.DateTime)
-                        row.DateTime = temp.DateTime;
+                    if(row.CapturedAt < temp.CapturedAt)
+                        row.CapturedAt = temp.CapturedAt;
 
                     // Der Exportwert wird addiert
-                    sum += temp[0];
+                    sum += temp.Value;
                 }
             }
 
             // Fügt die Summe der Zeile hinzu
-            row.Add(sum);
+            row.Value = sum;
 
             // Gibt die Zeile zurück
             return row;
@@ -201,7 +201,7 @@ namespace AutomaticSummaryCreator.Data
                 Row row = GetRow(current, current + interval);
 
                 // Prüfen, ob die Zeile Inhalt besitzt
-                if(row.DateTime != default(DateTime) || i > 0)
+                if(row.CapturedAt != default(DateTime) || i > 0)
                     i++;
 
                 // Die Zeile zwischen der aktuellen Zeit und der folgende Zeit zurückgeben

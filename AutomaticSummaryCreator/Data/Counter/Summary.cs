@@ -65,7 +65,7 @@ namespace AutomaticSummaryCreator.Data
                        select n;
 
             // Tabelle, um später die neue Zeile hinzuzufügen
-            Table table;
+            Table table = null;
 
             // Prüft, ob es eine Tabelle mit der übergeben ID gibt
             if(temp.Count() < 1)

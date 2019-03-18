@@ -44,12 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EvaluationCounter.cs" />
+    <Compile Include="Sensor.cs" />
     <Compile Include="Data\Meteo\Forecast.cs" />
     <Compile Include="Data\Counter\Group.cs" />
     <Compile Include="Data\Meteo\MeteoData.cs" />
     <Compile Include="Data\Meteo\Value.cs" />
-    <Compile Include="Evaluation.cs" />
+    <Compile Include="IEvaluation.cs" />
     <Compile Include="Excel\SheetDataInsert.cs" />
     <Compile Include="Excel\SheetTarget.cs" />
     <Compile Include="EvaluationMeteo.cs" />
@@ -59,6 +59,7 @@
     <Compile Include="GUI\ConfigTimer.Designer.cs">
       <DependentUpon>ConfigTimer.cs</DependentUpon>
     </Compile>
+    <Compile Include="SummaryCreatorApplication.cs" />
     <Compile Include="XmlLoad.cs" />
     <Compile Include="Data\Counter\Row.cs" />
     <Compile Include="Data\Counter\Summary.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\CsvSource.cs" />
+    <Compile Include="Source\CsvTimeSerieReader.cs" />
     <EmbeddedResource Include="GUI\ConfigTimer.resx">
       <DependentUpon>ConfigTimer.cs</DependentUpon>
     </EmbeddedResource>

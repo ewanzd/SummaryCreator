@@ -12,10 +12,7 @@ namespace AutomaticSummaryCreator
     /// </summary>
     public class Configuration
     {
-        /// <summary>
-        /// Pfad zur Quelldatei mit den Konfigurationen.
-        /// </summary>
-        private string sourcePath;
+        private FileInfo file; 
 
         /// <summary>
         /// Das Objekt, welches den Zugriff auf die Ini-Datei verwaltet.
@@ -103,14 +100,15 @@ namespace AutomaticSummaryCreator
         /// <param name="path">Pfad zur INI-Datei.</param>
         public Configuration(string path)
         {
-            Debug.Assert(Uri.IsWellFormedUriString(path, UriKind.RelativeOrAbsolute), "Path to configuration file isn't valid.");
-
-            sourcePath = path;
+            file = new FileInfo(path);
 
             if (File.Exists(path))
             {
-                var parser = new FileIniDataParser();
-                data = parser.ReadFile(path);
+                using(var reader = file.OpenText())
+                {
+                    var parser = new FileIniDataParser();
+                    data = parser.ReadData(reader);
+                }
             } else {
                 data = new IniData();
                 SetDefault();
@@ -134,13 +132,11 @@ namespace AutomaticSummaryCreator
         /// </summary>
         public void Save()
         {
-            if(!File.Exists(sourcePath))
+            using(var writer = file.CreateText())
             {
-                File.Create(sourcePath);
+                var parser = new FileIniDataParser();
+                parser.WriteData(writer, data);
             }
-
-            var parser = new FileIniDataParser();
-            parser.WriteFile(sourcePath, data);
         }
     }
 }

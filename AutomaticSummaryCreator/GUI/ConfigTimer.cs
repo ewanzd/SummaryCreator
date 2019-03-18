@@ -143,12 +143,15 @@ namespace AutomaticSummaryCreator.GUI
                 txbIdRow.BackColor = default(Color);
             }
 
-            // Daten abspeichern
+            // Daten übernehmen
             configuration.ExcelPath = excel;
             configuration.XmlPath = xml;
             configuration.SheetName = table;
             configuration.SheetIdRow = idInt;
             configuration.ExcelSourceDirectory = counter;
+
+            // Daten abspeichern
+            configuration.Save();
         }
 
         /// <summary>

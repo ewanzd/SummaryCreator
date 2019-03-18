@@ -1,43 +1,66 @@
 ﻿using AutomaticSummaryCreator.Data;
 using AutomaticSummaryCreator.Excel;
 using AutomaticSummaryCreator.Source;
-using BasicLibrary;
-using BasicLibrary.Unit;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomaticSummaryCreator
 {
     /// <summary>
     /// Verwaltet die Daten der Zähler.
     /// </summary>
-    public class EvaluationCounter : Evaluation
+    public sealed class Sensor : IEvaluation
     {
         /// <summary>
         /// Datencontainer.
         /// </summary>
-        public Summary Summary
-        {
-            get;
-            set;
-        }
+        public Summary Summary { get; private set; }
+
+        /// <summary>
+        /// Identity des Sensors.
+        /// </summary>
+        public string Id { get; private set; }
+
+        /// <summary>
+        /// Werteleser.
+        /// </summary>
+        private CsvTimeSerieReader reader = new CsvTimeSerieReader();
+        private char fileNameSeparator = '_';
+
 
         /// <summary>
         /// Fügt alle Daten der angegebenen CSV-Datei hinzu.
         /// </summary>
         /// <param name="path">Pfad zu der CSV-Datei.</param>
-        public override void LoadData(string path)
+        public void LoadData(string path)
         {
+            Id = ExtractId(path);
+
             // Prüft, ob bereits ein Container erstellt wurde
-            if(Summary == null)
+            if (Summary == null)
+            {
                 Summary = new Summary();
+            }
 
             // Daten abrufen und einfügen
-            CsvSource.ImportFromCSV(path, Summary);
+            foreach (var row in reader.ReadRowsFromFile(new FileInfo(path)))
+            {
+                Summary.Add(Id, row);
+            }
+        }
+
+        /// <summary>
+        /// Extract sensor id from file name.
+        /// </summary>
+        /// <param name="path">Path to file with data.</param>
+        /// <returns>Id of sensor.</returns>
+        private string ExtractId(string path)
+        {
+            // ID des Zählers from file name
+            // Beispiel: dbdata_6F5CBF4A-FC2F-4E67-99A6-3AFB3D9C2E46.csv
+            var fileName = Path.GetFileNameWithoutExtension(path);
+            return fileName.Split(fileNameSeparator)[1];
         }
 
         /// <summary>
@@ -45,14 +68,14 @@ namespace AutomaticSummaryCreator
         /// </summary>
         /// <param name="insert">Daten über den angegebenen Insert speichern.</param>
         /// <param name="targetRow">ID der Zeile, in der die Werte gespeichert werden soll.</param>
-        public override void SaveData(SheetDataInsert insert, string targetRow)
+        public void SaveData(SheetDataInsert insert, string targetRow)
         {
             // Prüfen, ob Daten vorhanden sind
             if(Summary == null)
                 throw new Exception("Keine Daten verfügbar");
             
             // Daten einfügen
-            insert.Insert(insert_GetData, targetRow);
+            insert.Insert(InsertGetData, targetRow);
         }
 
         /// <summary>
@@ -61,7 +84,7 @@ namespace AutomaticSummaryCreator
         /// <param name="colId">Bezeichnung für die angesprochene Spalte.</param>
         /// <param name="rowId">Bezeichnung für die angesprochene Zeile.</param>
         /// <returns>Ausgewerteter Wert.</returns>
-        protected virtual string insert_GetData(string colId, string rowId)
+        private string InsertGetData(string colId, string rowId)
         {
             // Teilt den String in die einzelnen Tabellen auf
             string[] tableIds = colId.Split(';');
@@ -110,10 +133,10 @@ namespace AutomaticSummaryCreator
                 return String.Empty;
 
             // Sucht den richtigen Wert für das angesprochene Feld
-            Row row = container.NextRow(container.FirstTime, new TimeSpan(24, 0, 0)).Where(x => x != null && x.DateTime.ToShortDateString() == rowId).FirstOrDefault();
+            Row row = container.NextRow(container.FirstTime, new TimeSpan(24, 0, 0)).Where(x => x != null && x.CapturedAt.ToShortDateString() == rowId).FirstOrDefault();
 
             // Gibt den Wert im Kiloformat zurück, falls er gefunden wurde
-            return (row != null) ? row[col].ToString(Unit.Kilo) : String.Empty;
+            return (row != null) ? row.Value.ToString() : String.Empty;
         }
     }
 }
