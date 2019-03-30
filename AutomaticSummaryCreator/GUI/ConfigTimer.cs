@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutomaticSummaryCreator.GUI
@@ -37,6 +31,40 @@ namespace AutomaticSummaryCreator.GUI
         private TimeSpan interval = new TimeSpan(0, 0, 0, 0, 100);
 
         /// <summary>
+        /// Startet die Form mit seinem Timer.
+        /// </summary>
+        /// <param name="sec">Verfügbare Zeit, bis der Vorgang gestartet wird.</param>
+        public ConfigTimer(int sec, Configuration ini)
+        {
+            if (ini == null)
+                throw new ArgumentNullException("ini");
+
+            // Verfügbare Zeit kann nicht unter null sein
+            if (sec < 0)
+                throw new ArgumentOutOfRangeException("sec");
+
+            // Komponente initialisieren
+            InitializeComponent();
+
+            // Ini-Datei setzen
+            this.configuration = ini;
+
+            // Timerdaten setzen
+            this.sec = sec;
+            restTime = new TimeSpan(0, 0, sec);
+
+            // Bestehende Konfigurationen einfügen
+            txbExcelPath.Text = ini.ExcelPath;
+            txbXMLPath.Text = ini.XmlPath;
+            txbTableName.Text = ini.SheetName;
+            txbIdRow.Text = ini.SheetIdRow.ToString();
+            txbCounterDirectory.Text = ini.ExcelSourceDirectory;
+
+            // Timer starten
+            timer.Start();
+        }
+
+        /// <summary>
         /// Den Intervall abrufen oder anpassen.
         /// </summary>
         public int Interval
@@ -62,43 +90,9 @@ namespace AutomaticSummaryCreator.GUI
         public event EventHandler Exit;
 
         /// <summary>
-        /// Startet die Form mit seinem Timer.
-        /// </summary>
-        /// <param name="sec">Verfügbare Zeit, bis der Vorgang gestartet wird.</param>
-        public ConfigTimer(int sec, Configuration ini)
-        {
-            if(ini == null)
-                throw new ArgumentNullException("ini");
-
-            // Verfügbare Zeit kann nicht unter null sein
-            if(sec < 0)
-                throw new ArgumentOutOfRangeException("sec");
-
-            // Komponente initialisieren
-            InitializeComponent();
-
-            // Ini-Datei setzen
-            this.configuration = ini;
-
-            // Timerdaten setzen
-            this.sec = sec;
-            restTime = new TimeSpan(0, 0, sec);
-
-            // Bestehende Konfigurationen einfügen
-            txbExcelPath.Text = ini.ExcelPath;
-            txbXMLPath.Text = ini.XmlPath;
-            txbTableName.Text = ini.SheetName;
-            txbIdRow.Text = ini.SheetIdRow.ToString();
-            txbCounterDirectory.Text = ini.ExcelSourceDirectory;
-
-            // Timer starten
-            timer.Start();
-        }
-
-        /// <summary>
         /// Die Daten werden überprüft und gespeichert, wenn sie gültig sind.
         /// </summary>
-        private void butSave_Click(object sender, EventArgs e)
+        private void ButSave_Click(object sender, EventArgs e)
         {
             // Timer stoppen
             Stop();
@@ -111,7 +105,7 @@ namespace AutomaticSummaryCreator.GUI
             string counter = txbCounterDirectory.Text;
 
             // Prüfen, ob Daten eingegeben wurde
-            if(String.IsNullOrWhiteSpace(excel) || String.IsNullOrWhiteSpace(xml))
+            if(string.IsNullOrWhiteSpace(excel) || string.IsNullOrWhiteSpace(xml))
             {
                 txbExcelPath.BackColor = Color.RosyBrown;
                 return;
@@ -133,7 +127,7 @@ namespace AutomaticSummaryCreator.GUI
             }
 
             int idInt;
-            if(!Int32.TryParse(id, out idInt))
+            if(!int.TryParse(id, out idInt))
             {
                 txbIdRow.BackColor = Color.RosyBrown;
                 return;
@@ -157,7 +151,7 @@ namespace AutomaticSummaryCreator.GUI
         /// <summary>
         /// Timer stoppen/Vorgang starten.
         /// </summary>
-        private void butTimeStatus_Click(object sender, EventArgs e)
+        private void ButTimeStatus_Click(object sender, EventArgs e)
         {
             if(timer.Enabled)
             {
@@ -166,11 +160,7 @@ namespace AutomaticSummaryCreator.GUI
             else
             {
                 // Vorgang starten
-                if(Start != null)
-                {
-                    lblStatus.Text = "Wird ausgewertet....";
-                    Start(this, EventArgs.Empty);
-                }
+                OnStart();
             }
         }
 
@@ -184,20 +174,18 @@ namespace AutomaticSummaryCreator.GUI
         /// <summary>
         /// Der nächste Tick wurde erreicht.
         /// </summary>
-        private void restTime_Tick(object sender, EventArgs e)
+        private void RestTime_Tick(object sender, EventArgs e)
         {
             if(restTime.TotalMilliseconds <= 0)
             {
                 // Vorgang starten
-                timer.Stop();
-                if(Start != null)
-                    Start(this, EventArgs.Empty);
+                OnStart();
             }
             else
             {
                 // Restzeit anpassen
                 restTime = restTime.Subtract(interval);
-                txbRestTime.Text = String.Format("{0}", restTime.ToString(@"ss\:ff"));
+                txbRestTime.Text = string.Format("{0}", restTime.ToString(@"ss\:ff"));
             }
         }
 
@@ -207,11 +195,10 @@ namespace AutomaticSummaryCreator.GUI
         private void Meteo_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Bescheid geben
-            if(Exit != null)
-                Exit(this, EventArgs.Empty);
+            OnExit();
         }
 
-        private void txbExcelPath_Click(object sender, EventArgs e)
+        private void TxbExcelPath_Click(object sender, EventArgs e)
         {
             // Timer stoppen
             Stop();
@@ -222,31 +209,48 @@ namespace AutomaticSummaryCreator.GUI
             ofd.Filter = "Excel-Dateien (*.xlsx)|*.xlsx";
             ofd.FilterIndex = 1;
             if(ofd.ShowDialog() == DialogResult.OK)
+            {
                 txbExcelPath.Text = ofd.FileName;
+            }
         }
 
-        private void txbXMLPath_Click(object sender, EventArgs e)
+        private void TxbXMLPath_Click(object sender, EventArgs e)
         {
             // Timer stoppen
             Stop();
         }
 
-        private void txbCounterDirectory_Click(object sender, EventArgs e)
+        private void TxbCounterDirectory_Click(object sender, EventArgs e)
         {
             // Timer stoppen
             Stop();
         }
 
-        private void txbTableName_Click(object sender, EventArgs e)
+        private void TxbTableName_Click(object sender, EventArgs e)
         {
             // Timer stoppen
             Stop();
         }
 
-        private void txbIdRow_Click(object sender, EventArgs e)
+        private void TxbIdRow_Click(object sender, EventArgs e)
         {
             // Timer stoppen
             Stop();
+        }
+
+        private void OnStart()
+        {
+            timer.Stop();
+
+            lblStatus.Text = "Wird ausgewertet....";
+            butTimeStatus.Enabled = false;
+
+            Start?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnExit()
+        {
+            Exit?.Invoke(this, EventArgs.Empty);
         }
     }
 }

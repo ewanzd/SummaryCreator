@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sensor.cs" />
+    <Compile Include="EvaluationSensor.cs" />
     <Compile Include="Data\Meteo\Forecast.cs" />
     <Compile Include="Data\Counter\Group.cs" />
     <Compile Include="Data\Meteo\MeteoData.cs" />

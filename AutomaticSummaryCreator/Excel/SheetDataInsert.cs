@@ -61,45 +61,53 @@ namespace AutomaticSummaryCreator.Excel
         public virtual int Insert(Func<string, string, string> getData, string targetRowValue, int targetColSearch = 1)
         {
             // Die Funktion muss mitgegeben werden
-            if(getData == null)
+            if (getData == null)
                 throw new ArgumentNullException("getData");
 
             // ID-Zeile muss mindestens 1 sein
-            if(IdRow < 1 || IdRow > sheet.CountRow)
+            if (IdRow < 1 || IdRow > sheet.CountRow)
                 throw new IndexOutOfRangeException("Ungültige ID-Zeile: " + IdRow);
 
             // Zeile ermitteln
             int row = sheet.IndexOfRow(targetRowValue, lastRow, sheet.CountRow, targetColSearch);
 
             // Falls nicht gefunden bei Zeile 1 suchen beginnen
-            if(row < 1)
+            if (row < 1)
+            {
                 row = sheet.IndexOfRow(targetRowValue, 1, sheet.CountRow, targetColSearch);
+            }
 
             // Wenn die Zeile nicht gefunden werden konnte wird eine neue Zeile hinten angefügt
-            if(row < 1)
+            if (row < 1)
             {
                 row = sheet.CountRow + 1;
                 sheet[row, targetColSearch] = targetRowValue;
             }
             else
+            {
                 lastRow = row;
+            }
 
             // Alle IDs in der im Konstruktor übergebenen Zeile durchgehen
-            for(int col = 1; col <= sheet.CountCol; col++)
+            for (int col = 1; col <= sheet.CountCol; col++)
             {
                 // Wert lesen
-                string id = sheet[IdRow, col];
+                var id = sheet[IdRow, col];
 
                 // Prüfen, ob das Feld einen Wert besitzt
-                if(String.IsNullOrWhiteSpace(id))
+                if (string.IsNullOrWhiteSpace(id))
+                {
                     continue;
+                }
 
                 // Holt den Wert ab
-                string newValue = getData(id, targetRowValue);
+                var newValue = getData(id, targetRowValue);
 
                 // Falls ein Wert zurückgegeben wurde wird er in das entsprechende Feld eingefügt
-                if(!String.IsNullOrEmpty(newValue))
+                if (!string.IsNullOrEmpty(newValue))
+                {
                     sheet[row, col] = newValue;
+                }
             }
 
             return row;

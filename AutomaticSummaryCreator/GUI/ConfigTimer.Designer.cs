@@ -69,7 +69,7 @@
             // 
             // timer
             // 
-            this.timer.Tick += new System.EventHandler(this.restTime_Tick);
+            this.timer.Tick += new System.EventHandler(this.RestTime_Tick);
             // 
             // butTimeStatus
             // 
@@ -79,7 +79,7 @@
             this.butTimeStatus.TabIndex = 2;
             this.butTimeStatus.Text = "Stop";
             this.butTimeStatus.UseVisualStyleBackColor = true;
-            this.butTimeStatus.Click += new System.EventHandler(this.butTimeStatus_Click);
+            this.butTimeStatus.Click += new System.EventHandler(this.ButTimeStatus_Click);
             // 
             // gbData
             // 
@@ -109,7 +109,7 @@
             this.txbIdRow.Name = "txbIdRow";
             this.txbIdRow.Size = new System.Drawing.Size(242, 20);
             this.txbIdRow.TabIndex = 9;
-            this.txbIdRow.Click += new System.EventHandler(this.txbIdRow_Click);
+            this.txbIdRow.Click += new System.EventHandler(this.TxbIdRow_Click);
             // 
             // lblInfo
             // 
@@ -135,7 +135,7 @@
             this.txbCounterDirectory.Name = "txbCounterDirectory";
             this.txbCounterDirectory.Size = new System.Drawing.Size(242, 20);
             this.txbCounterDirectory.TabIndex = 11;
-            this.txbCounterDirectory.Click += new System.EventHandler(this.txbCounterDirectory_Click);
+            this.txbCounterDirectory.Click += new System.EventHandler(this.TxbCounterDirectory_Click);
             // 
             // txbTableName
             // 
@@ -143,7 +143,7 @@
             this.txbTableName.Name = "txbTableName";
             this.txbTableName.Size = new System.Drawing.Size(242, 20);
             this.txbTableName.TabIndex = 7;
-            this.txbTableName.Click += new System.EventHandler(this.txbTableName_Click);
+            this.txbTableName.Click += new System.EventHandler(this.TxbTableName_Click);
             // 
             // butSave
             // 
@@ -153,7 +153,7 @@
             this.butSave.TabIndex = 4;
             this.butSave.Text = "Speichern";
             this.butSave.UseVisualStyleBackColor = true;
-            this.butSave.Click += new System.EventHandler(this.butSave_Click);
+            this.butSave.Click += new System.EventHandler(this.ButSave_Click);
             // 
             // lblTableName
             // 
@@ -179,7 +179,7 @@
             this.txbXMLPath.Name = "txbXMLPath";
             this.txbXMLPath.Size = new System.Drawing.Size(242, 20);
             this.txbXMLPath.TabIndex = 1;
-            this.txbXMLPath.Click += new System.EventHandler(this.txbXMLPath_Click);
+            this.txbXMLPath.Click += new System.EventHandler(this.TxbXMLPath_Click);
             // 
             // lblXMLPath
             // 
@@ -205,7 +205,7 @@
             this.txbExcelPath.Name = "txbExcelPath";
             this.txbExcelPath.Size = new System.Drawing.Size(242, 20);
             this.txbExcelPath.TabIndex = 3;
-            this.txbExcelPath.Click += new System.EventHandler(this.txbExcelPath_Click);
+            this.txbExcelPath.Click += new System.EventHandler(this.TxbExcelPath_Click);
             // 
             // lblStatus
             // 

@@ -2,6 +2,7 @@
 using AutomaticSummaryCreator.Excel;
 using AutomaticSummaryCreator.Source;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace AutomaticSummaryCreator
     /// <summary>
     /// Verwaltet die Daten der Zähler.
     /// </summary>
-    public sealed class Sensor : IEvaluation
+    public sealed class EvaluationSensor : IEvaluation
     {
         /// <summary>
         /// Datencontainer.
@@ -89,54 +90,43 @@ namespace AutomaticSummaryCreator
             // Teilt den String in die einzelnen Tabellen auf
             string[] tableIds = colId.Split(';');
 
-            // Welche Spalte der Tabelle genommen werden soll
-            int col = 0;
-
             // Datencontainer für die angesprochenen Tabellen
             TableContainer container = null;
 
             // Prüft, ob mehrere Tabellen angesprochen wurden
-            if(tableIds.Length > 1)
+            if (tableIds.Length > 1)
             {
                 // Stellt ein Container für die Gruppen zur Verfügung
                 Group group = new Group();
 
                 // Alle Tabellen der Spalte
-                foreach(var exId in tableIds)
+                foreach (var exId in tableIds)
                 {
                     // Prüft, ob der Zähler vorhanden ist
-                    var item = Summary.Where(con => con.ID == exId).FirstOrDefault();
-                    if(item != null)
+                    var item = Summary.Where(con => con.ID.Equals(exId)).FirstOrDefault();
+                    if (item != null)
                         group.Add(item);
                 }
 
                 // Stellt die Gruppe als Zielcontainer zur Verfügung
-                container = group;
+                container = group.Count == 0 ? null : group;
             }
-            else
+            else if (tableIds.Length == 1)
             {
-                // Prüft, welche Spalte angesprochen wurde beispielsweise Import / Export
-                string[] cols = tableIds[0].Split('-');
-                if(cols.Length > 1)
-                    if(!Int32.TryParse(cols[1], out col))
-                        col = 0;
-
-                // Angesprochene Tabelle abrufen
-                Table table = (Table)Summary.Where(con => con.ID == cols[0]).FirstOrDefault();
-
-                // Stellt die Tabelle als Zielcontainer zur Verfügung
-                container = table;
+                // Angesprochene Tabelle abrufen und stellt die Tabelle als Zielcontainer zur Verfügung
+                container = Summary.Where(con => con.ID.Equals(tableIds[0])).FirstOrDefault() as Table;
             }
 
             // Der Container muss einen Wert enthalten
             if(container == null)
-                return String.Empty;
+            {
+                return string.Empty;
+            }
 
             // Sucht den richtigen Wert für das angesprochene Feld
-            Row row = container.NextRow(container.FirstTime, new TimeSpan(24, 0, 0)).Where(x => x != null && x.CapturedAt.ToShortDateString() == rowId).FirstOrDefault();
-
-            // Gibt den Wert im Kiloformat zurück, falls er gefunden wurde
-            return (row != null) ? row.Value.ToString() : String.Empty;
+            var startDateTime = DateTime.Parse(rowId);
+            var endDateTime = startDateTime + TimeSpan.FromDays(1);
+            return container.Sum(startDateTime, endDateTime).ToString("0.###", CultureInfo.InvariantCulture);
         }
     }
 }

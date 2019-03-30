@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomaticSummaryCreator.Data
 {
     public abstract class TableContainer
     {
-        public string ID
-        {
-            get;
-            set;
-        }
+        public string ID { get; set; }
 
-        private string _headerText = String.Empty;
+        private string _headerText = string.Empty;
 
         public string HeaderText
         {
             get
             {
-                if(String.IsNullOrEmpty(_headerText))
+                if(string.IsNullOrEmpty(_headerText))
                     return ID;
                 else
                     return _headerText;
@@ -31,26 +24,19 @@ namespace AutomaticSummaryCreator.Data
             }
         }
 
-        public abstract string TypeName
-        {
-            get;
-        }
+        public abstract string TypeName { get; }
 
         public abstract Row GetRow(DateTime start, DateTime end);
 
-        public abstract DateTime FirstTime
-        {
-            get;
-        }
+        public abstract DateTime FirstTime { get; }
 
-        public abstract DateTime LastTime
-        {
-            get;
-        }
+        public abstract DateTime LastTime { get; }
 
         public abstract Row FirstRow(DateTime start, DateTime end);
 
         public abstract void Sort();
+
+        public abstract double Sum(DateTime start, DateTime end);
 
         public abstract IEnumerable<Row> NextRow(DateTime start, TimeSpan interval);
 

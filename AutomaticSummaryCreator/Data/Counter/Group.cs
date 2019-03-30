@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomaticSummaryCreator.Data
 {
@@ -19,18 +17,17 @@ namespace AutomaticSummaryCreator.Data
         /// <summary>
         /// Name of Container.
         /// </summary>
-        public override string TypeName
-        {
-            get
-            {
-                return "Gruppe";
-            }
-        }
+        public override string TypeName => nameof(Group); // "Gruppe";
+
+        /// <summary>
+        /// Number of container inside group.
+        /// </summary>
+        public int Count => container.Count;
 
         /// <summary>
         /// Get the count of group list with 'Interval' steps.
         /// </summary>
-        public int Count(TimeSpan interval)
+        public int CountOfIntervalSteps(TimeSpan interval)
         {
             // Prüfen, ob die Gruppe eine Tabelle besitzt
             if(container.Count == 0)
@@ -191,7 +188,7 @@ namespace AutomaticSummaryCreator.Data
             DateTime current = start;
 
             // Die Anzahl der Zeilen wird ausgerechnet
-            int count = Count(interval);
+            int count = CountOfIntervalSteps(interval);
 
             // Die ausgerechnete anzahl Zeilen erstellen
             int i = 0;
@@ -210,6 +207,17 @@ namespace AutomaticSummaryCreator.Data
                 // Aktuelle Zeit um den Interval erhöhen
                 current += interval;
             }
+        }
+
+        /// <summary>
+        /// Calculate sum of all values in time range.
+        /// </summary>
+        /// <param name="start">Start date time to get sum.</param>
+        /// <param name="end">End date time to get sum.</param>
+        /// <returns>Sum of all values in time range.</returns>
+        public override double Sum(DateTime start, DateTime end)
+        {
+            return container.Sum(x => x.Sum(start, end));
         }
     }
 }

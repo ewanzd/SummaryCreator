@@ -1,6 +1,7 @@
 ﻿using AutomaticSummaryCreator.Data;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace AutomaticSummaryCreator.Source
@@ -48,7 +49,7 @@ namespace AutomaticSummaryCreator.Source
             }
 
             // Wert konvertieren
-            if(double.TryParse(fields[0], out double val))
+            if(double.TryParse(fields[0], NumberStyles.Any, CultureInfo.InvariantCulture, out double val))
             {
                 row.Value = val;
             }

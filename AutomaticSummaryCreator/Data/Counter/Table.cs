@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace AutomaticSummaryCreator.Data
@@ -22,7 +21,7 @@ namespace AutomaticSummaryCreator.Data
         {
             get
             {
-                return "Tabelle";
+                return nameof(Table); // "Tabelle";
             }
         }
 
@@ -134,6 +133,22 @@ namespace AutomaticSummaryCreator.Data
 
             // Gibt der letzte Wert des letzten Intervalls zurück
             yield return lastRowOfInterval;
+        }
+
+        /// <summary>
+        /// Calculate sum of all values in time range.
+        /// </summary>
+        /// <param name="start">Start date time to get sum.</param>
+        /// <param name="end">End date time to get sum.</param>
+        /// <returns>Sum of all values in time range.</returns>
+        public override double Sum(DateTime start, DateTime end)
+        {
+            var rowsInPeriod = rows.Where(x => x.CapturedAt >= start && x.CapturedAt < end);
+
+            var firstRow = rowsInPeriod.FirstOrDefault(x => x.CapturedAt == rowsInPeriod.Min(y => y.CapturedAt));
+            var lastRow = rowsInPeriod.FirstOrDefault(x => x.CapturedAt == rowsInPeriod.Max(y => y.CapturedAt));
+
+            return lastRow.Value - firstRow.Value;
         }
     }
 }
