@@ -1,5 +1,5 @@
-﻿using AutomaticSummaryCreator.Excel;
-using AutomaticSummaryCreator.GUI;
+﻿using AutomaticSummaryCreator.GUI;
+using AutomaticSummaryCreator.IO.Excel;
 using System;
 using System.IO;
 using System.Threading.Tasks;

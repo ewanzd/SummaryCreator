@@ -9,6 +9,12 @@ namespace AutomaticSummaryCreator.Data
     {
         private readonly List<IDataContainer> containers = new List<IDataContainer>();
 
+        public int Count {
+            get {
+                return containers.Count;
+            }
+        }
+
         public void Add(IDataContainer dataContainer)
         {
             Debug.Assert(dataContainer != null, $"{nameof(dataContainer)} must not be null");

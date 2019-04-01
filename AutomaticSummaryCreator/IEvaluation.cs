@@ -1,4 +1,4 @@
-﻿using AutomaticSummaryCreator.Excel;
+﻿using AutomaticSummaryCreator.IO.Excel;
 
 namespace AutomaticSummaryCreator
 {

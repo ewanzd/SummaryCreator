@@ -44,14 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DataGroup.cs" />
+    <Compile Include="Data\DataPoint.cs" />
+    <Compile Include="Data\IDataContainer.cs" />
+    <Compile Include="Data\SensorTimeSeries.cs" />
     <Compile Include="EvaluationSensor.cs" />
     <Compile Include="Data\Meteo\Forecast.cs" />
     <Compile Include="Data\Counter\Group.cs" />
     <Compile Include="Data\Meteo\MeteoData.cs" />
     <Compile Include="Data\Meteo\Value.cs" />
     <Compile Include="IEvaluation.cs" />
-    <Compile Include="Excel\SheetDataInsert.cs" />
-    <Compile Include="Excel\SheetTarget.cs" />
+    <Compile Include="IO\Excel\SheetDataInsert.cs" />
+    <Compile Include="IO\Excel\SheetTarget.cs" />
     <Compile Include="EvaluationMeteo.cs" />
     <Compile Include="GUI\ConfigTimer.cs">
       <SubType>Form</SubType>
@@ -59,7 +63,14 @@
     <Compile Include="GUI\ConfigTimer.Designer.cs">
       <DependentUpon>ConfigTimer.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\Csv\DirectoryCsvReader.cs" />
+    <Compile Include="IO\Csv\NewSensorCsvReader.cs" />
+    <Compile Include="IO\Excel\ExcelWriter.cs" />
+    <Compile Include="IO\IDataReader.cs" />
+    <Compile Include="IO\Xml\MeteoXmlReader.cs" />
+    <Compile Include="IO\Csv\SensorCsvReader.cs" />
     <Compile Include="SummaryCreatorApplication.cs" />
+    <Compile Include="IO\IDataWriter.cs" />
     <Compile Include="XmlLoad.cs" />
     <Compile Include="Data\Counter\Row.cs" />
     <Compile Include="Data\Counter\Summary.cs" />
@@ -104,6 +115,9 @@
     <PackageReference Include="ini-parser">
       <Version>2.5.2</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Excel\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

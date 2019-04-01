@@ -1,5 +1,5 @@
 ﻿using AutomaticSummaryCreator.Data;
-using AutomaticSummaryCreator.Excel;
+using AutomaticSummaryCreator.IO.Excel;
 using System;
 using System.Linq;
 

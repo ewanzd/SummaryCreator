@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutomaticSummaryCreator.Excel
+namespace AutomaticSummaryCreator.IO.Excel
 {
     public class SheetTarget : Sheet
     {

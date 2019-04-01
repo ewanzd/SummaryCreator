@@ -49,7 +49,7 @@ namespace AutomaticSummaryCreator.IO.Xml
                 var dateStr = (string)values.Element("valid").Element("date");
                 if (!DateTime.TryParse(dateStr, out DateTime date))
                 {
-                    throw new InvalidDataException($"Invalid date format: {dateStr}");
+                    throw new InvalidDataException($"Ungültiges Format: {dateStr}");
                 }
 
                 // Alle Werte der Prognose abrufen
@@ -80,7 +80,7 @@ namespace AutomaticSummaryCreator.IO.Xml
                         }
                         else
                         {
-                            throw new InvalidDataException($"Ungültiges format: {valueStr}");
+                            throw new InvalidDataException($"Ungültiges Format: {valueStr}");
                         }
 
                         dataPoint.CapturedAt = date;
