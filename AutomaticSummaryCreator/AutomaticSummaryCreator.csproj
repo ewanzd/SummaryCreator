@@ -69,8 +69,17 @@
     <Compile Include="IO\IDataReader.cs" />
     <Compile Include="IO\Xml\MeteoXmlReader.cs" />
     <Compile Include="IO\Csv\SensorCsvReader.cs" />
+    <Compile Include="Services\DataService.cs" />
     <Compile Include="SummaryCreatorApplication.cs" />
     <Compile Include="IO\IDataWriter.cs" />
+    <Compile Include="View\ConfigPresenter.cs" />
+    <Compile Include="View\ConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ConfigForm.Designer.cs">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\IConfigView.cs" />
     <Compile Include="XmlLoad.cs" />
     <Compile Include="Data\Counter\Row.cs" />
     <Compile Include="Data\Counter\Summary.cs" />
@@ -92,6 +101,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\ConfigForm.resx">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

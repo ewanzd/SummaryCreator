@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,6 +28,22 @@ namespace AutomaticSummaryCreator.Data
             Debug.Assert(dataContainers != null && dataContainers.Any(), $"{nameof(dataContainers)} must not be null");
 
             containers.AddRange(dataContainers);
+        }
+
+        /// <summary>
+        /// Calculate sum of all values in time range.
+        /// </summary>
+        /// <param name="start">Start date time to get sum.</param>
+        /// <param name="end">End date time to get sum.</param>
+        /// <returns>Sum of all values in time range.</returns>
+        public double Sum(DateTime start, DateTime end)
+        {
+            return containers.Sum(x => x.Sum(start, end));
+        }
+
+        public double Total(DateTime pointInTime)
+        {
+            return containers.Sum(x => x.Total(pointInTime));
         }
 
         public IEnumerator<IDataContainer> GetEnumerator()

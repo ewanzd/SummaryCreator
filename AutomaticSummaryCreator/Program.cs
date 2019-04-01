@@ -20,14 +20,14 @@ namespace AutomaticSummaryCreator
         {
             // Prüfen, ob ein neuer Ini-Pfad mitgegeben wurde
             string path = args.Where(x => x.Split(':')[0] == "IniPath").FirstOrDefault();
-            if(!String.IsNullOrWhiteSpace(path))
+            if(!string.IsNullOrWhiteSpace(path))
             {
                 IniPath = path;
             }
                 
             // Prüfen, ob die Sekunden mitgegeben wurde, die der Benutzer Zeit hat, um die Konfigurationen zu bearbeiten
             int startSec;
-            if(!Int32.TryParse(args.Where(x => x.Split(':')[0] == "RestTime").FirstOrDefault(), out startSec))
+            if(!int.TryParse(args.Where(x => x.Split(':')[0] == "RestTime").FirstOrDefault(), out startSec))
             {
                 startSec = 10;
             }
