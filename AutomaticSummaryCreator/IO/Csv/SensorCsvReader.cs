@@ -1,14 +1,27 @@
 ﻿using AutomaticSummaryCreator.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AutomaticSummaryCreator.IO.Csv
 {
-    public class SensorCsvReader : IDataReader
+    public sealed class SensorCsvReader : IDataReader
     {
+        private const char rowSeperator = ';';
+
+        private readonly FileInfo sourceFile;
+
+        public SensorCsvReader(FileInfo sourceFile)
+        {
+            Debug.Assert(sourceFile != null, $"{nameof(sourceFile)} must not be null");
+
+            this.sourceFile = sourceFile;
+        }
+
         public IEnumerable<IDataContainer> Read()
         {
             throw new NotImplementedException();

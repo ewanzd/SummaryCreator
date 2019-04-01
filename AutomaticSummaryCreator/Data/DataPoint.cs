@@ -2,9 +2,9 @@
 
 namespace AutomaticSummaryCreator.Data
 {
-    public sealed class DataPoint
+    public class DataPoint
     {
-        DateTime CapturedAt { get; set; }
-        double Value { get; set; }
+        public DateTime CapturedAt { get; set; }
+        public double Value { get; set; }
     }
 }
