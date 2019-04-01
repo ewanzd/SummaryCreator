@@ -115,7 +115,8 @@ namespace AutomaticSummaryCreator.IO.Csv
         {
             // ID des Zählers des Dateinamens
             // Beispiel: dbdata_6F5CBF4A-FC2F-4E67-99A6-3AFB3D9C2E46.csv
-            return file.Name.Split(fileNameSeparator).FirstOrDefault();
+            var fileName = Path.GetFileNameWithoutExtension(file.FullName);
+            return fileName.Split(fileNameSeparator)[1];
         }
     }
 }

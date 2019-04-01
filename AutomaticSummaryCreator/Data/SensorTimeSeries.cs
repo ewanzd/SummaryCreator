@@ -12,7 +12,7 @@ namespace AutomaticSummaryCreator.Data
 
         public SensorTimeSeries(string id)
         {
-            Debug.Assert(string.IsNullOrEmpty(id), $"{nameof(id)} must not be null or empty");
+            Debug.Assert(!string.IsNullOrEmpty(id), $"{nameof(id)} must not be null or empty");
 
             Id = id;
         }

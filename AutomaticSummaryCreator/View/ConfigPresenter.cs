@@ -18,6 +18,8 @@ namespace AutomaticSummaryCreator.View
             this.dataService = dataService;
             this.configuration = configuration;
 
+            view.Presenter = this;
+
             // Bestehende Konfigurationen einfügen
             view.ExcelPath = configuration.ExcelPath;
             view.MeteoPath = configuration.XmlPath;
@@ -35,15 +37,27 @@ namespace AutomaticSummaryCreator.View
             // Timer stoppen
             OnStop();
 
-            // Daten übernehmen
-            configuration.ExcelPath = view.ExcelPath;
-            configuration.XmlPath = view.MeteoPath;
-            configuration.SheetName = view.TableName;
-            configuration.SheetIdRow = view.IdRow;
-            configuration.ExcelSourceDirectory = view.SensorDirectoryPath;
 
-            // Daten abspeichern
-            configuration.Save();
+            try
+            {
+                // Daten übernehmen
+                configuration.ExcelPath = view.ExcelPath;
+                configuration.XmlPath = view.MeteoPath;
+                configuration.SheetName = view.TableName;
+                configuration.SheetIdRow = view.IdRow;
+                configuration.ExcelSourceDirectory = view.SensorDirectoryPath;
+
+                // Daten abspeichern
+                configuration.Save();
+
+                // Konfigurationen wurden erfolgreich gespeichert
+                view.Status = "Gespeichert";
+            }
+            catch(Exception ex)
+            {
+                // Fehler ausgeben
+                view.Status = $"Fehler: {ex.Message}";
+            }
         }
 
         public void OnRun()

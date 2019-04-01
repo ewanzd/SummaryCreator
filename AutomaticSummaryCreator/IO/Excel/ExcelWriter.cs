@@ -51,45 +51,47 @@ namespace AutomaticSummaryCreator.IO.Excel
             // Teilt den String in die einzelnen Tabellen auf
             string[] tableIds = colId.Split(colSeperator);
 
+            // Sucht den richtigen Wert für das angesprochene Feld
+            var startDateTime = DateTime.Parse(rowId);
+            var endDateTime = startDateTime + TimeSpan.FromDays(1);
+
             // Datencontainer für die angesprochenen Tabellen
             IDataContainer container = null;
 
             // Prüft, ob mehrere Tabellen angesprochen wurden
             if (tableIds.Length > 1)
             {
-                //// Stellt ein Container für die Gruppen zur Verfügung
-                //DataGroup group = new DataGroup();
+                // Stellt ein Container für die Gruppen zur Verfügung
+                DataGroup group = new DataGroup();
 
-                //// Alle Tabellen der Spalte
-                //foreach (var exId in tableIds)
-                //{
-                //    // Prüft, ob der Zähler vorhanden ist
-                //    var item = containers.Where(con => con.Id.Equals(exId)).FirstOrDefault();
-                //    if (item != null)
-                //    {
-                //        group.Add(item);
-                //    }
-                //}
+                // Alle Tabellen der Spalte
+                foreach (var exId in tableIds)
+                {
+                    // Prüft, ob der Zähler vorhanden ist
+                    var item = containers.Where(con => con.Id.Equals(exId)).FirstOrDefault();
+                    if (item != null)
+                    {
+                        group.Add(item);
+                    }
+                }
 
-                //// Stellt die Gruppe als Zielcontainer zur Verfügung
-                //container = group.Count == 0 ? null : group;
+                // Gibt die Summe im spezifizierten Zeitbereich zurück
+                return group.Sum(startDateTime, endDateTime).ToString("0.###", CultureInfo.InvariantCulture);
             }
             else if (tableIds.Length == 1)
             {
                 // Angesprochene Tabelle abrufen und stellt die Tabelle als Zielcontainer zur Verfügung
                 container = containers.Where(con => con.Id.Equals(tableIds[0])).FirstOrDefault();
+
+                if(container != null)
+                {
+                    // Gibt die Summe im spezifizierten Zeitbereich zurück
+                    return container.Sum(startDateTime, endDateTime).ToString("0.###", CultureInfo.InvariantCulture);
+                }
             }
 
             // Der Container muss einen Wert enthalten
-            if (container == null)
-            {
-                return string.Empty;
-            }
-
-            // Sucht den richtigen Wert für das angesprochene Feld
-            var startDateTime = DateTime.Parse(rowId);
-            var endDateTime = startDateTime + TimeSpan.FromDays(1);
-            return container.Sum(startDateTime, endDateTime).ToString("0.###", CultureInfo.InvariantCulture);
+            return string.Empty;
         }
     }
 }

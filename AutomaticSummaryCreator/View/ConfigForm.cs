@@ -11,11 +11,6 @@ namespace AutomaticSummaryCreator.View
     public partial class ConfigForm : Form, IConfigView
     {
         /// <summary>
-        /// Verfügbare Zeit, bis der Vorgang gestartet wird.
-        /// </summary>
-        private int sec;
-
-        /// <summary>
         /// Restliche Zeit, bis der Vorgang gestartet wird.
         /// </summary>
         private TimeSpan restTime;
@@ -52,11 +47,11 @@ namespace AutomaticSummaryCreator.View
 
         public string ExcelPath { get => txbExcelPath.Text; set => txbExcelPath.Text = value; }
         public string MeteoPath { get => txbXMLPath.Text; set => txbXMLPath.Text = value; }
-        public string SensorDirectoryPath { get => txbXMLPath.Text; set => txbXMLPath.Text = value; }
-        public string TableName { get => txbXMLPath.Text; set => txbXMLPath.Text = value; }
+        public string SensorDirectoryPath { get => txbCounterDirectory.Text; set => txbCounterDirectory.Text = value; }
+        public string TableName { get => txbTableName.Text; set => txbTableName.Text = value; }
         public int IdRow { get => int.Parse(txbIdRow.Text); set => txbIdRow.Text = value.ToString(); }
 
-        public bool TimerIsEnabled { get => timer.Enabled; set => timer.Enabled = false; }
+        public bool TimerIsEnabled { get => timer.Enabled; set => timer.Enabled = value; }
         public string Status { set => lblStatus.Text = value; }
         public double RemainingTime { get => restTime.TotalSeconds; set => restTime = new TimeSpan(0, 0, 0, (int)value); }
         public bool ActionButtonEnabled { get => butTimeStatus.Enabled; set => butTimeStatus.Enabled = value; }

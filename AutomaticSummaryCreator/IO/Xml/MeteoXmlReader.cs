@@ -47,6 +47,10 @@ namespace AutomaticSummaryCreator.IO.Xml
             {
                 // Datum abrufen und speichern
                 var dateStr = (string)values.Element("valid").Element("date");
+                if(dateStr == null)
+                {
+                    dateStr = (string)values.Element("valid").Element("end");
+                }
                 if (!DateTime.TryParse(dateStr, out DateTime date))
                 {
                     throw new InvalidDataException($"Ungültiges Format: {dateStr}");
