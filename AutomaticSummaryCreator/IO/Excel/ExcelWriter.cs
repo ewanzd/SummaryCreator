@@ -1,6 +1,7 @@
 ﻿using AutomaticSummaryCreator.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
@@ -15,6 +16,8 @@ namespace AutomaticSummaryCreator.IO.Excel
 
         public ExcelWriter(SheetDataInsert sheetDataInsert)
         {
+            Debug.Assert(sheetDataInsert != null, $"{nameof(sheetDataInsert)} must not be null");
+
             this.sheetDataInsert = sheetDataInsert;
         }
 
@@ -55,9 +58,6 @@ namespace AutomaticSummaryCreator.IO.Excel
             var startDateTime = DateTime.Parse(rowId);
             var endDateTime = startDateTime + TimeSpan.FromDays(1);
 
-            // Datencontainer für die angesprochenen Tabellen
-            IDataContainer container = null;
-
             // Prüft, ob mehrere Tabellen angesprochen wurden
             if (tableIds.Length > 1)
             {
@@ -81,7 +81,7 @@ namespace AutomaticSummaryCreator.IO.Excel
             else if (tableIds.Length == 1)
             {
                 // Angesprochene Tabelle abrufen und stellt die Tabelle als Zielcontainer zur Verfügung
-                container = containers.Where(con => con.Id.Equals(tableIds[0])).FirstOrDefault();
+                var container = containers.Where(con => con.Id.Equals(tableIds[0])).FirstOrDefault();
 
                 if(container != null)
                 {

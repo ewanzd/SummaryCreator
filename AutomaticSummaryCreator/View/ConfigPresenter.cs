@@ -2,6 +2,7 @@
 using AutomaticSummaryCreator.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace AutomaticSummaryCreator.View
@@ -14,6 +15,10 @@ namespace AutomaticSummaryCreator.View
 
         public ConfigPresenter(IConfigView view, DataService dataService, Configuration configuration)
         {
+            Debug.Assert(view != null, $"{nameof(view)} must not be null");
+            Debug.Assert(dataService != null, $"{nameof(dataService)} must not be null");
+            Debug.Assert(configuration != null, $"{nameof(configuration)} must not be null");
+
             this.view = view;
             this.dataService = dataService;
             this.configuration = configuration;
@@ -36,7 +41,6 @@ namespace AutomaticSummaryCreator.View
         {
             // Timer stoppen
             OnStop();
-
 
             try
             {
