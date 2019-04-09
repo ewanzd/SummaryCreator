@@ -24,7 +24,7 @@ namespace AutomaticSummaryCreator.IO.Csv
         public IEnumerable<IDataContainer> Read()
         {
             var id = ExtractId(sourceFile);
-            var dataContainer = new SensorTimeSeries(id);
+            var dataContainer = new SensorContainer(id);
 
             // enumerator holen um durch zu iterieren
             var fileEnumerator = ReadFile(sourceFile).GetEnumerator();

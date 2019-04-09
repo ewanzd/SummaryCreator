@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace AutomaticSummaryCreator.Data
 {
-    public sealed class SensorTimeSeries : IDataContainer
+    public sealed class SensorContainer : IDataContainer
     {
         private readonly SortedList<DateTime, DataPoint> dataPoints = new SortedList<DateTime, DataPoint>();
 
-        public SensorTimeSeries(string id)
+        public SensorContainer(string id)
         {
             Debug.Assert(!string.IsNullOrEmpty(id), $"{nameof(id)} must not be null or empty");
 
@@ -30,6 +30,26 @@ namespace AutomaticSummaryCreator.Data
             Debug.Assert(dataPoint != null, $"{nameof(dataPoint)} must not be null");
 
             dataPoints.Add(dataPoint.CapturedAt, dataPoint);
+        }
+
+        public bool AnyBetween(DateTime start, DateTime end)
+        {
+            Debug.Assert(start <= end, "Start date is before end date");
+
+            if(dataPoints.Count == 0)
+            {
+                return false;
+            }
+
+            // if start date is after the last entry or the end date before first entry 
+            // then there is no entry in time range
+            var keys = dataPoints.Keys;
+            if(keys.First() > end || start > keys.Last())
+            {
+                return false;
+            }
+
+            return dataPoints.Keys.Any(capturedAt => start <= capturedAt && capturedAt < end);
         }
 
         public double Total(DateTime pointInTime)

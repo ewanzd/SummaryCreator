@@ -16,6 +16,14 @@ namespace AutomaticSummaryCreator.Data
             }
         }
 
+        public DataPoint First => containers
+            .Aggregate((minItem, nextItem) => minItem.First.CapturedAt < nextItem.First.CapturedAt ? minItem : nextItem)
+            .First;
+
+        public DataPoint Last => containers
+            .Aggregate((minItem, nextItem) => minItem.Last.CapturedAt > nextItem.Last.CapturedAt ? minItem : nextItem)
+            .Last;
+
         public void Add(IDataContainer dataContainer)
         {
             Debug.Assert(dataContainer != null, $"{nameof(dataContainer)} must not be null");
@@ -28,6 +36,11 @@ namespace AutomaticSummaryCreator.Data
             Debug.Assert(dataContainers != null && dataContainers.Any(), $"{nameof(dataContainers)} must not be null");
 
             containers.AddRange(dataContainers);
+        }
+
+        public bool AnyBetween(DateTime start, DateTime end)
+        {
+            return containers.Any(container => container.AnyBetween(start, end));
         }
 
         /// <summary>

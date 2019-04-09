@@ -64,11 +64,10 @@ namespace AutomaticSummaryCreator.IO.Xml
                         // Name hinzufügen
                         var type = (string)value.Attribute("type");
 
-                        var container = meteoDataContainers.FirstOrDefault(x => x.Id.Equals(type, StringComparison.InvariantCultureIgnoreCase));
-                        if (container == null)
+                        // nur irradience
+                        if (!type.Equals("irradience", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            container = new SensorTimeSeries(type);
-                            meteoDataContainers.Add(container);
+                            continue;
                         }
 
                         // Neuer Wert erstellen
@@ -86,8 +85,14 @@ namespace AutomaticSummaryCreator.IO.Xml
                         {
                             throw new InvalidDataException($"Ungültiges Format: {valueStr}");
                         }
-
                         dataPoint.CapturedAt = date;
+
+                        var container = meteoDataContainers.FirstOrDefault(x => x.Id.Equals(type, StringComparison.InvariantCultureIgnoreCase));
+                        if (container == null)
+                        {
+                            container = new MeteoContainer(type);
+                            meteoDataContainers.Add(container);
+                        }
                         container.Add(dataPoint);
                     }
                 }

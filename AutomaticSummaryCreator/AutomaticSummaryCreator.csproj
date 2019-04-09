@@ -47,9 +47,10 @@
     <Compile Include="Data\DataGroup.cs" />
     <Compile Include="Data\DataPoint.cs" />
     <Compile Include="Data\IDataContainer.cs" />
-    <Compile Include="Data\SensorTimeSeries.cs" />
-    <Compile Include="IO\Excel\SheetDataInsert.cs" />
-    <Compile Include="IO\Excel\SheetTarget.cs" />
+    <Compile Include="Data\MeteoContainer.cs" />
+    <Compile Include="Data\SensorContainer.cs" />
+    <Compile Include="IO\Excel\MyWorkbook.cs" />
+    <Compile Include="IO\Excel\MyWorksheet.cs" />
     <Compile Include="IO\Csv\DirectoryCsvReader.cs" />
     <Compile Include="IO\Csv\NewSensorCsvReader.cs" />
     <Compile Include="IO\Excel\ExcelWriter.cs" />
@@ -95,14 +96,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BasicLibrary\BasicLibrary.csproj">
-      <Project>{215f6cda-578d-4a26-b551-beb5f0ca05f3}</Project>
-      <Name>BasicLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="ini-parser">
       <Version>2.5.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Office.Interop.Excel">
+      <Version>15.0.4795.1000</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

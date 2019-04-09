@@ -10,6 +10,7 @@ namespace AutomaticSummaryCreator.Data
         DataPoint First { get; }
         DataPoint Last { get; }
 
+        bool AnyBetween(DateTime start, DateTime end);
         void Add(DataPoint dataPoint);
         double Sum(DateTime start, TimeSpan range);
         double Sum(DateTime start, DateTime end);

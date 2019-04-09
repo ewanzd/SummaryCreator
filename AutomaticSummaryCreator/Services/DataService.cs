@@ -25,10 +25,18 @@ namespace AutomaticSummaryCreator.Services
 
         public void WriteToExcel(IEnumerable<IDataContainer> containers, FileInfo destinationExcel, string sheetName, int idRow)
         {
-            var sheet = new SheetDataInsert(destinationExcel.FullName, sheetName, idRow);
-            var writer = new ExcelWriter(sheet);
-
-            writer.Write(containers);
+            var writer = new ExcelWriter();
+            try
+            {
+                writer.InitWorksheet(destinationExcel, sheetName, idRow);
+                writer.Write(containers);
+                writer.SaveAndClose();
+            }
+            catch
+            {
+                writer.Close();
+                throw;
+            }
         }
     }
 }
