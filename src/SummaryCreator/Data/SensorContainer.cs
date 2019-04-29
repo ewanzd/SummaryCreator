@@ -54,18 +54,22 @@ namespace SummaryCreator.Data
 
         public double Total(DateTime pointInTime)
         {
-            DataPoint closestPreviousDataPoint = null;
+            var closestPreviousDataPoint = FindClosestPreviousDataPoint(pointInTime);
+            return closestPreviousDataPoint == null ? 0.0 : closestPreviousDataPoint.Value;
+        }
 
+        private DataPoint FindClosestPreviousDataPoint(DateTime pointInTime)
+        {
+            DataPoint closestPreviousDataPoint = null;
             foreach (var dataPoint in dataPoints.Values)
             {
-                if(dataPoint.CapturedAt > pointInTime)
+                if (dataPoint.CapturedAt > pointInTime)
                 {
                     break;
                 }
                 closestPreviousDataPoint = dataPoint;
             }
-
-            return closestPreviousDataPoint == null ? 0.0 : closestPreviousDataPoint.Value;
+            return closestPreviousDataPoint;
         }
 
         public double Sum(DateTime start, TimeSpan range)
@@ -76,24 +80,18 @@ namespace SummaryCreator.Data
 
         public double Sum(DateTime start, DateTime end)
         {
-            DataPoint first = null, last = null;
+            DataPoint first = FindClosestPreviousDataPoint(start);
+            DataPoint last = FindClosestPreviousDataPoint(end);
 
-            foreach (var dataPoint in dataPoints.Values)
+            if(first == null && last == null)
             {
-                if (dataPoint.CapturedAt < end)
-                {
-                    last = dataPoint;
-                    if(first == null && dataPoint.CapturedAt >= start)
-                    {
-                        first = dataPoint;
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                return 0.0;
             }
-            return last == null || first == null ? 0.0 : last.Value - first.Value;
+            else if(first == null && last != null)
+            {
+                return last.Value;
+            }
+            return last.Value - first.Value;
         }
 
         public IEnumerator<DataPoint> GetEnumerator()
