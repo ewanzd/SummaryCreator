@@ -39,9 +39,9 @@ namespace SummaryCreator.IO.Excel
             var containerGroup = new DataGroup();
             containerGroup.AddRange(containers);
 
-            DateTime start = containerGroup.First.CapturedAt.Date;
+            DateTime start = containerGroup.FirstDataPoint.CapturedAt.Date;
             DateTime current = start;
-            DateTime end = containerGroup.Last.CapturedAt.Date;
+            DateTime end = containerGroup.LastDataPoint.CapturedAt.Date;
 
             while (current <= end)
             {

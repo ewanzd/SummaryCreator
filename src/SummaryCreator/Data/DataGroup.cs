@@ -16,13 +16,29 @@ namespace SummaryCreator.Data
             }
         }
 
-        public DataPoint First => containers
-            .Aggregate((minItem, nextItem) => minItem.First.CapturedAt < nextItem.First.CapturedAt ? minItem : nextItem)
-            .First;
+        public DataPoint FirstDataPoint {
+            get {
+                if(containers.Count == 0)
+                {
+                    return null;
+                }
+                return containers
+                    .Aggregate((minItem, nextItem) => minItem.First.CapturedAt < nextItem.First.CapturedAt ? minItem : nextItem)?
+                    .First;
+            }
+        }
 
-        public DataPoint Last => containers
-            .Aggregate((minItem, nextItem) => minItem.Last.CapturedAt > nextItem.Last.CapturedAt ? minItem : nextItem)
-            .Last;
+        public DataPoint LastDataPoint {
+            get {
+                if (containers.Count == 0)
+                {
+                    return null;
+                }
+                return containers
+                    .Aggregate((maxItem, nextItem) => maxItem.Last.CapturedAt > nextItem.Last.CapturedAt ? maxItem : nextItem)?
+                    .Last;
+            }
+        }
 
         public void Add(IDataContainer dataContainer)
         {
