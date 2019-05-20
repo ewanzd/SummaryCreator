@@ -1,16 +1,16 @@
-using SummaryCreator.Data;
+﻿using SummaryCreator.Data;
 using System;
 using Xunit;
 
 namespace SummaryCreator.UnitTests
 {
-    public class SensorContainerUnitTests
+    public class MeteoContainerUnitTests
     {
         [Fact]
-        public void SensorContainer_Empty()
+        public void MeteoContainer_Empty()
         {
             var id = "1234";
-            var container = new SensorContainer(id);
+            var container = new MeteoContainer(id);
 
             Assert.Equal(id, container.Id);
             Assert.Equal(0, container.Count);
@@ -22,15 +22,16 @@ namespace SummaryCreator.UnitTests
         }
 
         [Fact]
-        public void SensorContainer_OneEntry()
+        public void MeteoContainer_OneEntry()
         {
-            var dataPoint = new DataPoint() {
+            var dataPoint = new DataPoint()
+            {
                 CapturedAt = new DateTime(2019, 4, 29, 12, 0, 0),
                 Value = 1000
             };
 
             var id = "1234";
-            var container = new SensorContainer(id);
+            var container = new MeteoContainer(id);
             container.Add(dataPoint);
 
             Assert.Equal(id, container.Id);
@@ -49,7 +50,7 @@ namespace SummaryCreator.UnitTests
         }
 
         [Fact]
-        public void SensorContainer_MultipleEntry()
+        public void MeteoContainer_MultipleEntry()
         {
             var dataPoint1 = new DataPoint()
             {
@@ -68,7 +69,7 @@ namespace SummaryCreator.UnitTests
             };
 
             var id = "1234";
-            var container = new SensorContainer(id);
+            var container = new MeteoContainer(id);
             container.Add(dataPoint1);
             container.Add(dataPoint2);
             container.Add(dataPoint3);
@@ -83,15 +84,15 @@ namespace SummaryCreator.UnitTests
 
             Assert.InRange(container.Sum(DateTime.MinValue, new DateTime(2019, 4, 28)), 0.0 - 0.0001, 0.0 + 0.0001);
             Assert.InRange(container.Sum(new DateTime(2019, 5, 1), DateTime.MaxValue), 0.0 - 0.0001, 0.0 + 0.0001);
-            var sum = dataPoint3.Value - dataPoint1.Value;
-            Assert.Equal(sum, container.Sum(new DateTime(2019, 4, 29), new DateTime(2019, 4, 30, 23, 0, 0)));
+            var sum = dataPoint1.Value + dataPoint2.Value + dataPoint3.Value;
+            Assert.Equal(sum, container.Sum(new DateTime(2019, 4, 28), new DateTime(2019, 4, 30, 23, 0, 0)));
             Assert.InRange(container.Sum(DateTime.MinValue, new DateTime(2019, 4, 28)), 0.0 - 0.0001, 0.0 + 0.0001);
             Assert.InRange(container.Sum(new DateTime(2019, 5, 01), DateTime.MaxValue), 0.0 - 0.0001, 0.0 + 0.0001);
 
             Assert.InRange(container.Total(new DateTime(2019, 4, 28)), 0.0 - 0.0001, 0.0 + 0.0001);
             Assert.Equal(dataPoint1.Value, container.Total(new DateTime(2019, 4, 29)));
-            Assert.Equal(dataPoint3.Value, container.Total(new DateTime(2019, 5, 01)));
-            Assert.Equal(dataPoint3.Value, container.Total(DateTime.MaxValue));
+            Assert.Equal(sum, container.Total(new DateTime(2019, 5, 01)));
+            Assert.Equal(sum, container.Total(DateTime.MaxValue));
         }
     }
 }
