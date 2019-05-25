@@ -138,7 +138,7 @@ namespace SummaryCreator.View
             {
                 // Restzeit anpassen
                 restTime = restTime.Subtract(interval);
-                txbRestTime.Text = string.Format("{0}", restTime.ToString(@"ss\:ff"));
+                lblRestTime.Text = string.Format("{0}", restTime.ToString(@"ss\:ff"));
             }
         }
 

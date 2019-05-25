@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.lblRestTimeText = new System.Windows.Forms.Label();
             this.lblRestTime = new System.Windows.Forms.Label();
-            this.txbRestTime = new System.Windows.Forms.TextBox();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.butTimeStatus = new System.Windows.Forms.Button();
             this.gbData = new System.Windows.Forms.GroupBox();
@@ -50,22 +50,24 @@
             this.gbData.SuspendLayout();
             this.SuspendLayout();
             // 
+            // lblRestTimeText
+            // 
+            this.lblRestTimeText.AutoSize = true;
+            this.lblRestTimeText.Location = new System.Drawing.Point(20, 294);
+            this.lblRestTimeText.Name = "lblRestTimeText";
+            this.lblRestTimeText.Size = new System.Drawing.Size(50, 20);
+            this.lblRestTimeText.TabIndex = 0;
+            this.lblRestTimeText.Text = "Restzeit:";
+            // 
             // lblRestTime
             // 
-            this.lblRestTime.AutoSize = true;
-            this.lblRestTime.Location = new System.Drawing.Point(20, 265);
+            this.lblRestTime.Location = new System.Drawing.Point(75, 291);
             this.lblRestTime.Name = "lblRestTime";
-            this.lblRestTime.Size = new System.Drawing.Size(48, 13);
-            this.lblRestTime.TabIndex = 0;
-            this.lblRestTime.Text = "Restzeit:";
-            // 
-            // txbRestTime
-            // 
-            this.txbRestTime.Location = new System.Drawing.Point(72, 262);
-            this.txbRestTime.Name = "txbRestTime";
-            this.txbRestTime.ReadOnly = true;
-            this.txbRestTime.Size = new System.Drawing.Size(50, 20);
-            this.txbRestTime.TabIndex = 1;
+            this.lblRestTime.Size = new System.Drawing.Size(70, 20);
+            this.lblRestTime.TabIndex = 1;
+            this.lblRestTime.BackColor = System.Drawing.Color.PaleVioletRed;
+            this.lblRestTime.Padding = new System.Windows.Forms.Padding(3);
+            this.lblRestTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // timer
             // 
@@ -73,41 +75,52 @@
             // 
             // butTimeStatus
             // 
-            this.butTimeStatus.Location = new System.Drawing.Point(278, 259);
+            this.butTimeStatus.Location = new System.Drawing.Point(495, 280);
             this.butTimeStatus.Name = "butTimeStatus";
-            this.butTimeStatus.Size = new System.Drawing.Size(75, 23);
+            this.butTimeStatus.Size = new System.Drawing.Size(100, 35);
             this.butTimeStatus.TabIndex = 2;
             this.butTimeStatus.Text = "Stop";
             this.butTimeStatus.UseVisualStyleBackColor = true;
             this.butTimeStatus.Click += new System.EventHandler(this.ButTimeStatus_Click);
             // 
+            // butSave
+            // 
+            this.butSave.Location = new System.Drawing.Point(500, 210);
+            this.butSave.Name = "butSave";
+            this.butSave.Size = new System.Drawing.Size(75, 25);
+            this.butSave.TabIndex = 4;
+            this.butSave.Text = "Speichern";
+            this.butSave.UseVisualStyleBackColor = true;
+            this.butSave.Click += new System.EventHandler(this.ButSave_Click);
+            // 
             // gbData
             // 
             this.gbData.Controls.Add(this.lblStatus);
-            this.gbData.Controls.Add(this.txbIdRow);
             this.gbData.Controls.Add(this.lblInfo);
             this.gbData.Controls.Add(this.lblIdRow);
-            this.gbData.Controls.Add(this.txbCounterDirectory);
-            this.gbData.Controls.Add(this.txbTableName);
-            this.gbData.Controls.Add(this.butSave);
             this.gbData.Controls.Add(this.lblTableName);
             this.gbData.Controls.Add(this.lblCounterDirectory);
-            this.gbData.Controls.Add(this.txbXMLPath);
             this.gbData.Controls.Add(this.lblXMLPath);
             this.gbData.Controls.Add(this.lblExcelPath);
+            this.gbData.Controls.Add(this.txbCounterDirectory);
+            this.gbData.Controls.Add(this.txbTableName);
+            this.gbData.Controls.Add(this.txbIdRow);
+            this.gbData.Controls.Add(this.txbXMLPath);
             this.gbData.Controls.Add(this.txbExcelPath);
+            this.gbData.Controls.Add(this.butSave);
             this.gbData.Location = new System.Drawing.Point(13, 13);
+            this.gbData.Margin = new System.Windows.Forms.Padding(5);
             this.gbData.Name = "gbData";
-            this.gbData.Size = new System.Drawing.Size(346, 240);
+            this.gbData.AutoSize = true;
             this.gbData.TabIndex = 3;
             this.gbData.TabStop = false;
             this.gbData.Text = "Daten";
             // 
             // txbIdRow
             // 
-            this.txbIdRow.Location = new System.Drawing.Point(98, 179);
+            this.txbIdRow.Location = new System.Drawing.Point(125, 179);
             this.txbIdRow.Name = "txbIdRow";
-            this.txbIdRow.Size = new System.Drawing.Size(242, 20);
+            this.txbIdRow.Size = new System.Drawing.Size(450, 20);
             this.txbIdRow.TabIndex = 9;
             this.txbIdRow.Click += new System.EventHandler(this.TxbField_Click);
             // 
@@ -131,29 +144,19 @@
             // 
             // txbCounterDirectory
             // 
-            this.txbCounterDirectory.Location = new System.Drawing.Point(98, 80);
+            this.txbCounterDirectory.Location = new System.Drawing.Point(125, 80);
             this.txbCounterDirectory.Name = "txbCounterDirectory";
-            this.txbCounterDirectory.Size = new System.Drawing.Size(242, 20);
+            this.txbCounterDirectory.Size = new System.Drawing.Size(450, 20);
             this.txbCounterDirectory.TabIndex = 11;
             this.txbCounterDirectory.Click += new System.EventHandler(this.TxbField_Click);
             // 
             // txbTableName
             // 
-            this.txbTableName.Location = new System.Drawing.Point(98, 153);
+            this.txbTableName.Location = new System.Drawing.Point(125, 153);
             this.txbTableName.Name = "txbTableName";
-            this.txbTableName.Size = new System.Drawing.Size(242, 20);
+            this.txbTableName.Size = new System.Drawing.Size(450, 20);
             this.txbTableName.TabIndex = 7;
             this.txbTableName.Click += new System.EventHandler(this.TxbField_Click);
-            // 
-            // butSave
-            // 
-            this.butSave.Location = new System.Drawing.Point(265, 205);
-            this.butSave.Name = "butSave";
-            this.butSave.Size = new System.Drawing.Size(75, 23);
-            this.butSave.TabIndex = 4;
-            this.butSave.Text = "Speichern";
-            this.butSave.UseVisualStyleBackColor = true;
-            this.butSave.Click += new System.EventHandler(this.ButSave_Click);
             // 
             // lblTableName
             // 
@@ -175,9 +178,9 @@
             // 
             // txbXMLPath
             // 
-            this.txbXMLPath.Location = new System.Drawing.Point(98, 54);
+            this.txbXMLPath.Location = new System.Drawing.Point(125, 54);
             this.txbXMLPath.Name = "txbXMLPath";
-            this.txbXMLPath.Size = new System.Drawing.Size(242, 20);
+            this.txbXMLPath.Size = new System.Drawing.Size(450, 20);
             this.txbXMLPath.TabIndex = 1;
             this.txbXMLPath.Click += new System.EventHandler(this.TxbField_Click);
             // 
@@ -188,7 +191,7 @@
             this.lblXMLPath.Name = "lblXMLPath";
             this.lblXMLPath.Size = new System.Drawing.Size(78, 13);
             this.lblXMLPath.TabIndex = 0;
-            this.lblXMLPath.Text = "Quelldatei (xml)";
+            this.lblXMLPath.Text = "Quelldatei (.xml)";
             // 
             // lblExcelPath
             // 
@@ -201,9 +204,9 @@
             // 
             // txbExcelPath
             // 
-            this.txbExcelPath.Location = new System.Drawing.Point(98, 125);
+            this.txbExcelPath.Location = new System.Drawing.Point(125, 125);
             this.txbExcelPath.Name = "txbExcelPath";
-            this.txbExcelPath.Size = new System.Drawing.Size(242, 20);
+            this.txbExcelPath.Size = new System.Drawing.Size(450, 20);
             this.txbExcelPath.TabIndex = 3;
             this.txbExcelPath.Click += new System.EventHandler(this.TxbExcelPath_Click);
             // 
@@ -211,23 +214,24 @@
             // 
             this.lblStatus.AutoSize = true;
             this.lblStatus.ForeColor = System.Drawing.Color.Maroon;
-            this.lblStatus.Location = new System.Drawing.Point(22, 210);
+            this.lblStatus.Location = new System.Drawing.Point(125, 214);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(0, 13);
+            this.lblStatus.Size = new System.Drawing.Size(50, 25);
             this.lblStatus.TabIndex = 12;
             // 
-            // ConfigTimer
+            // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(370, 292);
+            this.AutoSize = true;
+            this.Padding = new System.Windows.Forms.Padding(8);
             this.Controls.Add(this.gbData);
             this.Controls.Add(this.butTimeStatus);
-            this.Controls.Add(this.txbRestTime);
             this.Controls.Add(this.lblRestTime);
+            this.Controls.Add(this.lblRestTimeText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Name = "ConfigTimer";
-            this.Text = "Meteodaten abrufen";
+            this.Name = "ConfigForm";
+            this.Text = "Kontrolfenster";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Meteo_FormClosed);
             this.gbData.ResumeLayout(false);
             this.gbData.PerformLayout();
@@ -238,8 +242,8 @@
 
         #endregion
 
+        private System.Windows.Forms.Label lblRestTimeText;
         private System.Windows.Forms.Label lblRestTime;
-        private System.Windows.Forms.TextBox txbRestTime;
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Button butTimeStatus;
         private System.Windows.Forms.GroupBox gbData;
