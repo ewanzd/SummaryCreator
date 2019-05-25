@@ -119,7 +119,7 @@ namespace SummaryCreator
         /// </summary>
         public void SetDefault()
         {
-            XmlPath = @"http://www.metweb.ch/cgi-local/haus/forecast.pl?lat=47.377455&long=8.536715";
+            XmlPath = @"P:\200_Infrastruktur\07_Energie\2018.05.03.forecast.pl.xml";
             ExcelPath = @"P:\200_Infrastruktur\07_Energie\Heiz- und Stromzähler_Verbrauch 1.xlsx";
             SheetName = "Heizungsablesung täglich";
             SheetIdRow = 4;
