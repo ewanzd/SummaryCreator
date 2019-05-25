@@ -10,6 +10,10 @@ SummaryCreator collects time serie data from `.csv` and meteo data from `.xml` f
 
 ## Build and Publish
 
-- Run following line in Powershell in project root directory:
+There are two (or more) ways:
+
+- 1: Run following line in Powershell in project root directory:
 
 `.\publish.ps1 <publishing directory>`
+
+- 2: Right click on `publish.ps1` and click "Run with PowerShell" and confirm with `Y` if there appears a warning about "Execution Policy Change". A folder with the name "Publish" is created in project root directory.
