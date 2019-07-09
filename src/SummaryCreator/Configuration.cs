@@ -11,7 +11,7 @@ namespace SummaryCreator
     /// </summary>
     public class Configuration
     {
-        private FileInfo file; 
+        private FileInfo file;
 
         /// <summary>
         /// Das Objekt, welches den Zugriff auf die Ini-Datei verwaltet.
@@ -21,14 +21,11 @@ namespace SummaryCreator
         /// <summary>
         /// Liest oder schreibt den XML-Pfad aus/in die Ini-Datei.
         /// </summary>
-        public string XmlPath
-        {
-            get
-            {
+        public string XmlPath {
+            get {
                 return data["xml"]["path"];
             }
-            set
-            {
+            set {
                 data["xml"]["path"] = value;
             }
         }
@@ -36,14 +33,11 @@ namespace SummaryCreator
         /// <summary>
         /// Liest oder schreibt den Excel-Pfad aus/in die Ini-Datei.
         /// </summary>
-        public string ExcelPath
-        {
-            get
-            {
+        public string ExcelPath {
+            get {
                 return data["excel"]["path"];
             }
-            set
-            {
+            set {
                 data["excel"]["path"] = value;
             }
         }
@@ -51,14 +45,11 @@ namespace SummaryCreator
         /// <summary>
         /// Liest oder schreibt den Excel-Pfad aus/in die Ini-Datei.
         /// </summary>
-        public string SheetName
-        {
-            get
-            {
+        public string SheetName {
+            get {
                 return data["excel"]["sheetName"];
             }
-            set
-            {
+            set {
                 data["excel"]["sheetName"] = value;
             }
         }
@@ -66,29 +57,23 @@ namespace SummaryCreator
         /// <summary>
         /// Liest oder schreibt den Excel-Pfad aus/in die Ini-Datei.
         /// </summary>
-        public int SheetIdRow
-        {
-            get
-            {
+        public int SheetIdRow {
+            get {
                 int id = -1;
                 var idRow = data["excel"]["idRow"];
                 Int32.TryParse(idRow, out id);
                 return id;
             }
-            set
-            {
+            set {
                 data["excel"]["idRow"] = value.ToString();
             }
         }
 
-        public string ExcelSourceDirectory
-        {
-            get
-            {
+        public string ExcelSourceDirectory {
+            get {
                 return data["excelSource"]["directory"];
             }
-            set
-            {
+            set {
                 data["excelSource"]["directory"] = value;
             }
         }
@@ -103,12 +88,14 @@ namespace SummaryCreator
 
             if (File.Exists(path))
             {
-                using(var reader = file.OpenText())
+                using (var reader = file.OpenText())
                 {
                     var parser = new FileIniDataParser();
                     data = parser.ReadData(reader);
                 }
-            } else {
+            }
+            else
+            {
                 data = new IniData();
                 SetDefault();
             }
@@ -131,7 +118,7 @@ namespace SummaryCreator
         /// </summary>
         public void Save()
         {
-            using(var writer = file.CreateText())
+            using (var writer = file.CreateText())
             {
                 var parser = new FileIniDataParser();
                 parser.WriteData(writer, data);

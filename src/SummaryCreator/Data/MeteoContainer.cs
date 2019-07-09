@@ -41,7 +41,7 @@ namespace SummaryCreator.Data
                 return false;
             }
 
-            // if start date is after the last entry or the end date before first entry 
+            // if start date is after the last entry or the end date before first entry
             // then there is no entry in time range
             var keys = dataPoints.Keys;
             if (keys.First() > end || start > keys.Last())
@@ -82,9 +82,9 @@ namespace SummaryCreator.Data
         {
             var total = 0.0;
 
-            foreach(var dataPoint in dataPoints.Values)
+            foreach (var dataPoint in dataPoints.Values)
             {
-                if(dataPoint.CapturedAt >= pointInTime)
+                if (dataPoint.CapturedAt >= pointInTime)
                 {
                     break;
                 }

@@ -18,7 +18,7 @@ namespace SummaryCreator.Data
 
         public DataPoint FirstDataPoint {
             get {
-                if(containers.Count == 0)
+                if (containers.Count == 0)
                 {
                     return null;
                 }

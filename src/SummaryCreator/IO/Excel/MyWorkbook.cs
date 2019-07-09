@@ -39,10 +39,8 @@ namespace SummaryCreator.IO.Excel
         /// <summary>
         /// Anzahl der Tabellen.
         /// </summary>
-        public int Count
-        {
-            get
-            {
+        public int Count {
+            get {
                 return sheetCount;
             }
         }
@@ -50,10 +48,8 @@ namespace SummaryCreator.IO.Excel
         /// <summary>
         /// Gibt auskunft, ob die Excel-Datei bereits geschlossen wurde.
         /// </summary>
-        public bool IsClose
-        {
-            get
-            {
+        public bool IsClose {
+            get {
                 return close;
             }
         }
@@ -61,10 +57,8 @@ namespace SummaryCreator.IO.Excel
         /// <summary>
         /// Gibt auskunft, ob die Excel-Datei bereits freigegeben wurde.
         /// </summary>
-        public bool IsDispose
-        {
-            get
-            {
+        public bool IsDispose {
+            get {
                 return dispose;
             }
         }
@@ -115,11 +109,11 @@ namespace SummaryCreator.IO.Excel
         public void Open(string path)
         {
             // Prüft, ob die Datei existiert
-            if(!File.Exists(path))
+            if (!File.Exists(path))
                 throw new ArgumentException("Datei nicht vorhanden.");
 
             // Prüft, ob es sich um eine Excel-Datei handelt
-            if(!Path.GetExtension(path).Equals(".xlsx"))
+            if (!Path.GetExtension(path).Equals(".xlsx"))
                 throw new ArgumentException("Ungültiges Format.");
 
             // Öffnet das Arbeitsbuch
@@ -136,7 +130,7 @@ namespace SummaryCreator.IO.Excel
             sheetCount++;
 
             // Falls nicht genügend Tabellen vorhanden sind wird eine hinzugefügt
-            if(sheetCount > wkb.Worksheets.Count)
+            if (sheetCount > wkb.Worksheets.Count)
             {
                 wkb.Sheets.Add(After: wkb.Sheets[wkb.Sheets.Count]);
             }
@@ -152,12 +146,12 @@ namespace SummaryCreator.IO.Excel
         /// <returns>Gibt true zurück wenn vorhanden und false wenn nicht.</returns>
         public bool ContainsSheet(string name)
         {
-            if(name == null)
+            if (name == null)
             {
                 return false;
             }
 
-            foreach(Worksheet sheet in wkb.Worksheets)
+            foreach (Worksheet sheet in wkb.Worksheets)
             {
                 if (name.Equals(sheet.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -187,8 +181,8 @@ namespace SummaryCreator.IO.Excel
         /// <returns>Gibt das Arbeitsblatt mit dem angegebenen Type zurück.</returns>
         public MyWorksheet GetSheet(string name)
         {
-            foreach(Worksheet workSheet in wkb.Worksheets)
-                if(name.Equals(workSheet.Name, StringComparison.InvariantCultureIgnoreCase))
+            foreach (Worksheet workSheet in wkb.Worksheets)
+                if (name.Equals(workSheet.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var mySheet = new MyWorksheet();
                     mySheet.SetSheet(workSheet);
@@ -213,7 +207,7 @@ namespace SummaryCreator.IO.Excel
         /// </summary>
         public void Close()
         {
-            if(app == null)
+            if (app == null)
             {
                 return;
             }
@@ -230,7 +224,7 @@ namespace SummaryCreator.IO.Excel
         {
             try
             {
-                if(!IsClose)
+                if (!IsClose)
                     Close();
 
                 Marshal.ReleaseComObject(wkb.Worksheets);
@@ -239,7 +233,6 @@ namespace SummaryCreator.IO.Excel
             }
             catch
             {
-
             }
             finally
             {

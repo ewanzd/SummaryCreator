@@ -57,7 +57,7 @@ namespace SummaryCreator.View
                 // Konfigurationen wurden erfolgreich gespeichert
                 view.Status = "Gespeichert";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Fehler ausgeben
                 view.Status = $"Fehler: {ex.Message}";
@@ -85,7 +85,7 @@ namespace SummaryCreator.View
                 // Daten in Excel schreiben
                 dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Fehler ausgeben
                 view.Status = $"Fehler: {ex.Message}";

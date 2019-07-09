@@ -26,7 +26,8 @@ namespace SummaryCreator.UnitTests
         [Fact]
         public void SensorContainer_OneEntry()
         {
-            var dataPoint = new DataPoint() {
+            var dataPoint = new DataPoint()
+            {
                 CapturedAt = new DateTime(2019, 4, 29, 12, 0, 0),
                 Value = 1000
             };

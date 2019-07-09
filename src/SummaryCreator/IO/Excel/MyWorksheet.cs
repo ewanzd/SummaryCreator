@@ -15,20 +15,17 @@ namespace SummaryCreator.IO.Excel
         /// <param name="row">Die Zeile der Zelle.</param>
         /// <param name="col">Die Spalte der Zelle.</param>
         /// <returns>Der Inhalt der Zelle.</returns>
-        public string this[int row, int col]
-        {
-            get
-            {
+        public string this[int row, int col] {
+            get {
                 dynamic dyn = (sheet.Cells[row, col] as Range).Value;
-                if(dyn == null)
+                if (dyn == null)
                     return String.Empty;
-                else if(dyn is DateTime)
+                else if (dyn is DateTime)
                     return dyn.ToShortDateString();
                 else
                     return dyn.ToString();
             }
-            set
-            {
+            set {
                 sheet.Cells[row, col] = value;
             }
         }
@@ -36,10 +33,8 @@ namespace SummaryCreator.IO.Excel
         /// <summary>
         /// Vorhandene Anzahl der Zeilen.
         /// </summary>
-        public int CountRow
-        {
-            get
-            {
+        public int CountRow {
+            get {
                 return sheet.UsedRange.Rows.Count;
             }
         }
@@ -47,10 +42,8 @@ namespace SummaryCreator.IO.Excel
         /// <summary>
         /// Vorhandene Anzahl der Spalten.
         /// </summary>
-        public int CountCol
-        {
-            get
-            {
+        public int CountCol {
+            get {
                 return sheet.UsedRange.Columns.Count;
             }
         }
@@ -58,14 +51,11 @@ namespace SummaryCreator.IO.Excel
         /// <summary>
         /// Dem Arbeitsblatt einen Namen geben.
         /// </summary>
-        public string Name
-        {
-            get
-            {
+        public string Name {
+            get {
                 return sheet.Name;
             }
-            set
-            {
+            set {
                 sheet.Name = value;
             }
         }
@@ -80,7 +70,6 @@ namespace SummaryCreator.IO.Excel
         /// </summary>
         public MyWorksheet()
         {
-
         }
 
         /// <summary>

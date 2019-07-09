@@ -122,8 +122,8 @@ namespace SummaryCreator.IO.Excel
                     var startDateTime = DateTime.Parse(targetRowValue);
                     var endDateTime = startDateTime + TimeSpan.FromDays(1);
 
-                    var dataPoint = container.FirstOrDefault(x => 
-                        x.CapturedAt >= startDateTime && 
+                    var dataPoint = container.FirstOrDefault(x =>
+                        x.CapturedAt >= startDateTime &&
                         x.CapturedAt < endDateTime &&
                         x.CapturedAt.ToUniversalTime().Hour == 12);
 
@@ -187,7 +187,7 @@ namespace SummaryCreator.IO.Excel
                 }
 
                 // Gibt die Summe im spezifizierten Zeitbereich zurück
-                if(group.AnyBetween(startDateTime, endDateTime))
+                if (group.AnyBetween(startDateTime, endDateTime))
                 {
                     return group.Sum(startDateTime, endDateTime);
                 }

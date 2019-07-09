@@ -26,14 +26,14 @@ namespace SummaryCreator.IO.Csv
         {
             List<IDataContainer> containers = new List<IDataContainer>();
 
-            foreach(var file in sourceDirectory.EnumerateFiles())
+            foreach (var file in sourceDirectory.EnumerateFiles())
             {
-                if(!file.Extension.Equals(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                if (!file.Extension.Equals(fileExtension, StringComparison.InvariantCultureIgnoreCase))
                 {
                     continue;
                 }
 
-                if(IsNewSensor(file))
+                if (IsNewSensor(file))
                 {
                     var reader = new NewSensorCsvReader(file);
                     containers.AddRange(reader.Read());

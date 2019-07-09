@@ -36,15 +36,15 @@ namespace SummaryCreator.Data
         {
             Debug.Assert(start <= end, "Start date is before end date");
 
-            if(dataPoints.Count == 0)
+            if (dataPoints.Count == 0)
             {
                 return false;
             }
 
-            // if start date is after the last entry or the end date before first entry 
+            // if start date is after the last entry or the end date before first entry
             // then there is no entry in time range
             var keys = dataPoints.Keys;
-            if(keys.First() > end || start > keys.Last())
+            if (keys.First() > end || start > keys.Last())
             {
                 return false;
             }
@@ -83,11 +83,11 @@ namespace SummaryCreator.Data
             DataPoint first = FindClosestPreviousDataPoint(start);
             DataPoint last = FindClosestPreviousDataPoint(end);
 
-            if(first == null && last == null)
+            if (first == null && last == null)
             {
                 return 0.0;
             }
-            else if(first == null && last != null)
+            else if (first == null && last != null)
             {
                 return last.Value;
             }

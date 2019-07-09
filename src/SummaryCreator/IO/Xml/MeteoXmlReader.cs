@@ -47,7 +47,7 @@ namespace SummaryCreator.IO.Xml
             {
                 // Datum abrufen und speichern
                 var dateStr = (string)values.Element("valid").Element("date");
-                if(dateStr == null)
+                if (dateStr == null)
                 {
                     dateStr = (string)values.Element("valid").Element("end");
                 }

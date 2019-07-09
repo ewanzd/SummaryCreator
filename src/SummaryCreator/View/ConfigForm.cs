@@ -33,12 +33,10 @@ namespace SummaryCreator.View
         /// Den Intervall abrufen oder anpassen.
         /// </summary>
         public int TimerInterval {
-            get
-            {
+            get {
                 return Convert.ToInt32(interval.TotalMilliseconds);
             }
-            protected set
-            {
+            protected set {
                 interval = new TimeSpan(0, 0, 0, 0, value);
             }
         }
@@ -73,7 +71,7 @@ namespace SummaryCreator.View
             string counter = txbCounterDirectory.Text;
 
             // Prüfen, ob Daten eingegeben wurde
-            if(string.IsNullOrWhiteSpace(excel) || string.IsNullOrWhiteSpace(xml))
+            if (string.IsNullOrWhiteSpace(excel) || string.IsNullOrWhiteSpace(xml))
             {
                 txbExcelPath.BackColor = Color.RosyBrown;
                 return;
@@ -84,7 +82,7 @@ namespace SummaryCreator.View
             }
 
             // Prüfen, ob die Excel-Datei die richtige Endung besitzt
-            if(Path.GetExtension(excel) != ".xlsx")
+            if (Path.GetExtension(excel) != ".xlsx")
             {
                 txbExcelPath.BackColor = Color.RosyBrown;
                 return;
@@ -95,7 +93,7 @@ namespace SummaryCreator.View
             }
 
             int idInt;
-            if(!int.TryParse(id, out idInt))
+            if (!int.TryParse(id, out idInt))
             {
                 txbIdRow.BackColor = Color.RosyBrown;
                 return;
@@ -113,7 +111,7 @@ namespace SummaryCreator.View
         /// </summary>
         private void ButTimeStatus_Click(object sender, EventArgs e)
         {
-            if(timer.Enabled)
+            if (timer.Enabled)
             {
                 Presenter.OnStop();
             }
@@ -129,7 +127,7 @@ namespace SummaryCreator.View
         /// </summary>
         private void RestTime_Tick(object sender, EventArgs e)
         {
-            if(restTime.TotalMilliseconds <= 0)
+            if (restTime.TotalMilliseconds <= 0)
             {
                 // Vorgang starten
                 Presenter.OnRun();
@@ -161,7 +159,7 @@ namespace SummaryCreator.View
             ofd.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
             ofd.Filter = "Excel-Dateien (*.xlsx)|*.xlsx";
             ofd.FilterIndex = 1;
-            if(ofd.ShowDialog() == DialogResult.OK)
+            if (ofd.ShowDialog() == DialogResult.OK)
             {
                 txbExcelPath.Text = ofd.FileName;
             }

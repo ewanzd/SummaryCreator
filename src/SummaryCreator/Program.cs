@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace SummaryCreator
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// Der Pfad zu der Ini-Datei, wo alle weitere Konfigurationen gespeichert werden.
@@ -18,11 +18,11 @@ namespace SummaryCreator
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // Prüfen, ob ein neuer Ini-Pfad mitgegeben wurde
             string path = args.Where(x => x.Split(':')[0] == "IniPath").FirstOrDefault();
-            if(!string.IsNullOrWhiteSpace(path))
+            if (!string.IsNullOrWhiteSpace(path))
             {
                 IniPath = path;
             }
