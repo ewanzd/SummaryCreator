@@ -1,4 +1,4 @@
-ï»¿using SummaryCreator.Services;
+using SummaryCreator.Services;
 using SummaryCreator.View;
 using System;
 using System.IO;
@@ -15,18 +15,19 @@ namespace SummaryCreator
         private static string IniPath = Path.Combine(Application.StartupPath, "SummaryCreator.ini");
 
         /// <summary>
-        /// Der Haupteinstiegspunkt fÃ¼r die Anwendung.
+        /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
         private static void Main(string[] args)
         {
-            // PrÃ¼fen, ob ein neuer Ini-Pfad mitgegeben wurde
+            // Prüfen, ob ein neuer Ini-Pfad mitgegeben wurde
             string path = args.Where(x => x.Split(':')[0] == "IniPath").FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(path))
             {
                 IniPath = path;
             }
 
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -36,7 +37,7 @@ namespace SummaryCreator
             var configuration = new Configuration(IniPath);
             var configPresenter = new ConfigPresenter(configView, dataService, configuration);
 
-            // Fenster Ã¶ffnen
+            // Fenster öffnen
             configView.Show();
 
             // Applikation laufen lassen bis Exit aufgerufen wird

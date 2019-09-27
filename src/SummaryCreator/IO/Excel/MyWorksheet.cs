@@ -17,7 +17,7 @@ namespace SummaryCreator.IO.Excel
         /// <returns>Der Inhalt der Zelle.</returns>
         public string this[int row, int col] {
             get {
-                dynamic dyn = (sheet.Cells[row, col] as Range).Value;
+                dynamic dyn = (sheet.Cells[row, col] as Microsoft.Office.Interop.Excel.Range).Value;
                 if (dyn == null)
                     return String.Empty;
                 else if (dyn is DateTime)
