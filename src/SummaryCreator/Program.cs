@@ -16,8 +16,33 @@ namespace SummaryCreator
         /// </summary>
         private static string IniPath = Path.Combine(Application.StartupPath, "SummaryCreator.ini");
 
+        /// <summary>
+        /// For logging.
+        /// </summary>
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         [STAThread]
         private static void Main()
+        {
+            Logger.Info("{0} started.", Application.ProductName);
+            Logger.Info("Path to configuration file: {0}", IniPath);
+
+            try
+            {
+                Startup();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                throw;
+            }
+            finally
+            {
+                Logger.Info("{0} exited.", Application.ProductName);
+            }
+        }
+
+        private static void Startup()
         {
             // configure application for windows forms
             Application.SetHighDpiMode(HighDpiMode.SystemAware);

@@ -15,6 +15,11 @@ namespace SummaryCreator
         private IniData data;
 
         /// <summary>
+        /// For logging.
+        /// </summary>
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+        /// <summary>
         /// Path to file with meteo data.
         /// </summary>
         public string MeteoFilePath {
@@ -96,6 +101,8 @@ namespace SummaryCreator
             ResultExcelFilePath = @"P:\200_Infrastruktur\07_Energie\Heiz- und Stromzähler_Verbrauch 1.xlsx";
             ResultExcelSheetName = "Heizungsablesung täglich";
             ResultExcelSheetRowIndex = 4;
+
+            Logger.Info("Configuration set to default.");
         }
 
         /// <summary>
@@ -108,6 +115,8 @@ namespace SummaryCreator
                 var parser = new FileIniDataParser();
                 parser.WriteData(writer, data);
             }
+
+            Logger.Info("Configuration saved.");
         }
 
         /// <summary>
@@ -128,6 +137,8 @@ namespace SummaryCreator
                 data = new IniData();
                 SetDefault();
             }
+
+            Logger.Info("Configuration reloaded.");
         }
     }
 }
