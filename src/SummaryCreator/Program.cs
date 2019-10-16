@@ -14,7 +14,10 @@ namespace SummaryCreator
         /// <summary>
         /// Path to configuration file.
         /// </summary>
-        private static string IniPath = Path.Combine(Application.StartupPath, "SummaryCreator.ini");
+        private static string IniPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "SummaryCreator",
+            "SummaryCreator.ini");
 
         /// <summary>
         /// For logging.

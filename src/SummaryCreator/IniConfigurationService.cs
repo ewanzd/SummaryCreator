@@ -110,6 +110,7 @@ namespace SummaryCreator
         /// </summary>
         public void Save()
         {
+            Directory.CreateDirectory(file.DirectoryName);
             using (var writer = file.CreateText())
             {
                 var parser = new FileIniDataParser();
