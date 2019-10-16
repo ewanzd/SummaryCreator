@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Forms;
 
 namespace SummaryCreator.View
 {
@@ -12,6 +13,11 @@ namespace SummaryCreator.View
         private readonly IConfigView view;
         private readonly IDataService dataService;
         private readonly IConfigurationService config;
+
+        /// <summary>
+        /// For logging.
+        /// </summary>
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public ConfigPresenter(IConfigView view, IDataService dataService, IConfigurationService config)
         {
@@ -25,47 +31,48 @@ namespace SummaryCreator.View
 
             view.Presenter = this;
 
-            // Bestehende Konfigurationen einfügen
+            // load configurations into UI
             view.ExcelPath = config.ResultExcelFilePath;
             view.MeteoPath = config.MeteoFilePath;
             view.TableName = config.ResultExcelSheetName;
             view.IdRow = config.ResultExcelSheetRowIndex;
             view.SensorDirectoryPath = config.SensorDirectoryPath;
 
-            // Timer Optionen
+            // timer settings
             view.RemainingTime = 10.0;
             view.TimerIsEnabled = true;
         }
 
         public void OnSave()
         {
-            // Timer stoppen
             OnStop();
 
             try
             {
-                // Daten übernehmen
+                // set changed configurations
                 config.ResultExcelFilePath = view.ExcelPath;
                 config.MeteoFilePath = view.MeteoPath;
                 config.ResultExcelSheetName = view.TableName;
                 config.ResultExcelSheetRowIndex = view.IdRow;
                 config.SensorDirectoryPath = view.SensorDirectoryPath;
 
-                // Daten abspeichern
+                // save configurations
                 config.Save();
 
-                // Konfigurationen wurden erfolgreich gespeichert
                 view.Status = "Gespeichert";
             }
             catch (Exception ex)
             {
-                // Fehler ausgeben
+                Logger.Error(ex);
+
                 view.Status = $"Fehler: {ex.Message}";
             }
         }
 
         public void OnRun()
         {
+            Logger.Info("Creation of summary started.");
+
             OnStop();
 
             view.Status = "Wird ausgewertet....";
@@ -77,17 +84,26 @@ namespace SummaryCreator.View
                 var meteoSourceFile = new FileInfo(view.MeteoPath);
                 var destinationExcel = new FileInfo(view.ExcelPath);
 
-                // Daten sammeln
+                // load data
                 var containers = new List<IDataContainer>();
-                containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
-                containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
 
-                // Daten in Excel schreiben
+                Logger.Info("Load sensor data.");
+                containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
+
+                if (meteoSourceFile.Exists)
+                {
+                    Logger.Info("Load meteo data.");
+                    containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
+                }
+
+                // write to excel
+                Logger.Info("Write results to excel.");
                 dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
             }
             catch (Exception ex)
             {
-                // Fehler ausgeben
+                Logger.Error(ex);
+
                 view.Status = $"Fehler: {ex.Message}";
             }
             finally
@@ -95,6 +111,8 @@ namespace SummaryCreator.View
                 view.ActionButtonText = "Ausführen";
                 view.ActionButtonEnabled = true;
             }
+
+            Logger.Info("Creation of summary finished.");
         }
 
         public void OnStop()
@@ -105,8 +123,7 @@ namespace SummaryCreator.View
 
         public void OnExit()
         {
-            // Beendet die Applikation
-            Environment.Exit(0);
+            Application.Exit();
         }
     }
 }
