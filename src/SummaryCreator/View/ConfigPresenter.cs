@@ -10,27 +10,27 @@ namespace SummaryCreator.View
     public class ConfigPresenter
     {
         private readonly IConfigView view;
-        private readonly DataService dataService;
-        private readonly IniConfigurationService configuration;
+        private readonly IDataService dataService;
+        private readonly IConfigurationService config;
 
-        public ConfigPresenter(IConfigView view, DataService dataService, IniConfigurationService configuration)
+        public ConfigPresenter(IConfigView view, IDataService dataService, IConfigurationService config)
         {
             Debug.Assert(view != null, $"{nameof(view)} must not be null");
             Debug.Assert(dataService != null, $"{nameof(dataService)} must not be null");
-            Debug.Assert(configuration != null, $"{nameof(configuration)} must not be null");
+            Debug.Assert(config != null, $"{nameof(config)} must not be null");
 
             this.view = view;
             this.dataService = dataService;
-            this.configuration = configuration;
+            this.config = config;
 
             view.Presenter = this;
 
             // Bestehende Konfigurationen einfügen
-            view.ExcelPath = configuration.ResultExcelFilePath;
-            view.MeteoPath = configuration.MeteoFilePath;
-            view.TableName = configuration.ResultExcelSheetName;
-            view.IdRow = configuration.ResultExcelSheetRowIndex;
-            view.SensorDirectoryPath = configuration.SensorDirectoryPath;
+            view.ExcelPath = config.ResultExcelFilePath;
+            view.MeteoPath = config.MeteoFilePath;
+            view.TableName = config.ResultExcelSheetName;
+            view.IdRow = config.ResultExcelSheetRowIndex;
+            view.SensorDirectoryPath = config.SensorDirectoryPath;
 
             // Timer Optionen
             view.RemainingTime = 10.0;
@@ -45,14 +45,14 @@ namespace SummaryCreator.View
             try
             {
                 // Daten übernehmen
-                configuration.ResultExcelFilePath = view.ExcelPath;
-                configuration.MeteoFilePath = view.MeteoPath;
-                configuration.ResultExcelSheetName = view.TableName;
-                configuration.ResultExcelSheetRowIndex = view.IdRow;
-                configuration.SensorDirectoryPath = view.SensorDirectoryPath;
+                config.ResultExcelFilePath = view.ExcelPath;
+                config.MeteoFilePath = view.MeteoPath;
+                config.ResultExcelSheetName = view.TableName;
+                config.ResultExcelSheetRowIndex = view.IdRow;
+                config.SensorDirectoryPath = view.SensorDirectoryPath;
 
                 // Daten abspeichern
-                configuration.Save();
+                config.Save();
 
                 // Konfigurationen wurden erfolgreich gespeichert
                 view.Status = "Gespeichert";

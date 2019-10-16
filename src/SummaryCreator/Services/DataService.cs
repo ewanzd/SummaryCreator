@@ -7,7 +7,7 @@ using System.IO;
 
 namespace SummaryCreator.Services
 {
-    public class DataService
+    public class DataService : IDataService
     {
         public IEnumerable<IDataContainer> ReadSensorData(DirectoryInfo sourceDirectory)
         {
