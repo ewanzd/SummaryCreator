@@ -10,6 +10,12 @@ namespace SummaryCreator.Data
     {
         private readonly List<IDataContainer> containers = new List<IDataContainer>();
 
+        public IDataContainer this[string id] {
+            get {
+                return containers.FirstOrDefault(c => c.Id.Equals(id));
+            }
+        }
+
         public int Count {
             get {
                 return containers.Count;

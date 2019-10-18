@@ -11,15 +11,15 @@ namespace SummaryCreator.View
     public class ConfigPresenter
     {
         private readonly IConfigView view;
-        private readonly IDataService dataService;
-        private readonly IConfigurationService config;
+        private readonly DataService dataService;
+        private readonly IniConfigurationService config;
 
         /// <summary>
         /// For logging.
         /// </summary>
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public ConfigPresenter(IConfigView view, IDataService dataService, IConfigurationService config)
+        public ConfigPresenter(IConfigView view, DataService dataService, IniConfigurationService config)
         {
             Debug.Assert(view != null, $"{nameof(view)} must not be null");
             Debug.Assert(dataService != null, $"{nameof(dataService)} must not be null");
@@ -99,6 +99,9 @@ namespace SummaryCreator.View
                 // write to excel
                 Logger.Info("Write results to excel.");
                 dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
+
+                Logger.Info("Creation of summary finished.");
+                view.Status = "Auswertung abgeschlossen.";
             }
             catch (Exception ex)
             {
@@ -111,8 +114,6 @@ namespace SummaryCreator.View
                 view.ActionButtonText = "Ausführen";
                 view.ActionButtonEnabled = true;
             }
-
-            Logger.Info("Creation of summary finished.");
         }
 
         public void OnStop()

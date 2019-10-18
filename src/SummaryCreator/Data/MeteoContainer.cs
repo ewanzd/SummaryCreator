@@ -103,5 +103,10 @@ namespace SummaryCreator.Data
         {
             return GetEnumerator();
         }
+
+        public override string ToString()
+        {
+            return Id;
+        }
     }
 }

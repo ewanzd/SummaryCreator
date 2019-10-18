@@ -7,8 +7,16 @@ using System.IO;
 
 namespace SummaryCreator.Services
 {
-    public class DataService : IDataService
+    /// <summary>
+    /// Load and write data.
+    /// </summary>
+    public class DataService
     {
+        /// <summary>
+        /// Load sensor data from all files in directory.
+        /// </summary>
+        /// <param name="sourceDirectory">Path to directory with sensor data.</param>
+        /// <returns></returns>
         public IEnumerable<IDataContainer> ReadSensorData(DirectoryInfo sourceDirectory)
         {
             var reader = new DirectoryCsvReader(sourceDirectory);
@@ -16,6 +24,11 @@ namespace SummaryCreator.Services
             return reader.Read();
         }
 
+        /// <summary>
+        /// Read meteo data from file.
+        /// </summary>
+        /// <param name="sourceFile"></param>
+        /// <returns></returns>
         public IEnumerable<IDataContainer> ReadMeteoData(FileInfo sourceFile)
         {
             var reader = new MeteoXmlReader(sourceFile);
@@ -23,20 +36,18 @@ namespace SummaryCreator.Services
             return reader.Read();
         }
 
+        /// <summary>
+        /// Write all data to file.
+        /// </summary>
+        /// <param name="containers"></param>
+        /// <param name="destinationExcel"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="idRow"></param>
         public void WriteToExcel(IEnumerable<IDataContainer> containers, FileInfo destinationExcel, string sheetName, int idRow)
         {
-            var writer = new ExcelWriter();
-            try
-            {
-                writer.InitWorksheet(destinationExcel, sheetName, idRow);
-                writer.Write(containers);
-                writer.SaveAndClose();
-            }
-            catch
-            {
-                writer.Close();
-                throw;
-            }
+            var writer = new EppExcelWriter(destinationExcel, sheetName, idRow);
+
+            writer.Write(containers);
         }
     }
 }
