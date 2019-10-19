@@ -1,8 +1,10 @@
 ﻿using SummaryCreator.Data;
+using SummaryCreator.Resources;
 using SummaryCreator.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -59,23 +61,23 @@ namespace SummaryCreator.View
                 // save configurations
                 config.Save();
 
-                view.Status = "Gespeichert";
+                view.Status = Strings.ConfigPresenter_StatusSaved;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
 
-                view.Status = $"Fehler: {ex.Message}";
+                view.Status = string.Format(CultureInfo.CurrentCulture, Strings.ConfigPresenter_Error, ex.Message);
             }
         }
 
         public void OnRun()
         {
-            Logger.Info("Creation of summary started.");
+            Logger.Info(CultureInfo.InvariantCulture, "Creation of summary started.");
 
             OnStop();
 
-            view.Status = "Wird ausgewertet....";
+            view.Status = Strings.ConfigPresenter_StatusRunning;
             view.ActionButtonEnabled = false;
 
             try
@@ -85,40 +87,40 @@ namespace SummaryCreator.View
                 var destinationExcel = new FileInfo(view.ExcelPath);
 
                 // load data
-                var containers = new List<IDataContainer>();
+                var containers = new List<IContainer>();
 
-                Logger.Info("Load sensor data.");
+                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
                 containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
 
                 if (meteoSourceFile.Exists)
                 {
-                    Logger.Info("Load meteo data.");
+                    Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
                     containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
                 }
 
                 // write to excel
-                Logger.Info("Write results to excel.");
+                Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
                 dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
 
-                Logger.Info("Creation of summary finished.");
-                view.Status = "Auswertung abgeschlossen.";
+                Logger.Info(CultureInfo.InvariantCulture, "Creation of summary finished.");
+                view.Status = Strings.ConfigPresenter_StatusFinished;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
 
-                view.Status = $"Fehler: {ex.Message}";
+                view.Status = string.Format(CultureInfo.CurrentCulture, Strings.ConfigPresenter_Error, ex.Message);
             }
             finally
             {
-                view.ActionButtonText = "Ausführen";
+                view.ActionButtonText = Strings.ConfigPresenter_Run;
                 view.ActionButtonEnabled = true;
             }
         }
 
         public void OnStop()
         {
-            view.ActionButtonText = "Ausführen";
+            view.ActionButtonText = Strings.ConfigPresenter_Run;
             view.TimerIsEnabled = false;
         }
 

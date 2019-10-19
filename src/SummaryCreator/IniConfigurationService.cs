@@ -1,6 +1,6 @@
 ﻿using IniParser;
 using IniParser.Model;
-using System;
+using System.Globalization;
 using System.IO;
 
 namespace SummaryCreator
@@ -72,13 +72,15 @@ namespace SummaryCreator
         /// </summary>
         public int ResultExcelSheetRowIndex {
             get {
-                int id = -1;
                 var idRow = data["result"]["excelRowIndex"];
-                Int32.TryParse(idRow, out id);
-                return id;
+                if (int.TryParse(idRow, out int id))
+                {
+                    return id;
+                }
+                return -1;
             }
             set {
-                data["result"]["excelRowIndex"] = value.ToString();
+                data["result"]["excelRowIndex"] = value.ToString(CultureInfo.InvariantCulture);
             }
         }
 

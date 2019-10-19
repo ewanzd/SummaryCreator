@@ -21,7 +21,7 @@ namespace SummaryCreator.IO.Csv
             this.sourceFile = sourceFile;
         }
 
-        public IEnumerable<IDataContainer> Read()
+        public IEnumerable<IContainer> Read()
         {
             var id = ExtractId(sourceFile);
             var dataContainer = new SensorContainer(id);
@@ -40,7 +40,7 @@ namespace SummaryCreator.IO.Csv
                 dataContainer.Add(dataPoint);
             }
 
-            return new List<IDataContainer>() { dataContainer };
+            return new List<IContainer>() { dataContainer };
         }
 
         /// <summary>

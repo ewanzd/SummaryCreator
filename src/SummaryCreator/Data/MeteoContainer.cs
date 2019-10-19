@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SummaryCreator.Data
 {
-    public class MeteoContainer : IDataContainer
+    public class MeteoContainer : IContainer
     {
         private readonly SortedList<DateTime, DataPoint> dataPoints = new SortedList<DateTime, DataPoint>();
 

@@ -1,6 +1,7 @@
 using SummaryCreator.Services;
 using SummaryCreator.View;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -14,7 +15,7 @@ namespace SummaryCreator
         /// <summary>
         /// Path to configuration file.
         /// </summary>
-        private static string IniPath = Path.Combine(
+        private static readonly string IniPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "SummaryCreator",
             "SummaryCreator.ini");
@@ -27,8 +28,8 @@ namespace SummaryCreator
         [STAThread]
         private static void Main()
         {
-            Logger.Info("{0} started.", Application.ProductName);
-            Logger.Info("Path to configuration file: {0}", IniPath);
+            Logger.Info(CultureInfo.InvariantCulture, "{0} started.", Application.ProductName);
+            Logger.Info(CultureInfo.InvariantCulture, "Path to configuration file: {0}", IniPath);
 
             try
             {
@@ -41,7 +42,7 @@ namespace SummaryCreator
             }
             finally
             {
-                Logger.Info("{0} exited.", Application.ProductName);
+                Logger.Info(CultureInfo.InvariantCulture, "{0} exited.", Application.ProductName);
             }
         }
 
@@ -59,13 +60,15 @@ namespace SummaryCreator
             // dependency injection
             var dataService = new DataService();
             var configView = new ConfigForm();
-            var configPresenter = new ConfigPresenter(configView, dataService, configuration);
+            _ = new ConfigPresenter(configView, dataService, configuration);
 
             // show windows
             configView.Show();
 
             // run application until exit
             Application.Run();
+
+            configView.Dispose();
         }
     }
 }

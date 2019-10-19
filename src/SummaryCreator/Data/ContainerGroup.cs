@@ -6,13 +6,15 @@ using System.Linq;
 
 namespace SummaryCreator.Data
 {
-    public sealed class DataGroup : IEnumerable<IDataContainer>
+    public sealed class ContainerGroup : IEnumerable<IContainer>
     {
-        private readonly List<IDataContainer> containers = new List<IDataContainer>();
+        private readonly List<IContainer> containers = new List<IContainer>();
 
-        public IDataContainer this[string id] {
+        public IContainer this[string id] {
             get {
-                return containers.FirstOrDefault(c => c.Id.Equals(id));
+                Debug.Assert(id != null, $"{nameof(id)} must not be null.");
+
+                return containers.FirstOrDefault(c => c.Id.Equals(id, StringComparison.InvariantCulture));
             }
         }
 
@@ -46,14 +48,14 @@ namespace SummaryCreator.Data
             }
         }
 
-        public void Add(IDataContainer dataContainer)
+        public void Add(IContainer dataContainer)
         {
             Debug.Assert(dataContainer != null, $"{nameof(dataContainer)} must not be null");
 
             containers.Add(dataContainer);
         }
 
-        public void AddRange(IEnumerable<IDataContainer> dataContainers)
+        public void AddRange(IEnumerable<IContainer> dataContainers)
         {
             Debug.Assert(dataContainers != null && dataContainers.Any(), $"{nameof(dataContainers)} must not be null");
 
@@ -81,7 +83,7 @@ namespace SummaryCreator.Data
             return containers.Sum(x => x.Total(pointInTime));
         }
 
-        public IEnumerator<IDataContainer> GetEnumerator()
+        public IEnumerator<IContainer> GetEnumerator()
         {
             return containers.GetEnumerator();
         }

@@ -14,9 +14,10 @@ namespace SummaryCreator.IO.Excel
         private const int DATETIME_COLUMN = 1;
         private const char COL_SEPERATOR = ';';
 
-        private FileInfo excelFile;
-        private string excelSheetName;
-        private int excelIdRowIndex;
+        private readonly FileInfo excelFile;
+        private readonly string excelSheetName;
+        private readonly int excelIdRowIndex;
+
         private int lastRow = 1;
 
         public EppExcelWriter(FileInfo targetFile, string sheetName, int idRow)
@@ -30,32 +31,29 @@ namespace SummaryCreator.IO.Excel
             excelIdRowIndex = idRow;
         }
 
-        public void Write(IEnumerable<IDataContainer> containers)
+        public void Write(IEnumerable<IContainer> containers)
         {
-            DataGroup containerGroup = containers as DataGroup;
-            if (containerGroup == null)
+            if (!(containers is ContainerGroup containerGroup))
             {
-                containerGroup = new DataGroup();
+                containerGroup = new ContainerGroup();
                 containerGroup.AddRange(containers);
             }
 
-            using (var excelPack = new ExcelPackage(excelFile))
+            using var excelPack = new ExcelPackage(excelFile);
+
+            var worksheet = excelPack.Workbook.Worksheets[excelSheetName];
+            if (worksheet == null)
             {
-                var worksheet = excelPack.Workbook.Worksheets[excelSheetName];
-
-                if (worksheet == null)
-                {
-                    throw new InvalidDataException($"Table '{excelSheetName}' not found.");
-                }
-
-                var edrWorksheet = new EppWorksheet(worksheet);
-                FillDataIntoTable(edrWorksheet, containerGroup);
-
-                excelPack.Save();
+                throw new InvalidDataException($"Table '{excelSheetName}' not found.");
             }
+
+            var edrWorksheet = new EppWorksheet(worksheet);
+            FillDataIntoTable(edrWorksheet, containerGroup);
+
+            excelPack.Save();
         }
 
-        private void FillDataIntoTable(IWorksheet worksheet, DataGroup data)
+        private void FillDataIntoTable(IWorksheet worksheet, ContainerGroup data)
         {
             DateTime start = data.FirstDataPoint.CapturedAt.Date;
             DateTime current = start;
@@ -70,23 +68,23 @@ namespace SummaryCreator.IO.Excel
             }
         }
 
-        private string[] GetIds(string value)
+        private static string[] GetIds(string value, char seperator)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
 
-            return value.Split(COL_SEPERATOR).Select(x => x.Trim()).ToArray();
+            return value.Split(seperator).Select(x => x.Trim()).ToArray();
         }
 
-        private void InsertData(IWorksheet worksheet, DataGroup data, int rowIndex, DateTime startDateTime)
+        private void InsertData(IWorksheet worksheet, ContainerGroup data, int rowIndex, DateTime startDateTime)
         {
             var colsCount = worksheet.Cols;
             for (int col = 1; col <= colsCount; col++)
             {
                 var idStr = worksheet[excelIdRowIndex, col]?.ToString();
-                var ids = GetIds(idStr);
+                var ids = GetIds(idStr, COL_SEPERATOR);
 
                 if (ids.Length == 0)
                 {
@@ -155,7 +153,7 @@ namespace SummaryCreator.IO.Excel
             return rowIndex;
         }
 
-        private int FindRowIndexByDateTime(IWorksheet worksheet, DateTime targetDateTime, int startRow, int endRow, int col)
+        private static int FindRowIndexByDateTime(IWorksheet worksheet, DateTime targetDateTime, int startRow, int endRow, int col)
         {
             Debug.Assert(startRow >= 0, $"{nameof(startRow)} must be greater than or equal 0");
             Debug.Assert(worksheet.Rows >= endRow, $"Number of rows must be greater or equal {nameof(endRow)}");
@@ -166,17 +164,16 @@ namespace SummaryCreator.IO.Excel
             {
                 var row = worksheet[i, col];
 
-                if (row is DateTime)
+                if (row is DateTime dt)
                 {
-                    var dt = (DateTime)row;
                     if (targetDateTime.CompareTo(dt) == 0)
                     {
                         return i;
                     }
                 }
-                else if (row is string && DateTime.TryParse(row as string, out DateTime dt))
+                else if (row is string && DateTime.TryParse(row as string, out DateTime dtFromStr))
                 {
-                    if (targetDateTime.CompareTo(dt) == 0)
+                    if (targetDateTime.CompareTo(dtFromStr) == 0)
                     {
                         return i;
                     }
@@ -186,7 +183,7 @@ namespace SummaryCreator.IO.Excel
             return -1;
         }
 
-        private DateTime NextDay(DataGroup dataPoints, DateTime currentDateTime)
+        private static DateTime NextDay(ContainerGroup dataPoints, DateTime currentDateTime)
         {
             var tomorrow = currentDateTime + TimeSpan.FromDays(1);
 
@@ -196,14 +193,14 @@ namespace SummaryCreator.IO.Excel
             }
 
             var leftContainers = dataPoints.OrderBy(x => x.Last.CapturedAt).SkipWhile(x => tomorrow > x.Last.CapturedAt);
-            return leftContainers.Count() == 0 ?
+            return !leftContainers.Any() ?
                 tomorrow :
                 leftContainers
                     .Aggregate((minItem, nextItem) => minItem.First.CapturedAt < nextItem.First.CapturedAt ? minItem : nextItem)
                     .First.CapturedAt.Date;
         }
 
-        private double GetSumByIdAndDay(DataGroup data, string[] ids, DateTime startDateTime)
+        private static double GetSumByIdAndDay(ContainerGroup data, string[] ids, DateTime startDateTime)
         {
             var endDateTime = startDateTime + TimeSpan.FromDays(1);
 
@@ -219,7 +216,7 @@ namespace SummaryCreator.IO.Excel
             else if (ids.Length > 1)
             {
                 // create a sub group of all containers
-                DataGroup group = new DataGroup();
+                ContainerGroup group = new ContainerGroup();
                 foreach (var exId in ids)
                 {
                     var container = data[exId];
@@ -238,7 +235,7 @@ namespace SummaryCreator.IO.Excel
             return double.NaN;
         }
 
-        private double GetTotalByIdAndDay(DataGroup data, string[] ids, DateTime startDateTime)
+        private static double GetTotalByIdAndDay(ContainerGroup data, string[] ids, DateTime startDateTime)
         {
             var endDateTime = startDateTime + TimeSpan.FromDays(1);
 
@@ -254,7 +251,7 @@ namespace SummaryCreator.IO.Excel
             else if (ids.Length > 1)
             {
                 // create a sub group of all containers
-                DataGroup group = new DataGroup();
+                ContainerGroup group = new ContainerGroup();
                 foreach (var exId in ids)
                 {
                     var item = data[exId];

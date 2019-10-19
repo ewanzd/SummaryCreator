@@ -17,7 +17,7 @@ namespace SummaryCreator.Services
         /// </summary>
         /// <param name="sourceDirectory">Path to directory with sensor data.</param>
         /// <returns></returns>
-        public IEnumerable<IDataContainer> ReadSensorData(DirectoryInfo sourceDirectory)
+        public IEnumerable<IContainer> ReadSensorData(DirectoryInfo sourceDirectory)
         {
             var reader = new DirectoryCsvReader(sourceDirectory);
 
@@ -29,7 +29,7 @@ namespace SummaryCreator.Services
         /// </summary>
         /// <param name="sourceFile"></param>
         /// <returns></returns>
-        public IEnumerable<IDataContainer> ReadMeteoData(FileInfo sourceFile)
+        public IEnumerable<IContainer> ReadMeteoData(FileInfo sourceFile)
         {
             var reader = new MeteoXmlReader(sourceFile);
 
@@ -43,7 +43,7 @@ namespace SummaryCreator.Services
         /// <param name="destinationExcel"></param>
         /// <param name="sheetName"></param>
         /// <param name="idRow"></param>
-        public void WriteToExcel(IEnumerable<IDataContainer> containers, FileInfo destinationExcel, string sheetName, int idRow)
+        public void WriteToExcel(IEnumerable<IContainer> containers, FileInfo destinationExcel, string sheetName, int idRow)
         {
             var writer = new EppExcelWriter(destinationExcel, sheetName, idRow);
 

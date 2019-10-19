@@ -20,9 +20,9 @@ namespace SummaryCreator.IO.Csv
             this.sourceFile = sourceFile;
         }
 
-        public IEnumerable<IDataContainer> Read()
+        public IEnumerable<IContainer> Read()
         {
-            var containers = new Dictionary<string, IDataContainer>();
+            var containers = new Dictionary<string, IContainer>();
 
             // get file content enumerator
             var fileEnumerator = ReadFile(sourceFile).GetEnumerator();
@@ -31,7 +31,7 @@ namespace SummaryCreator.IO.Csv
             fileEnumerator.MoveNext();
 
             // convert all row to objects
-            IDataContainer dataContainer;
+            IContainer dataContainer;
             while (fileEnumerator.MoveNext())
             {
                 var row = fileEnumerator.Current;
@@ -50,7 +50,7 @@ namespace SummaryCreator.IO.Csv
                 }
             }
 
-            return new List<IDataContainer>(containers.Values);
+            return new List<IContainer>(containers.Values);
         }
 
         /// <summary>

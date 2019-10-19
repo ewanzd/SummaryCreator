@@ -22,9 +22,9 @@ namespace SummaryCreator.IO.Csv
             this.sourceDirectory = sourceDirectory;
         }
 
-        public IEnumerable<IDataContainer> Read()
+        public IEnumerable<IContainer> Read()
         {
-            List<IDataContainer> containers = new List<IDataContainer>();
+            List<IContainer> containers = new List<IContainer>();
 
             foreach (var file in sourceDirectory.EnumerateFiles())
             {
@@ -52,7 +52,7 @@ namespace SummaryCreator.IO.Csv
         {
             var filePrefix = file.Name.Split(fileNameSeparator).FirstOrDefault();
 
-            return filePrefix != null && filePrefix.Equals(prefix);
+            return filePrefix != null && filePrefix.Equals(prefix, StringComparison.InvariantCulture);
         }
     }
 }

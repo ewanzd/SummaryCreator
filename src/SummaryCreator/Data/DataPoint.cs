@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace SummaryCreator.Data
 {
@@ -9,7 +10,7 @@ namespace SummaryCreator.Data
 
         public override string ToString()
         {
-            return $"{CapturedAt.ToString()}: {Value}";
+            return $"{CapturedAt.ToString(CultureInfo.InvariantCulture)}: {Value}";
         }
     }
 }

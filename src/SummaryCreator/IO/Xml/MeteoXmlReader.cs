@@ -20,7 +20,7 @@ namespace SummaryCreator.IO.Xml
             this.sourceFile = sourceFile;
         }
 
-        public IEnumerable<IDataContainer> Read()
+        public IEnumerable<IContainer> Read()
         {
             var xDocument = XDocument.Load(sourceFile.OpenRead());
 
@@ -31,10 +31,10 @@ namespace SummaryCreator.IO.Xml
         /// Daten des Dokumentes auswerten.
         /// </summary>
         /// <returns>Das neue Datenobjekt.</returns>
-        private IEnumerable<IDataContainer> Evaluation(XElement root)
+        private IEnumerable<IContainer> Evaluation(XElement root)
         {
             // Datenobjekt, in der die Daten gespeichert werden.
-            var meteoDataContainers = new List<IDataContainer>();
+            var meteoDataContainers = new List<IContainer>();
 
             // Grundelement abrufen
             IEnumerable<XElement> meteodata = root.Elements("meteodata");
