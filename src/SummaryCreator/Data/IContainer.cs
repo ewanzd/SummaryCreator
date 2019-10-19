@@ -6,7 +6,7 @@ namespace SummaryCreator.Data
     /// <summary>
     /// Container for data points of a specific sensor.
     /// </summary>
-    public interface IDataContainer : IEnumerable<DataPoint>
+    public interface IContainer : IEnumerable<DataPoint>
     {
         /// <summary>
         /// Id of sensor.
@@ -31,10 +31,10 @@ namespace SummaryCreator.Data
         /// <summary>
         /// Whether there are any data points inside specified time range.
         /// </summary>
-        /// <param name="start">First date time of time range.</param>
-        /// <param name="end">Last date time of time range.</param>
+        /// <param name="startDateTime">First date time of time range.</param>
+        /// <param name="endDateTime">Last date time of time range.</param>
         /// <returns>Whether there are any data points inside specified time range.</returns>
-        bool AnyBetween(DateTime start, DateTime end);
+        bool AnyBetween(DateTime startDateTime, DateTime endDateTime);
 
         /// <summary>
         /// Add a new data point to container.
@@ -45,18 +45,18 @@ namespace SummaryCreator.Data
         /// <summary>
         /// Amount of value created in this specified time range.
         /// </summary>
-        /// <param name="start">First date time of time range.</param>
-        /// <param name="range">Time range from <paramref name="start"/>.</param>
+        /// <param name="startDateTime">First date time of time range.</param>
+        /// <param name="range">Time range from <paramref name="startDateTime"/>.</param>
         /// <returns>Amount of value created in this specified time range.</returns>
-        double Sum(DateTime start, TimeSpan range);
+        double Sum(DateTime startDateTime, TimeSpan range);
 
         /// <summary>
         /// Amount of value created in this specified time range.
         /// </summary>
-        /// <param name="start">First date time of time range.</param>
-        /// <param name="end">Last date time of time range.</param>
+        /// <param name="startDateTime">First date time of time range.</param>
+        /// <param name="endDateTime">Last date time of time range.</param>
         /// <returns>Amount of value created in this specified time range.</returns>
-        double Sum(DateTime start, DateTime end);
+        double Sum(DateTime startDateTime, DateTime endDateTime);
 
         /// <summary>
         /// All value created until this point in time.

@@ -1,9 +1,12 @@
 ﻿using SummaryCreator.Data;
+using SummaryCreator.Resources;
 using SummaryCreator.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Windows.Forms;
 
 namespace SummaryCreator.View
 {
@@ -11,64 +14,70 @@ namespace SummaryCreator.View
     {
         private readonly IConfigView view;
         private readonly DataService dataService;
-        private readonly Configuration configuration;
+        private readonly IniConfigurationService config;
 
-        public ConfigPresenter(IConfigView view, DataService dataService, Configuration configuration)
+        /// <summary>
+        /// For logging.
+        /// </summary>
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+        public ConfigPresenter(IConfigView view, DataService dataService, IniConfigurationService config)
         {
             Debug.Assert(view != null, $"{nameof(view)} must not be null");
             Debug.Assert(dataService != null, $"{nameof(dataService)} must not be null");
-            Debug.Assert(configuration != null, $"{nameof(configuration)} must not be null");
+            Debug.Assert(config != null, $"{nameof(config)} must not be null");
 
             this.view = view;
             this.dataService = dataService;
-            this.configuration = configuration;
+            this.config = config;
 
             view.Presenter = this;
 
-            // Bestehende Konfigurationen einfügen
-            view.ExcelPath = configuration.ExcelPath;
-            view.MeteoPath = configuration.XmlPath;
-            view.TableName = configuration.SheetName;
-            view.IdRow = configuration.SheetIdRow;
-            view.SensorDirectoryPath = configuration.ExcelSourceDirectory;
+            // load configurations into UI
+            view.ExcelPath = config.ResultExcelFilePath;
+            view.MeteoPath = config.MeteoFilePath;
+            view.TableName = config.ResultExcelSheetName;
+            view.IdRow = config.ResultExcelSheetRowIndex;
+            view.SensorDirectoryPath = config.SensorDirectoryPath;
 
-            // Timer Optionen
+            // timer settings
             view.RemainingTime = 10.0;
             view.TimerIsEnabled = true;
         }
 
         public void OnSave()
         {
-            // Timer stoppen
             OnStop();
 
             try
             {
-                // Daten übernehmen
-                configuration.ExcelPath = view.ExcelPath;
-                configuration.XmlPath = view.MeteoPath;
-                configuration.SheetName = view.TableName;
-                configuration.SheetIdRow = view.IdRow;
-                configuration.ExcelSourceDirectory = view.SensorDirectoryPath;
+                // set changed configurations
+                config.ResultExcelFilePath = view.ExcelPath;
+                config.MeteoFilePath = view.MeteoPath;
+                config.ResultExcelSheetName = view.TableName;
+                config.ResultExcelSheetRowIndex = view.IdRow;
+                config.SensorDirectoryPath = view.SensorDirectoryPath;
 
-                // Daten abspeichern
-                configuration.Save();
+                // save configurations
+                config.Save();
 
-                // Konfigurationen wurden erfolgreich gespeichert
-                view.Status = "Gespeichert";
+                view.Status = Strings.ConfigPresenter_StatusSaved;
             }
             catch (Exception ex)
             {
-                // Fehler ausgeben
-                view.Status = $"Fehler: {ex.Message}";
+                Logger.Error(ex);
+
+                view.Status = string.Format(CultureInfo.CurrentCulture, Strings.ConfigPresenter_Error, ex.Message);
             }
         }
 
         public void OnRun()
         {
+            Logger.Info(CultureInfo.InvariantCulture, "Creation of summary started.");
+
             OnStop();
 
-            view.Status = "Wird ausgewertet....";
+            view.Status = Strings.ConfigPresenter_StatusRunning;
             view.ActionButtonEnabled = false;
 
             try
@@ -77,36 +86,47 @@ namespace SummaryCreator.View
                 var meteoSourceFile = new FileInfo(view.MeteoPath);
                 var destinationExcel = new FileInfo(view.ExcelPath);
 
-                // Daten sammeln
-                var containers = new List<IDataContainer>();
-                containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
-                containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
+                // load data
+                var containers = new List<IContainer>();
 
-                // Daten in Excel schreiben
+                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
+                containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
+
+                if (meteoSourceFile.Exists)
+                {
+                    Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
+                    containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
+                }
+
+                // write to excel
+                Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
                 dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
+
+                Logger.Info(CultureInfo.InvariantCulture, "Creation of summary finished.");
+                view.Status = Strings.ConfigPresenter_StatusFinished;
             }
             catch (Exception ex)
             {
-                // Fehler ausgeben
-                view.Status = $"Fehler: {ex.Message}";
+                Logger.Error(ex);
+
+                view.Status = string.Format(CultureInfo.CurrentCulture, Strings.ConfigPresenter_Error, ex.Message);
             }
             finally
             {
-                view.ActionButtonText = "Ausführen";
+                view.ActionButtonText = Strings.ConfigPresenter_Run;
                 view.ActionButtonEnabled = true;
             }
         }
 
         public void OnStop()
         {
-            view.ActionButtonText = "Ausführen";
+            view.ActionButtonText = Strings.ConfigPresenter_Run;
             view.TimerIsEnabled = false;
         }
 
         public void OnExit()
         {
-            // Beendet die Applikation
-            Environment.Exit(0);
+            Application.Exit();
         }
     }
 }

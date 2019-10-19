@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -136,7 +137,7 @@ namespace SummaryCreator.View
             {
                 // Restzeit anpassen
                 restTime = restTime.Subtract(interval);
-                lblRestTime.Text = string.Format("{0}", restTime.ToString(@"ss\:ff"));
+                lblRestTime.Text = restTime.ToString(@"ss\:ff", CultureInfo.InvariantCulture);
             }
         }
 

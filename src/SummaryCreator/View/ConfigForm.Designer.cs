@@ -1,4 +1,6 @@
-﻿namespace SummaryCreator.View
+﻿using SummaryCreator.Resources;
+
+namespace SummaryCreator.View
 {
     partial class ConfigForm
     {
@@ -53,17 +55,17 @@
             // lblRestTimeText
             // 
             this.lblRestTimeText.AutoSize = true;
-            this.lblRestTimeText.Location = new System.Drawing.Point(20, 294);
+            this.lblRestTimeText.Location = new System.Drawing.Point(90, 294);
             this.lblRestTimeText.Name = "lblRestTimeText";
             this.lblRestTimeText.Size = new System.Drawing.Size(50, 20);
             this.lblRestTimeText.TabIndex = 0;
-            this.lblRestTimeText.Text = "Restzeit:";
+            this.lblRestTimeText.Text = Strings.ConfigForm_TimeLeft;
             // 
             // lblRestTime
             // 
-            this.lblRestTime.Location = new System.Drawing.Point(75, 291);
+            this.lblRestTime.Location = new System.Drawing.Point(20, 291);
             this.lblRestTime.Name = "lblRestTime";
-            this.lblRestTime.Size = new System.Drawing.Size(70, 20);
+            this.lblRestTime.Size = new System.Drawing.Size(60, 20);
             this.lblRestTime.TabIndex = 1;
             this.lblRestTime.BackColor = System.Drawing.Color.PaleVioletRed;
             this.lblRestTime.Padding = new System.Windows.Forms.Padding(3);
@@ -79,7 +81,7 @@
             this.butTimeStatus.Name = "butTimeStatus";
             this.butTimeStatus.Size = new System.Drawing.Size(100, 35);
             this.butTimeStatus.TabIndex = 2;
-            this.butTimeStatus.Text = "Stop";
+            this.butTimeStatus.Text = Strings.ConfigForm_Stop;
             this.butTimeStatus.UseVisualStyleBackColor = true;
             this.butTimeStatus.Click += new System.EventHandler(this.ButTimeStatus_Click);
             // 
@@ -89,7 +91,7 @@
             this.butSave.Name = "butSave";
             this.butSave.Size = new System.Drawing.Size(75, 25);
             this.butSave.TabIndex = 4;
-            this.butSave.Text = "Speichern";
+            this.butSave.Text = Strings.ConfigForm_Save;
             this.butSave.UseVisualStyleBackColor = true;
             this.butSave.Click += new System.EventHandler(this.ButSave_Click);
             // 
@@ -114,7 +116,7 @@
             this.gbData.AutoSize = true;
             this.gbData.TabIndex = 3;
             this.gbData.TabStop = false;
-            this.gbData.Text = "Daten";
+            this.gbData.Text = Strings.ConfigForm_Data;
             // 
             // txbIdRow
             // 
@@ -131,7 +133,7 @@
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.Size = new System.Drawing.Size(150, 13);
             this.lblInfo.TabIndex = 5;
-            this.lblInfo.Text = "Konfigurationsdaten anpassen";
+            this.lblInfo.Text = Strings.ConfigForm_AdjustConfigurations;
             // 
             // lblIdRow
             // 
@@ -140,7 +142,7 @@
             this.lblIdRow.Name = "lblIdRow";
             this.lblIdRow.Size = new System.Drawing.Size(65, 13);
             this.lblIdRow.TabIndex = 8;
-            this.lblIdRow.Text = "Zeile mit IDs";
+            this.lblIdRow.Text = Strings.ConfigForm_ResultRowWithIds;
             // 
             // txbCounterDirectory
             // 
@@ -165,7 +167,7 @@
             this.lblTableName.Name = "lblTableName";
             this.lblTableName.Size = new System.Drawing.Size(74, 13);
             this.lblTableName.TabIndex = 6;
-            this.lblTableName.Text = "Tabellenname";
+            this.lblTableName.Text = Strings.ConfigForm_ResultTableName;
             // 
             // lblCounterDirectory
             // 
@@ -174,7 +176,7 @@
             this.lblCounterDirectory.Name = "lblCounterDirectory";
             this.lblCounterDirectory.Size = new System.Drawing.Size(90, 13);
             this.lblCounterDirectory.TabIndex = 10;
-            this.lblCounterDirectory.Text = "Quellordner (.csv)";
+            this.lblCounterDirectory.Text = Strings.ConfigForm_SensorSourceDirectory;
             // 
             // txbXMLPath
             // 
@@ -191,7 +193,7 @@
             this.lblXMLPath.Name = "lblXMLPath";
             this.lblXMLPath.Size = new System.Drawing.Size(78, 13);
             this.lblXMLPath.TabIndex = 0;
-            this.lblXMLPath.Text = "Quelldatei (.xml)";
+            this.lblXMLPath.Text = Strings.ConfigForm_MeteoSourceFile;
             // 
             // lblExcelPath
             // 
@@ -200,7 +202,7 @@
             this.lblExcelPath.Name = "lblExcelPath";
             this.lblExcelPath.Size = new System.Drawing.Size(76, 13);
             this.lblExcelPath.TabIndex = 2;
-            this.lblExcelPath.Text = "Zieldatei (.xlsx)";
+            this.lblExcelPath.Text = Strings.ConfigForm_ResultFile;
             // 
             // txbExcelPath
             // 
@@ -231,7 +233,7 @@
             this.Controls.Add(this.lblRestTimeText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ConfigForm";
-            this.Text = "Kontrolfenster";
+            this.Text = Strings.ConfigForm_Title;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Meteo_FormClosed);
             this.gbData.ResumeLayout(false);
             this.gbData.PerformLayout();

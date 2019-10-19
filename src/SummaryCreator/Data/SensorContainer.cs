@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace SummaryCreator.Data
 {
-    public sealed class SensorContainer : IDataContainer
+    public sealed class SensorContainer : IContainer
     {
         private readonly SortedList<DateTime, DataPoint> dataPoints = new SortedList<DateTime, DataPoint>();
 
         public SensorContainer(string id)
         {
-            Debug.Assert(!string.IsNullOrEmpty(id), $"{nameof(id)} must not be null or empty");
+            Debug.Assert(!string.IsNullOrEmpty(id), $"{nameof(id)} must not be null or empty.");
 
             Id = id;
         }
@@ -72,6 +72,18 @@ namespace SummaryCreator.Data
             return closestPreviousDataPoint;
         }
 
+        private DataPoint FindClosestNextDataPoint(DateTime pointInTime)
+        {
+            foreach (var dataPoint in dataPoints.Values)
+            {
+                if (dataPoint.CapturedAt > pointInTime)
+                {
+                    return dataPoint;
+                }
+            }
+            return null;
+        }
+
         public double Sum(DateTime start, TimeSpan range)
         {
             var end = start + range;
@@ -89,7 +101,11 @@ namespace SummaryCreator.Data
             }
             else if (first == null && last != null)
             {
-                return last.Value;
+                first = FindClosestNextDataPoint(start);
+                if (first == last)
+                {
+                    return last.Value;
+                }
             }
             return last.Value - first.Value;
         }
@@ -102,6 +118,11 @@ namespace SummaryCreator.Data
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public override string ToString()
+        {
+            return Id;
         }
     }
 }

@@ -7,36 +7,47 @@ using System.IO;
 
 namespace SummaryCreator.Services
 {
+    /// <summary>
+    /// Load and write data.
+    /// </summary>
     public class DataService
     {
-        public IEnumerable<IDataContainer> ReadSensorData(DirectoryInfo sourceDirectory)
+        /// <summary>
+        /// Load sensor data from all files in directory.
+        /// </summary>
+        /// <param name="sourceDirectory">Path to directory with sensor data.</param>
+        /// <returns></returns>
+        public IEnumerable<IContainer> ReadSensorData(DirectoryInfo sourceDirectory)
         {
             var reader = new DirectoryCsvReader(sourceDirectory);
 
             return reader.Read();
         }
 
-        public IEnumerable<IDataContainer> ReadMeteoData(FileInfo sourceFile)
+        /// <summary>
+        /// Read meteo data from file.
+        /// </summary>
+        /// <param name="sourceFile"></param>
+        /// <returns></returns>
+        public IEnumerable<IContainer> ReadMeteoData(FileInfo sourceFile)
         {
             var reader = new MeteoXmlReader(sourceFile);
 
             return reader.Read();
         }
 
-        public void WriteToExcel(IEnumerable<IDataContainer> containers, FileInfo destinationExcel, string sheetName, int idRow)
+        /// <summary>
+        /// Write all data to file.
+        /// </summary>
+        /// <param name="containers"></param>
+        /// <param name="destinationExcel"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="idRow"></param>
+        public void WriteToExcel(IEnumerable<IContainer> containers, FileInfo destinationExcel, string sheetName, int idRow)
         {
-            var writer = new ExcelWriter();
-            try
-            {
-                writer.InitWorksheet(destinationExcel, sheetName, idRow);
-                writer.Write(containers);
-                writer.SaveAndClose();
-            }
-            catch
-            {
-                writer.Close();
-                throw;
-            }
+            var writer = new EppExcelWriter(destinationExcel, sheetName, idRow);
+
+            writer.Write(containers);
         }
     }
 }

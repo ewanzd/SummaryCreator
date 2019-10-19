@@ -11,7 +11,7 @@ namespace SummaryCreator.UnitTests
         [Fact]
         public void DataGroup_Empty()
         {
-            var group = new DataGroup();
+            var group = new ContainerGroup();
 
             Assert.Equal(0, group.Count);
             Assert.Null(group.FirstDataPoint);
@@ -24,7 +24,7 @@ namespace SummaryCreator.UnitTests
         [Fact]
         public void DataGroup_OneEmptyContainer()
         {
-            var group = new DataGroup();
+            var group = new ContainerGroup();
 
             var container = new SensorContainer("1234");
             group.Add(container);

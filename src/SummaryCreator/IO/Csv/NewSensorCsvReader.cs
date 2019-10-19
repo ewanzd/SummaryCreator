@@ -16,23 +16,23 @@ namespace SummaryCreator.IO.Csv
 
         public NewSensorCsvReader(FileInfo sourceFile)
         {
-            Debug.Assert(sourceFile != null, $"{nameof(sourceFile)} must not be null");
+            Debug.Assert(sourceFile != null, $"{nameof(sourceFile)} must not be null.");
 
             this.sourceFile = sourceFile;
         }
 
-        public IEnumerable<IDataContainer> Read()
+        public IEnumerable<IContainer> Read()
         {
             var id = ExtractId(sourceFile);
             var dataContainer = new SensorContainer(id);
 
-            // enumerator holen um durch zu iterieren
+            // get file content enumerator
             var fileEnumerator = ReadFile(sourceFile).GetEnumerator();
 
-            // erste zeile überspringen
+            // skip first line
             fileEnumerator.MoveNext();
 
-            // alle Zeilen in Objekte konvetieren und zurückgeben
+            // convert all row to objects
             while (fileEnumerator.MoveNext())
             {
                 var row = fileEnumerator.Current;
@@ -40,7 +40,7 @@ namespace SummaryCreator.IO.Csv
                 dataContainer.Add(dataPoint);
             }
 
-            return new List<IDataContainer>() { dataContainer };
+            return new List<IContainer>() { dataContainer };
         }
 
         /// <summary>
@@ -57,27 +57,27 @@ namespace SummaryCreator.IO.Csv
 
             if (fields.Length != 2)
             {
-                throw new InvalidDataException($"Ungültiges format: {row}");
+                throw new InvalidDataException($"Invalid format: {row}");
             }
 
-            // Wert konvertieren
+            // convert value
             if (double.TryParse(fields[0], NumberStyles.Any, CultureInfo.InvariantCulture, out double val))
             {
                 dataPoint.Value = val;
             }
             else
             {
-                throw new InvalidDataException($"Ungültiges format: {fields[0]}");
+                throw new InvalidDataException($"Invalid format: {fields[0]}");
             }
 
-            // Datum konvertieren
+            // convert date
             if (DateTime.TryParse(fields[1], out DateTime dtTemp))
             {
                 dataPoint.CapturedAt = dtTemp;
             }
             else
             {
-                throw new InvalidDataException($"Ungültiges format: {fields[1]}");
+                throw new InvalidDataException($"Invalid format: {fields[1]}");
             }
 
             return dataPoint;
@@ -87,7 +87,6 @@ namespace SummaryCreator.IO.Csv
         /// Get all rows from file with IEnumerable.
         /// </summary>
         /// <param name="path">The path to the file.</param>
-        /// <param name="separator">The delimiter for split the row in cells.</param>
         /// <returns>Return a row at array with cells as string[].</returns>
         private static IEnumerable<string> ReadFile(FileInfo file)
         {
@@ -112,8 +111,8 @@ namespace SummaryCreator.IO.Csv
         /// <returns>Id of sensor.</returns>
         private string ExtractId(FileInfo file)
         {
-            // ID des Zählers des Dateinamens
-            // Beispiel: dbdata_6F5CBF4A-FC2F-4E67-99A6-3AFB3D9C2E46.csv
+            // id of the sensor in file name
+            // Example: dbdata_6F5CBF4A-FC2F-4E67-99A6-3AFB3D9C2E46.csv
             var fileName = Path.GetFileNameWithoutExtension(file.FullName);
             return fileName.Split(fileNameSeparator)[1];
         }
