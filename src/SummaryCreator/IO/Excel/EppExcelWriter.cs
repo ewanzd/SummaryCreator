@@ -1,5 +1,5 @@
 ﻿using OfficeOpenXml;
-using SummaryCreator.Data;
+using SummaryCreator.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

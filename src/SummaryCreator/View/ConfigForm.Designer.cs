@@ -210,7 +210,7 @@ namespace SummaryCreator.View
             this.txbExcelPath.Name = "txbExcelPath";
             this.txbExcelPath.Size = new System.Drawing.Size(450, 20);
             this.txbExcelPath.TabIndex = 3;
-            this.txbExcelPath.Click += new System.EventHandler(this.TxbExcelPath_Click);
+            this.txbExcelPath.Click += new System.EventHandler(this.TxbField_Click);
             // 
             // lblStatus
             // 

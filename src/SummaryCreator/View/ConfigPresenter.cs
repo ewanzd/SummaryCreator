@@ -1,4 +1,4 @@
-﻿using SummaryCreator.Data;
+﻿using SummaryCreator.Core;
 using SummaryCreator.Resources;
 using SummaryCreator.Services;
 using System;
@@ -6,11 +6,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace SummaryCreator.View
 {
-    public class ConfigPresenter
+    public sealed class ConfigPresenter
     {
         private readonly IConfigView view;
         private readonly DataService dataService;
@@ -71,7 +73,7 @@ namespace SummaryCreator.View
             }
         }
 
-        public void OnRun()
+        public async Task OnRunAsync()
         {
             Logger.Info(CultureInfo.InvariantCulture, "Creation of summary started.");
 
@@ -82,30 +84,12 @@ namespace SummaryCreator.View
 
             try
             {
-                var sensorSourceDirectory = new DirectoryInfo(view.SensorDirectoryPath);
-                var meteoSourceFile = new FileInfo(view.MeteoPath);
-                var destinationExcel = new FileInfo(view.ExcelPath);
-
-                // load data
-                var containers = new List<IContainer>();
-
-                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
-                containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
-
-                if (meteoSourceFile.Exists)
-                {
-                    Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
-                    containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
-                }
-
-                // write to excel
-                Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
-                dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
+                await Task.Run(() => OnRun());
 
                 Logger.Info(CultureInfo.InvariantCulture, "Creation of summary finished.");
                 view.Status = Strings.ConfigPresenter_StatusFinished;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is IOException || ex is XmlException || ex is InvalidDataException)
             {
                 Logger.Error(ex);
 
@@ -116,6 +100,29 @@ namespace SummaryCreator.View
                 view.ActionButtonText = Strings.ConfigPresenter_Run;
                 view.ActionButtonEnabled = true;
             }
+        }
+
+        private void OnRun()
+        {
+            var sensorSourceDirectory = new DirectoryInfo(view.SensorDirectoryPath);
+            var meteoSourceFile = new FileInfo(view.MeteoPath);
+            var destinationExcel = new FileInfo(view.ExcelPath);
+
+            // load data
+            var containers = new List<IContainer>();
+
+            Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
+            containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
+
+            if (meteoSourceFile.Exists)
+            {
+                Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
+                containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
+            }
+
+            // write to excel
+            Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
+            dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
         }
 
         public void OnStop()

@@ -1,4 +1,4 @@
-﻿using SummaryCreator.Data;
+﻿using SummaryCreator.Core;
 using SummaryCreator.IO.Csv;
 using SummaryCreator.IO.Excel;
 using SummaryCreator.IO.Xml;
