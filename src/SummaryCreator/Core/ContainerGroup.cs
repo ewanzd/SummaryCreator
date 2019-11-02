@@ -53,7 +53,7 @@ namespace SummaryCreator.Core
                 {
                     return null;
                 }
-                return containers.Select(x => x.Last).Aggregate((dpMax, x) => (dpMax == null || (x?.CapturedAt ?? DateTime.MinValue) < dpMax.CapturedAt ? x : dpMax));
+                return containers.Select(x => x.Last).Aggregate((dpMax, x) => (dpMax == null || (x?.CapturedAt ?? DateTime.MinValue) > dpMax.CapturedAt ? x : dpMax));
             }
         }
 

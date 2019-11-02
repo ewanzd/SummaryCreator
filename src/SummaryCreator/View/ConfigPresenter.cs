@@ -3,7 +3,6 @@ using SummaryCreator.Resources;
 using SummaryCreator.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -25,9 +24,9 @@ namespace SummaryCreator.View
 
         public ConfigPresenter(IConfigView view, DataService dataService, IniConfigurationService config)
         {
-            Debug.Assert(view != null, $"{nameof(view)} must not be null");
-            Debug.Assert(dataService != null, $"{nameof(dataService)} must not be null");
-            Debug.Assert(config != null, $"{nameof(config)} must not be null");
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (dataService == null) throw new ArgumentNullException(nameof(dataService));
+            if (config == null) throw new ArgumentNullException(nameof(config));
 
             this.view = view;
             this.dataService = dataService;
@@ -82,6 +81,13 @@ namespace SummaryCreator.View
             view.Status = Strings.ConfigPresenter_StatusRunning;
             view.ActionButtonEnabled = false;
 
+            Logger.Info("RUN PARAMETERS:");
+            Logger.Info("Sensor directory path: '{0}'", view.SensorDirectoryPath);
+            Logger.Info("Meteo file path: '{0}'", view.MeteoPath);
+            Logger.Info("Result excel file path: '{0}'", view.ExcelPath);
+            Logger.Info("Result excel sheet name: '{0}'", view.TableName);
+            Logger.Info("Result excel sheet row index: '{0}'", view.IdRow);
+
             try
             {
                 await Task.Run(() => OnRun());
@@ -89,7 +95,7 @@ namespace SummaryCreator.View
                 Logger.Info(CultureInfo.InvariantCulture, "Creation of summary finished.");
                 view.Status = Strings.ConfigPresenter_StatusFinished;
             }
-            catch (Exception ex) when (ex is IOException || ex is XmlException || ex is InvalidDataException)
+            catch (Exception ex) when (ex is InvalidOperationException || ex is XmlException || ex is InvalidDataException)
             {
                 Logger.Error(ex);
 

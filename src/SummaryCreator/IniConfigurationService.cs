@@ -9,9 +9,9 @@ namespace SummaryCreator
     /// Manage configuration data.
     /// https://github.com/rickyah/ini-parser
     /// </summary>
-    public class IniConfigurationService
+    public sealed class IniConfigurationService
     {
-        private FileInfo file;
+        private readonly FileInfo file;
         private IniData data;
 
         /// <summary>
@@ -91,6 +91,7 @@ namespace SummaryCreator
         public IniConfigurationService(string path)
         {
             file = new FileInfo(path);
+            data = new IniData();
         }
 
         /// <summary>

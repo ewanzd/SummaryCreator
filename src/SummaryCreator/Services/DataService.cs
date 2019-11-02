@@ -10,7 +10,7 @@ namespace SummaryCreator.Services
     /// <summary>
     /// Load and write data.
     /// </summary>
-    public class DataService
+    public sealed class DataService
     {
         /// <summary>
         /// Load sensor data from all files in directory.

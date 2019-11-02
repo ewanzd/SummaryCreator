@@ -9,7 +9,11 @@ using System.Linq;
 
 namespace SummaryCreator.IO.Excel
 {
-    public class EppExcelWriter : IDataWriter
+    /// <summary>
+    /// Write data to excel file.
+    /// https://github.com/JanKallman/EPPlus
+    /// </summary>
+    public sealed class EppExcelWriter : IDataWriter
     {
         private const int DATETIME_COLUMN = 1;
         private const char COL_SEPERATOR = ';';
@@ -22,9 +26,9 @@ namespace SummaryCreator.IO.Excel
 
         public EppExcelWriter(FileInfo targetFile, string sheetName, int idRow)
         {
-            Debug.Assert(targetFile != null, $"{nameof(targetFile)} must not be null.");
-            Debug.Assert(!string.IsNullOrEmpty(sheetName), $"{nameof(sheetName)} must not be null.");
-            Debug.Assert(idRow > 0, $"{nameof(idRow)} must be bigger than 0.");
+            if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
+            if (sheetName == null) throw new ArgumentNullException(nameof(sheetName));
+            if (idRow <= 0) throw new ArgumentOutOfRangeException(nameof(idRow), "Value must be higher than 0.");
 
             excelFile = targetFile;
             excelSheetName = sheetName;
@@ -33,6 +37,9 @@ namespace SummaryCreator.IO.Excel
 
         public void Write(IEnumerable<IContainer> containers)
         {
+            if (containers == null) throw new ArgumentNullException(nameof(containers));
+            if (containers.Any(x => x == null)) throw new ArgumentException("IEnumerable contains null values.", nameof(containers));
+
             if (!(containers is ContainerGroup containerGroup))
             {
                 containerGroup = new ContainerGroup();

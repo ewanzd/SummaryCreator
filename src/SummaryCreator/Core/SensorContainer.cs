@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace SummaryCreator.Core
 {
+    /// <summary>
+    /// Container for sensor data.
+    /// </summary>
     public sealed class SensorContainer : IContainer
     {
         private readonly SortedList<DateTime, DataPoint> dataPoints = new SortedList<DateTime, DataPoint>();
@@ -38,7 +41,7 @@ namespace SummaryCreator.Core
 
         public bool AnyBetween(DateTime start, DateTime end)
         {
-            if (start < end || dataPoints.Count == 0)
+            if (start > end || dataPoints.Count == 0)
             {
                 return false;
             }

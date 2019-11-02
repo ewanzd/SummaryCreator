@@ -1,25 +1,33 @@
 ﻿using OfficeOpenXml;
+using System;
 
 namespace SummaryCreator.IO.Excel
 {
     /// <summary>
-    /// Editable worksheet.
-    /// https://github.com/JanKallman/EPPlus
+    /// For easy access to
     /// </summary>
-    public class EppWorksheet : IWorksheet
+    public sealed class EppWorksheet : IWorksheet
     {
         private readonly ExcelWorksheet worksheet;
 
         public EppWorksheet(ExcelWorksheet worksheet)
         {
+            if (worksheet == null) throw new ArgumentNullException(nameof(worksheet));
+
             this.worksheet = worksheet;
         }
 
         public object this[int row, int col] {
             get {
+                if (row <= 0) throw new ArgumentOutOfRangeException(nameof(row));
+                if (col <= 0) throw new ArgumentOutOfRangeException(nameof(col));
+
                 return worksheet.GetValue(row, col);
             }
             set {
+                if (row <= 0) throw new ArgumentOutOfRangeException(nameof(row));
+                if (col <= 0) throw new ArgumentOutOfRangeException(nameof(col));
+
                 worksheet.SetValue(row, col, value);
             }
         }

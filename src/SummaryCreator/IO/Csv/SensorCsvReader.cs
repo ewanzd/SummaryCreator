@@ -1,12 +1,14 @@
 ﻿using SummaryCreator.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 
 namespace SummaryCreator.IO.Csv
 {
+    /// <summary>
+    /// Read sensor data (old format).
+    /// </summary>
     public sealed class SensorCsvReader : IDataReader
     {
         private const char rowSeperator = ';';
@@ -15,7 +17,7 @@ namespace SummaryCreator.IO.Csv
 
         public SensorCsvReader(FileInfo sourceFile)
         {
-            Debug.Assert(sourceFile != null, $"{nameof(sourceFile)} must not be null.");
+            if (sourceFile == null) throw new ArgumentNullException(nameof(sourceFile));
 
             this.sourceFile = sourceFile;
         }

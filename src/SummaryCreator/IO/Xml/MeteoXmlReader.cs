@@ -1,7 +1,6 @@
 ﻿using SummaryCreator.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,13 +8,16 @@ using System.Xml.Linq;
 
 namespace SummaryCreator.IO.Xml
 {
+    /// <summary>
+    /// Reader for meteo data.
+    /// </summary>
     public sealed class MeteoXmlReader : IDataReader
     {
         private readonly FileInfo sourceFile;
 
         public MeteoXmlReader(FileInfo sourceFile)
         {
-            Debug.Assert(sourceFile != null, $"{nameof(sourceFile)} must not be null");
+            if (sourceFile == null) throw new ArgumentNullException(nameof(sourceFile));
 
             this.sourceFile = sourceFile;
         }
@@ -28,24 +30,24 @@ namespace SummaryCreator.IO.Xml
         }
 
         /// <summary>
-        /// Daten des Dokumentes auswerten.
+        /// Evaluate meteo data from xml tree.
         /// </summary>
-        /// <returns>Das neue Datenobjekt.</returns>
+        /// <returns></returns>
         private IEnumerable<IContainer> Evaluation(XElement root)
         {
-            // Datenobjekt, in der die Daten gespeichert werden.
+            // list of data containers
             var meteoDataContainers = new List<IContainer>();
 
-            // Grundelement abrufen
+            // get base element
             IEnumerable<XElement> meteodata = root.Elements("meteodata");
 
-            // Daten des Standortes abrufen
+            // find location data
             IEnumerable<XElement> locationContainer = meteodata.Elements("location");
 
-            // Alle Prognosen des Standortes
+            // of data of this location
             foreach (var values in locationContainer.Elements("values"))
             {
-                // Datum abrufen und speichern
+                // get date and safe it
                 var dateStr = (string)values.Element("valid").Element("date");
                 if (dateStr == null)
                 {
@@ -53,37 +55,33 @@ namespace SummaryCreator.IO.Xml
                 }
                 if (!DateTime.TryParse(dateStr, out DateTime date))
                 {
-                    throw new InvalidDataException($"Ungültiges Format: {dateStr}");
+                    throw new InvalidDataException($"Invalid format: {dateStr}");
                 }
 
-                // Alle Werte der Prognose abrufen
+                // get all meteo data
                 foreach (var value in values.Elements())
                 {
                     if (value.Name == "value")
                     {
-                        // Name hinzufügen
+                        // add name
                         var type = (string)value.Attribute("type");
 
-                        // nur irradience
+                        // take only irradience
                         if (!type.Equals("irradience", StringComparison.InvariantCultureIgnoreCase))
                         {
                             continue;
                         }
 
-                        // Neuer Wert erstellen
                         var dataPoint = new DataPoint();
-
-                        // Daten des Wertes speichern
                         var valueStr = (string)value;
 
-                        // Wert konvertieren
                         if (double.TryParse(valueStr, NumberStyles.Any, CultureInfo.InvariantCulture, out double val))
                         {
                             dataPoint.Value = val;
                         }
                         else
                         {
-                            throw new InvalidDataException($"Ungültiges Format: {valueStr}");
+                            throw new InvalidDataException($"Invalid format: {valueStr}");
                         }
                         dataPoint.CapturedAt = date;
 
@@ -98,7 +96,6 @@ namespace SummaryCreator.IO.Xml
                 }
             }
 
-            // Die Auswertung zurückgeben
             return meteoDataContainers;
         }
     }
