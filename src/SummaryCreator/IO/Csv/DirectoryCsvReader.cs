@@ -1,4 +1,4 @@
-﻿using SummaryCreator.Data;
+﻿using SummaryCreator.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +7,10 @@ using System.Linq;
 
 namespace SummaryCreator.IO.Csv
 {
-    public class DirectoryCsvReader : IDataReader
+    /// <summary>
+    /// Read every csv file in directory.
+    /// </summary>
+    public sealed class DirectoryCsvReader : IDataReader
     {
         private const char fileNameSeparator = '_';
         private const string fileExtension = ".csv";
@@ -17,7 +20,7 @@ namespace SummaryCreator.IO.Csv
 
         public DirectoryCsvReader(DirectoryInfo sourceDirectory)
         {
-            Debug.Assert(sourceDirectory != null, $"{nameof(sourceDirectory)} must not be null");
+            if (sourceDirectory == null) throw new ArgumentNullException(nameof(sourceDirectory));
 
             this.sourceDirectory = sourceDirectory;
         }
@@ -50,6 +53,8 @@ namespace SummaryCreator.IO.Csv
 
         private bool IsNewSensor(FileInfo file)
         {
+            Debug.Assert(file != null, $"{nameof(file)} must not be null.");
+
             var filePrefix = file.Name.Split(fileNameSeparator).FirstOrDefault();
 
             return filePrefix != null && filePrefix.Equals(prefix, StringComparison.InvariantCulture);

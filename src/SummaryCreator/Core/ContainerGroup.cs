@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
-namespace SummaryCreator.Data
+namespace SummaryCreator.Core
 {
+    /// <summary>
+    /// Manage a group of containers.
+    /// </summary>
     public sealed class ContainerGroup : IEnumerable<IContainer>
     {
         private readonly List<IContainer> containers = new List<IContainer>();
 
+        /// <summary>
+        /// Get container by Id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IContainer this[string id] {
             get {
-                Debug.Assert(id != null, $"{nameof(id)} must not be null.");
+                if (id == null) return null;
 
                 return containers.FirstOrDefault(c => c.Id.Equals(id, StringComparison.InvariantCulture));
             }
@@ -24,40 +31,54 @@ namespace SummaryCreator.Data
             }
         }
 
+        /// <summary>
+        /// Find first <see cref="DataPoint"/>. Property return null if no data found.
+        /// </summary>
         public DataPoint FirstDataPoint {
             get {
                 if (containers.Count == 0)
                 {
                     return null;
                 }
-                return containers
-                    .Aggregate((minItem, nextItem) => minItem.First.CapturedAt < nextItem.First.CapturedAt ? minItem : nextItem)?
-                    .First;
+                return containers.Select(x => x.First).Aggregate((dpMin, x) => (dpMin == null || (x?.CapturedAt ?? DateTime.MaxValue) < dpMin.CapturedAt ? x : dpMin));
             }
         }
 
+        /// <summary>
+        /// Find last <see cref="DataPoint"/>. Property return null if no data found.
+        /// </summary>
         public DataPoint LastDataPoint {
             get {
                 if (containers.Count == 0)
                 {
                     return null;
                 }
-                return containers
-                    .Aggregate((maxItem, nextItem) => maxItem.Last.CapturedAt > nextItem.Last.CapturedAt ? maxItem : nextItem)?
-                    .Last;
+                return containers.Select(x => x.Last).Aggregate((dpMax, x) => (dpMax == null || (x?.CapturedAt ?? DateTime.MinValue) > dpMax.CapturedAt ? x : dpMax));
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dataContainer"></param>
+        /// <exception cref="ArgumentNullException">Null is not allowed.</exception>
         public void Add(IContainer dataContainer)
         {
-            Debug.Assert(dataContainer != null, $"{nameof(dataContainer)} must not be null");
+            if (dataContainer == null) throw new ArgumentNullException(nameof(dataContainer));
 
             containers.Add(dataContainer);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dataContainers"></param>
+        /// <exception cref="ArgumentNullException">Null is not allowed.</exception>
+        /// <exception cref="ArgumentException">IEnumerable contains null values.</exception>
         public void AddRange(IEnumerable<IContainer> dataContainers)
         {
-            Debug.Assert(dataContainers != null && dataContainers.Any(), $"{nameof(dataContainers)} must not be null");
+            if (dataContainers == null) throw new ArgumentNullException(nameof(dataContainers));
+            if (dataContainers.Any(x => x == null)) throw new ArgumentException($"{nameof(dataContainers)} cannot contain null values.");
 
             containers.AddRange(dataContainers);
         }

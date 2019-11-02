@@ -1,5 +1,6 @@
-﻿using SummaryCreator.Data;
+﻿using SummaryCreator.Core;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace SummaryCreator.UnitTests
@@ -35,6 +36,16 @@ namespace SummaryCreator.UnitTests
             Assert.False(group.AnyBetween(DateTime.MinValue, DateTime.MaxValue));
             Assert.InRange(group.Sum(DateTime.MinValue, DateTime.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
             Assert.InRange(group.Total(DateTime.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
+        }
+
+        [Fact]
+        public void DataGroup_AddNullElements_Throws()
+        {
+            var group = new ContainerGroup();
+
+            Assert.Throws<ArgumentNullException>(() => group.Add(null));
+            Assert.Throws<ArgumentNullException>(() => group.AddRange(null));
+            Assert.Throws<ArgumentException>(() => group.AddRange(new List<IContainer>() { null }));
         }
     }
 }

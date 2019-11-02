@@ -210,7 +210,7 @@ namespace SummaryCreator.View
             this.txbExcelPath.Name = "txbExcelPath";
             this.txbExcelPath.Size = new System.Drawing.Size(450, 20);
             this.txbExcelPath.TabIndex = 3;
-            this.txbExcelPath.Click += new System.EventHandler(this.TxbExcelPath_Click);
+            this.txbExcelPath.Click += new System.EventHandler(this.TxbField_Click);
             // 
             // lblStatus
             // 
@@ -218,7 +218,8 @@ namespace SummaryCreator.View
             this.lblStatus.ForeColor = System.Drawing.Color.Maroon;
             this.lblStatus.Location = new System.Drawing.Point(125, 214);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(50, 25);
+            this.lblStatus.MaximumSize = new System.Drawing.Size(380, 0);
+            this.lblStatus.AutoSize = true;
             this.lblStatus.TabIndex = 12;
             // 
             // ConfigForm

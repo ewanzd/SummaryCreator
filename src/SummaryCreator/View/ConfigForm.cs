@@ -7,31 +7,30 @@ using System.Windows.Forms;
 namespace SummaryCreator.View
 {
     /// <summary>
-    /// Startet einen Timer, der nach der angegeben Zeit einen Vorgang startet.
+    /// Manage 'Summary Creator'. You can set important settings and start the process.
     /// </summary>
     public partial class ConfigForm : Form, IConfigView
     {
         /// <summary>
-        /// Restliche Zeit, bis der Vorgang gestartet wird.
+        /// Time left until process is started.
         /// </summary>
         private TimeSpan restTime;
 
         /// <summary>
-        /// Intervall, in dem der Tick ausgeführt wird.
+        /// Tick interval.
         /// </summary>
         private TimeSpan interval = new TimeSpan(0, 0, 0, 0, 100);
 
         /// <summary>
-        /// Startet die Form mit seinem Timer.
+        /// Create form and start timer.
         /// </summary>
         public ConfigForm()
         {
-            // Komponente initialisieren
             InitializeComponent();
         }
 
         /// <summary>
-        /// Den Intervall abrufen oder anpassen.
+        /// Tick interval.
         /// </summary>
         public int TimerInterval {
             get {
@@ -57,21 +56,18 @@ namespace SummaryCreator.View
         public string ActionButtonText { get => butTimeStatus.Text; set => butTimeStatus.Text = value; }
 
         /// <summary>
-        /// Die Daten werden überprüft und gespeichert, wenn sie gültig sind.
+        /// Read input data, check whether they are valid and save them.
         /// </summary>
         private void ButSave_Click(object sender, EventArgs e)
         {
-            // Timer stoppen
             Presenter.OnStop();
 
-            // Eingegebene Daten abrufen
             string excel = txbExcelPath.Text;
             string xml = txbXMLPath.Text;
             string table = txbTableName.Text;
             string id = txbIdRow.Text;
             string counter = txbCounterDirectory.Text;
 
-            // Prüfen, ob Daten eingegeben wurde
             if (string.IsNullOrWhiteSpace(excel) || string.IsNullOrWhiteSpace(xml))
             {
                 txbExcelPath.BackColor = Color.RosyBrown;
@@ -82,7 +78,6 @@ namespace SummaryCreator.View
                 txbExcelPath.BackColor = default(Color);
             }
 
-            // Prüfen, ob die Excel-Datei die richtige Endung besitzt
             if (Path.GetExtension(excel) != ".xlsx")
             {
                 txbExcelPath.BackColor = Color.RosyBrown;
@@ -108,9 +103,9 @@ namespace SummaryCreator.View
         }
 
         /// <summary>
-        /// Timer stoppen/Vorgang starten.
+        /// Stop timer and start process.
         /// </summary>
-        private void ButTimeStatus_Click(object sender, EventArgs e)
+        private async void ButTimeStatus_Click(object sender, EventArgs e)
         {
             if (timer.Enabled)
             {
@@ -118,57 +113,34 @@ namespace SummaryCreator.View
             }
             else
             {
-                // Vorgang starten
-                Presenter.OnRun();
+                await Presenter.OnRunAsync();
             }
         }
 
         /// <summary>
-        /// Der nächste Tick wurde erreicht.
+        /// Next tick was reached.
         /// </summary>
-        private void RestTime_Tick(object sender, EventArgs e)
+        private async void RestTime_Tick(object sender, EventArgs e)
         {
             if (restTime.TotalMilliseconds <= 0)
             {
-                // Vorgang starten
-                Presenter.OnRun();
+                await Presenter.OnRunAsync();
+                Presenter.OnStop();
             }
             else
             {
-                // Restzeit anpassen
                 restTime = restTime.Subtract(interval);
                 lblRestTime.Text = restTime.ToString(@"ss\:ff", CultureInfo.InvariantCulture);
             }
         }
 
-        /// <summary>
-        /// Fenster wurde geschlossen.
-        /// </summary>
         private void Meteo_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // Bescheid geben
             Presenter.OnExit();
-        }
-
-        private void TxbExcelPath_Click(object sender, EventArgs e)
-        {
-            // Timer stoppen
-            Presenter.OnStop();
-
-            // Datei auswählen
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-            ofd.Filter = "Excel-Dateien (*.xlsx)|*.xlsx";
-            ofd.FilterIndex = 1;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                txbExcelPath.Text = ofd.FileName;
-            }
         }
 
         private void TxbField_Click(object sender, EventArgs e)
         {
-            // Timer stoppen
             Presenter.OnStop();
         }
     }

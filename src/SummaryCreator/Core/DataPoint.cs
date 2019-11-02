@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 
-namespace SummaryCreator.Data
+namespace SummaryCreator.Core
 {
-    public class DataPoint
+    public sealed class DataPoint
     {
         public DateTime CapturedAt { get; set; }
         public double Value { get; set; }

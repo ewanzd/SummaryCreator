@@ -1,16 +1,17 @@
-﻿using SummaryCreator.Data;
+﻿using SummaryCreator.Core;
 using SummaryCreator.Resources;
 using SummaryCreator.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace SummaryCreator.View
 {
-    public class ConfigPresenter
+    public sealed class ConfigPresenter
     {
         private readonly IConfigView view;
         private readonly DataService dataService;
@@ -23,9 +24,9 @@ namespace SummaryCreator.View
 
         public ConfigPresenter(IConfigView view, DataService dataService, IniConfigurationService config)
         {
-            Debug.Assert(view != null, $"{nameof(view)} must not be null");
-            Debug.Assert(dataService != null, $"{nameof(dataService)} must not be null");
-            Debug.Assert(config != null, $"{nameof(config)} must not be null");
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (dataService == null) throw new ArgumentNullException(nameof(dataService));
+            if (config == null) throw new ArgumentNullException(nameof(config));
 
             this.view = view;
             this.dataService = dataService;
@@ -71,7 +72,7 @@ namespace SummaryCreator.View
             }
         }
 
-        public void OnRun()
+        public async Task OnRunAsync()
         {
             Logger.Info(CultureInfo.InvariantCulture, "Creation of summary started.");
 
@@ -80,32 +81,21 @@ namespace SummaryCreator.View
             view.Status = Strings.ConfigPresenter_StatusRunning;
             view.ActionButtonEnabled = false;
 
+            Logger.Info("RUN PARAMETERS:");
+            Logger.Info("Sensor directory path: '{0}'", view.SensorDirectoryPath);
+            Logger.Info("Meteo file path: '{0}'", view.MeteoPath);
+            Logger.Info("Result excel file path: '{0}'", view.ExcelPath);
+            Logger.Info("Result excel sheet name: '{0}'", view.TableName);
+            Logger.Info("Result excel sheet row index: '{0}'", view.IdRow);
+
             try
             {
-                var sensorSourceDirectory = new DirectoryInfo(view.SensorDirectoryPath);
-                var meteoSourceFile = new FileInfo(view.MeteoPath);
-                var destinationExcel = new FileInfo(view.ExcelPath);
-
-                // load data
-                var containers = new List<IContainer>();
-
-                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
-                containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
-
-                if (meteoSourceFile.Exists)
-                {
-                    Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
-                    containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
-                }
-
-                // write to excel
-                Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
-                dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
+                await Task.Run(() => OnRun());
 
                 Logger.Info(CultureInfo.InvariantCulture, "Creation of summary finished.");
                 view.Status = Strings.ConfigPresenter_StatusFinished;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is InvalidOperationException || ex is XmlException || ex is InvalidDataException)
             {
                 Logger.Error(ex);
 
@@ -116,6 +106,29 @@ namespace SummaryCreator.View
                 view.ActionButtonText = Strings.ConfigPresenter_Run;
                 view.ActionButtonEnabled = true;
             }
+        }
+
+        private void OnRun()
+        {
+            var sensorSourceDirectory = new DirectoryInfo(view.SensorDirectoryPath);
+            var meteoSourceFile = new FileInfo(view.MeteoPath);
+            var destinationExcel = new FileInfo(view.ExcelPath);
+
+            // load data
+            var containers = new List<IContainer>();
+
+            Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
+            containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
+
+            if (meteoSourceFile.Exists)
+            {
+                Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
+                containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
+            }
+
+            // write to excel
+            Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
+            dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
         }
 
         public void OnStop()

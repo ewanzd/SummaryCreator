@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
-namespace SummaryCreator.Data
+namespace SummaryCreator.Core
 {
+    /// <summary>
+    /// Container for sensor data.
+    /// </summary>
     public sealed class SensorContainer : IContainer
     {
         private readonly SortedList<DateTime, DataPoint> dataPoints = new SortedList<DateTime, DataPoint>();
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <exception cref="ArgumentException"><paramref name="id"/> must contain a valid string value (not null or white space).</exception>
         public SensorContainer(string id)
         {
-            Debug.Assert(!string.IsNullOrEmpty(id), $"{nameof(id)} must not be null or empty.");
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException($"{nameof(id)} must contain a value.");
 
             Id = id;
         }
@@ -27,16 +34,14 @@ namespace SummaryCreator.Data
 
         public void Add(DataPoint dataPoint)
         {
-            Debug.Assert(dataPoint != null, $"{nameof(dataPoint)} must not be null");
+            if (dataPoint == null) throw new ArgumentNullException(nameof(dataPoint));
 
             dataPoints.Add(dataPoint.CapturedAt, dataPoint);
         }
 
         public bool AnyBetween(DateTime start, DateTime end)
         {
-            Debug.Assert(start <= end, "Start date is before end date");
-
-            if (dataPoints.Count == 0)
+            if (start > end || dataPoints.Count == 0)
             {
                 return false;
             }

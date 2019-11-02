@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SummaryCreator.Data
+namespace SummaryCreator.Core
 {
     /// <summary>
     /// Container for data points of a specific sensor.
