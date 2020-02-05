@@ -1,4 +1,4 @@
-param([System.IO.FileInfo]$publishDirectory=$variable:pwd.Path + "/Publish")
+param([System.IO.FileInfo]$publishDirectory=$variable:pwd.Path + "/publish")
 
 $targetProject = ".\src\SummaryCreator\SummaryCreator.csproj"
 
