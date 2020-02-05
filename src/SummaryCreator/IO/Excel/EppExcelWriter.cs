@@ -110,24 +110,25 @@ namespace SummaryCreator.IO.Excel
 
                     if (dataPoint != null)
                     {
-                        var value = dataPoint.Value.ToString("0.###", CultureInfo.InvariantCulture);
+                        var value = dataPoint.Value.ToString("0.##", CultureInfo.InvariantCulture);
                         worksheet[rowIndex, col] = value;
                     }
                 }
                 else
                 {
                     var total = GetTotalByIdAndDay(data, ids, startDateTime);
+
+                    // change unit (Wh to kWh)
+                    total /= 1000.0;
+
+                    // rounding to 2 fractional digits
+                    total = Math.Round(total, 2);
+
+                    // write value to excel field
                     if (!double.IsNaN(total))
                     {
-                        var value = total.ToString("0.###", CultureInfo.InvariantCulture);
+                        var value = total.ToString("0.##", CultureInfo.InvariantCulture);
                         worksheet[rowIndex, col] = value;
-                    }
-
-                    var sum = GetSumByIdAndDay(data, ids, startDateTime);
-                    if (!double.IsNaN(sum))
-                    {
-                        var value = sum.ToString("0.###", CultureInfo.InvariantCulture);
-                        worksheet[rowIndex, col + 1] = value;
                     }
                 }
             }
@@ -205,41 +206,6 @@ namespace SummaryCreator.IO.Excel
                 leftContainers
                     .Aggregate((minItem, nextItem) => minItem.First.CapturedAt < nextItem.First.CapturedAt ? minItem : nextItem)
                     .First.CapturedAt.Date;
-        }
-
-        private static double GetSumByIdAndDay(ContainerGroup data, string[] ids, DateTime startDateTime)
-        {
-            var endDateTime = startDateTime + TimeSpan.FromDays(1);
-
-            if (ids.Length == 1)
-            {
-                var container = data[ids[0]];
-
-                if (container != null && container.AnyBetween(startDateTime, endDateTime))
-                {
-                    return container.Sum(startDateTime, endDateTime);
-                }
-            }
-            else if (ids.Length > 1)
-            {
-                // create a sub group of all containers
-                ContainerGroup group = new ContainerGroup();
-                foreach (var exId in ids)
-                {
-                    var container = data[exId];
-                    if (container != null)
-                    {
-                        group.Add(container);
-                    }
-                }
-
-                if (group.AnyBetween(startDateTime, endDateTime))
-                {
-                    return group.Sum(startDateTime, endDateTime);
-                }
-            }
-
-            return double.NaN;
         }
 
         private static double GetTotalByIdAndDay(ContainerGroup data, string[] ids, DateTime startDateTime)
