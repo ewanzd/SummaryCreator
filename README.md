@@ -4,7 +4,7 @@ SummaryCreator collects time serie data from `.csv` and meteo data from `.xml` f
 
 ## Requirements
 
-- .NET Core 3.0 SDK ([Download](https://dotnet.microsoft.com/download))
+- .NET Core 3.1 SDK ([Download](https://dotnet.microsoft.com/download))
 
 ## Build and Publish
 
