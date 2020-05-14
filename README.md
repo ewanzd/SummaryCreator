@@ -1,6 +1,6 @@
 # SummaryCreator
 
-SummaryCreator collects time serie data from `.csv` and meteo data from `.xml` file. Then the tool evaluates and writes the result in a `.xlsx` file.
+SummaryCreator collects time series data from `.csv` and meteorological data from `.xml` files, evaluates them and writes the result to an `.xlsx` file.
 
 ## Requirements
 
