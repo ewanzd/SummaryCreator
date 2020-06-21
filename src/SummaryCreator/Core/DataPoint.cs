@@ -5,7 +5,7 @@ namespace SummaryCreator.Core
 {
     public sealed class DataPoint
     {
-        public DateTime CapturedAt { get; set; }
+        public DateTimeOffset CapturedAt { get; set; }
         public double Value { get; set; }
 
         public override string ToString()

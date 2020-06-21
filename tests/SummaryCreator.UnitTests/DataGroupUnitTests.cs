@@ -17,9 +17,9 @@ namespace SummaryCreator.UnitTests
             Assert.Equal(0, group.Count);
             Assert.Null(group.FirstDataPoint);
             Assert.Null(group.LastDataPoint);
-            Assert.False(group.AnyBetween(DateTime.MinValue, DateTime.MaxValue));
-            Assert.InRange(group.Sum(DateTime.MinValue, DateTime.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
-            Assert.InRange(group.Total(DateTime.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
+            Assert.False(group.AnyBetween(DateTimeOffset.MinValue, DateTimeOffset.MaxValue));
+            Assert.InRange(group.Sum(DateTimeOffset.MinValue, DateTimeOffset.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
+            Assert.InRange(group.Total(DateTimeOffset.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
         }
 
         [Fact]
@@ -33,9 +33,9 @@ namespace SummaryCreator.UnitTests
             Assert.Equal(1, group.Count);
             Assert.Null(group.FirstDataPoint);
             Assert.Null(group.LastDataPoint);
-            Assert.False(group.AnyBetween(DateTime.MinValue, DateTime.MaxValue));
-            Assert.InRange(group.Sum(DateTime.MinValue, DateTime.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
-            Assert.InRange(group.Total(DateTime.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
+            Assert.False(group.AnyBetween(DateTimeOffset.MinValue, DateTimeOffset.MaxValue));
+            Assert.InRange(group.Sum(DateTimeOffset.MinValue, DateTimeOffset.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
+            Assert.InRange(group.Total(DateTimeOffset.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
         }
 
         [Fact]

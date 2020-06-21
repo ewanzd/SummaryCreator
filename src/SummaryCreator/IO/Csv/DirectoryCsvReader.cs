@@ -14,15 +14,15 @@ namespace SummaryCreator.IO.Csv
     {
         private const char fileNameSeparator = '_';
         private const string fileExtension = ".csv";
-        private const string prefix = "dbdata";
+
+        private const string dbdataIdenticator = "dbdata";
+        private const string setMeterIdenticator = "sel_meter";
 
         private readonly DirectoryInfo sourceDirectory;
 
         public DirectoryCsvReader(DirectoryInfo sourceDirectory)
         {
-            if (sourceDirectory == null) throw new ArgumentNullException(nameof(sourceDirectory));
-
-            this.sourceDirectory = sourceDirectory;
+            this.sourceDirectory = sourceDirectory ?? throw new ArgumentNullException(nameof(sourceDirectory));
         }
 
         public IEnumerable<IContainer> Read()
@@ -36,9 +36,14 @@ namespace SummaryCreator.IO.Csv
                     continue;
                 }
 
-                if (IsNewSensor(file))
+                if (IsDbdataSensor(file))
                 {
-                    var reader = new NewSensorCsvReader(file);
+                    var reader = new DbdataSensorCsvReader(file);
+                    containers.AddRange(reader.Read());
+                }
+                else if(IsSelMeterSensor(file))
+                {
+                    var reader = new SelMeterCsvReader(file);
                     containers.AddRange(reader.Read());
                 }
                 else
@@ -51,13 +56,20 @@ namespace SummaryCreator.IO.Csv
             return containers;
         }
 
-        private bool IsNewSensor(FileInfo file)
+        private bool IsDbdataSensor(FileInfo file)
         {
             Debug.Assert(file != null, $"{nameof(file)} must not be null.");
 
             var filePrefix = file.Name.Split(fileNameSeparator).FirstOrDefault();
 
-            return filePrefix != null && filePrefix.Equals(prefix, StringComparison.InvariantCulture);
+            return filePrefix != null && filePrefix.Equals(dbdataIdenticator, StringComparison.InvariantCulture);
+        }
+
+        private bool IsSelMeterSensor(FileInfo file)
+        {
+            Debug.Assert(file != null, $"{nameof(file)} must not be null.");
+
+            return file.Name.Contains(setMeterIdenticator, StringComparison.InvariantCulture);
         }
     }
 }
