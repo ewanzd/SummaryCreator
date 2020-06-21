@@ -17,9 +17,7 @@ namespace SummaryCreator.IO.Csv
 
         public SensorCsvReader(FileInfo sourceFile)
         {
-            if (sourceFile == null) throw new ArgumentNullException(nameof(sourceFile));
-
-            this.sourceFile = sourceFile;
+            this.sourceFile = sourceFile ?? throw new ArgumentNullException(nameof(sourceFile));
         }
 
         public IEnumerable<IContainer> Read()
@@ -76,7 +74,7 @@ namespace SummaryCreator.IO.Csv
             // convert date
             if (DateTime.TryParse(fields[0], out DateTime dtTemp))
             {
-                dataPoint.CapturedAt = dtTemp;
+                dataPoint.CapturedAt = DateTime.SpecifyKind(dtTemp, DateTimeKind.Local);
             }
             else
             {

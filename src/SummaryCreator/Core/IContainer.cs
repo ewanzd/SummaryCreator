@@ -34,7 +34,7 @@ namespace SummaryCreator.Core
         /// <param name="startDateTime">First date time of time range.</param>
         /// <param name="endDateTime">Last date time of time range.</param>
         /// <returns>Whether there are any data points inside specified time range.</returns>
-        bool AnyBetween(DateTime startDateTime, DateTime endDateTime);
+        bool AnyBetween(DateTimeOffset startDateTime, DateTimeOffset endDateTime);
 
         /// <summary>
         /// Add a new data point to container.
@@ -48,7 +48,7 @@ namespace SummaryCreator.Core
         /// <param name="startDateTime">First date time of time range.</param>
         /// <param name="range">Time range from <paramref name="startDateTime"/>.</param>
         /// <returns>Amount of value created in this specified time range.</returns>
-        double Sum(DateTime startDateTime, TimeSpan range);
+        double Sum(DateTimeOffset startDateTime, TimeSpan range);
 
         /// <summary>
         /// Amount of value created in this specified time range.
@@ -56,13 +56,13 @@ namespace SummaryCreator.Core
         /// <param name="startDateTime">First date time of time range.</param>
         /// <param name="endDateTime">Last date time of time range.</param>
         /// <returns>Amount of value created in this specified time range.</returns>
-        double Sum(DateTime startDateTime, DateTime endDateTime);
+        double Sum(DateTimeOffset startDateTime, DateTimeOffset endDateTime);
 
         /// <summary>
         /// All value created until this point in time.
         /// </summary>
         /// <param name="pointInTime">Total value until this point in time.</param>
         /// <returns>All value created until this point in time.</returns>
-        double Total(DateTime pointInTime);
+        double Total(DateTimeOffset pointInTime);
     }
 }

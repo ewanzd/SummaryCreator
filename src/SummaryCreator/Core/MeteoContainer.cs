@@ -10,7 +10,7 @@ namespace SummaryCreator.Core
     /// </summary>
     public sealed class MeteoContainer : IContainer
     {
-        private readonly SortedList<DateTime, DataPoint> dataPoints = new SortedList<DateTime, DataPoint>();
+        private readonly SortedList<DateTimeOffset, DataPoint> dataPoints = new SortedList<DateTimeOffset, DataPoint>();
 
         /// <summary>
         ///
@@ -39,7 +39,7 @@ namespace SummaryCreator.Core
             dataPoints.Add(dataPoint.CapturedAt, dataPoint);
         }
 
-        public bool AnyBetween(DateTime start, DateTime end)
+        public bool AnyBetween(DateTimeOffset start, DateTimeOffset end)
         {
             if (start > end || dataPoints.Count == 0)
             {
@@ -57,13 +57,13 @@ namespace SummaryCreator.Core
             return dataPoints.Keys.Any(capturedAt => start <= capturedAt && capturedAt < end);
         }
 
-        public double Sum(DateTime start, TimeSpan range)
+        public double Sum(DateTimeOffset start, TimeSpan range)
         {
             var end = start + range;
             return Sum(start, end);
         }
 
-        public double Sum(DateTime start, DateTime end)
+        public double Sum(DateTimeOffset start, DateTimeOffset end)
         {
             var total = 0.0;
 
@@ -83,7 +83,7 @@ namespace SummaryCreator.Core
             return total;
         }
 
-        public double Total(DateTime pointInTime)
+        public double Total(DateTimeOffset pointInTime)
         {
             var total = 0.0;
 
