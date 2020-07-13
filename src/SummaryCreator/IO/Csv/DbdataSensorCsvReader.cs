@@ -9,18 +9,16 @@ namespace SummaryCreator.IO.Csv
     /// <summary>
     /// Read sensor data file with new format (file name starts with dbdata, content is time series).
     /// </summary>
-    public sealed class NewSensorCsvReader : IDataReader
+    public sealed class DbdataSensorCsvReader : IDataReader
     {
         private const char fileNameSeparator = '_';
         private const char rowSeperator = ',';
 
         private readonly FileInfo sourceFile;
 
-        public NewSensorCsvReader(FileInfo sourceFile)
+        public DbdataSensorCsvReader(FileInfo sourceFile)
         {
-            if (sourceFile == null) throw new ArgumentNullException(nameof(sourceFile));
-
-            this.sourceFile = sourceFile;
+            this.sourceFile = sourceFile ?? throw new ArgumentNullException(nameof(sourceFile));
         }
 
         public IEnumerable<IContainer> Read()
@@ -75,7 +73,7 @@ namespace SummaryCreator.IO.Csv
             // convert date
             if (DateTime.TryParse(fields[1], out DateTime dtTemp))
             {
-                dataPoint.CapturedAt = dtTemp;
+                dataPoint.CapturedAt = DateTime.SpecifyKind(dtTemp, DateTimeKind.Local);
             }
             else
             {
