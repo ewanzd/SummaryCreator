@@ -29,24 +29,22 @@ namespace SummaryCreator.IO.Csv
 
             // skip first line
             fileEnumerator.MoveNext();
-
-            // convert all row to objects
-            ITimeSeries timeSeries;
             while (fileEnumerator.MoveNext())
             {
                 var row = fileEnumerator.Current;
-                var entry = ConvertToEntry(row, rowSeperator);
+                var (id, dataPoint) = ConvertToEntry(row, rowSeperator);
 
+                // convert all row to objects
                 // check if id is available, otherwise create new time series
-                if (timeSeriesDict.TryGetValue(entry.id, out timeSeries))
+                if (timeSeriesDict.TryGetValue(id, out ITimeSeries timeSeries))
                 {
-                    timeSeries.Add(entry.dp);
+                    timeSeries.Add(dataPoint);
                 }
                 else
                 {
-                    timeSeries = new SensorTimeSeries(entry.id);
-                    timeSeries.Add(entry.dp);
-                    timeSeriesDict.Add(entry.id, timeSeries);
+                    timeSeries = new SensorTimeSeries(id);
+                    timeSeries.Add(dataPoint);
+                    timeSeriesDict.Add(id, timeSeries);
                 }
             }
 
@@ -61,7 +59,6 @@ namespace SummaryCreator.IO.Csv
         /// <returns>Return a new full row.</returns>
         private (string id, DataPoint dp) ConvertToEntry(string row, char separator)
         {
-            string id = string.Empty;
             DataPoint dataPoint = new DataPoint();
 
             var fields = GetFields(row, separator);
@@ -82,7 +79,7 @@ namespace SummaryCreator.IO.Csv
             }
 
             // get sensor id
-            id = fields[1];
+            string id = fields[1];
 
             // convert total if available, otherwise calculate it
             if (double.TryParse(fields[2], NumberStyles.Any, CultureInfo.InvariantCulture, out double total))
@@ -122,12 +119,10 @@ namespace SummaryCreator.IO.Csv
         /// <returns>Return a row at array with cells as string[].</returns>
         private static IEnumerable<string> ReadFile(FileInfo file)
         {
-            using (StreamReader reader = file.OpenText())
+            using StreamReader reader = file.OpenText();
+            while (reader.EndOfStream == false)
             {
-                while (reader.EndOfStream == false)
-                {
-                    yield return reader.ReadLine();
-                }
+                yield return reader.ReadLine();
             }
         }
 

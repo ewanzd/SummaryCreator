@@ -98,12 +98,10 @@ namespace SummaryCreator.IO.Csv
         /// <returns>Return a row at array with cells as string[].</returns>
         private static IEnumerable<string> ReadFile(FileInfo file)
         {
-            using (StreamReader reader = file.OpenText())
+            using StreamReader reader = file.OpenText();
+            while (reader.EndOfStream == false)
             {
-                while (reader.EndOfStream == false)
-                {
-                    yield return reader.ReadLine();
-                }
+                yield return reader.ReadLine();
             }
         }
 

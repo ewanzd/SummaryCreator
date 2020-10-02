@@ -130,11 +130,9 @@ namespace SummaryCreator
         {
             if (file.Exists)
             {
-                using (var reader = file.OpenText())
-                {
-                    var parser = new FileIniDataParser();
-                    data = parser.ReadData(reader);
-                }
+                using var reader = file.OpenText();
+                var parser = new FileIniDataParser();
+                data = parser.ReadData(reader);
             }
             else
             {

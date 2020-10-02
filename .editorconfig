@@ -1,0 +1,7 @@
+﻿[*.{cs,vb}]
+
+# IDE0028: Simplify collection initialization
+dotnet_style_collection_initializer = true:silent
+
+# IDE0016: Use 'throw' expression
+csharp_style_throw_expression = true:silent
