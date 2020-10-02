@@ -57,7 +57,7 @@ namespace SummaryCreator.Core
             return dataPoints.Keys.Any(capturedAt => start <= capturedAt && capturedAt < end);
         }
 
-        public double Total(DateTimeOffset pointInTime)
+        public double TotalUntil(DateTimeOffset pointInTime)
         {
             var closestPreviousDataPoint = FindClosestPreviousDataPoint(pointInTime);
             return closestPreviousDataPoint == null ? 0.0 : closestPreviousDataPoint.Value;

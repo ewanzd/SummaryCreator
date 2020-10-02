@@ -218,7 +218,7 @@ namespace SummaryCreator.IO.Excel
 
                 if (container != null && container.AnyBetween(startDateTime, endDateTime))
                 {
-                    return container.Total(endDateTime);
+                    return container.TotalUntil(endDateTime);
                 }
             }
             else if (ids.Length > 1)

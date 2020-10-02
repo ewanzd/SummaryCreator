@@ -101,7 +101,7 @@ namespace SummaryCreator.Core
 
         public double Total(DateTimeOffset pointInTime)
         {
-            return containers.Sum(x => x.Total(pointInTime));
+            return containers.Sum(x => x.TotalUntil(pointInTime));
         }
 
         public IEnumerator<IContainer> GetEnumerator()

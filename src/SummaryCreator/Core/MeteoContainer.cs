@@ -83,7 +83,7 @@ namespace SummaryCreator.Core
             return total;
         }
 
-        public double Total(DateTimeOffset pointInTime)
+        public double TotalUntil(DateTimeOffset pointInTime)
         {
             var total = 0.0;
 
