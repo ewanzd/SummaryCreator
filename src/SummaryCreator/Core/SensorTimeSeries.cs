@@ -13,7 +13,7 @@ namespace SummaryCreator.Core
         private readonly SortedList<DateTimeOffset, DataPoint> dataPoints = new SortedList<DateTimeOffset, DataPoint>();
 
         /// <summary>
-        ///
+        /// Create a new time series with sensor data points.
         /// </summary>
         /// <param name="id"></param>
         /// <exception cref="ArgumentException"><paramref name="id"/> must contain a valid string value (not null or white space).</exception>
@@ -26,7 +26,7 @@ namespace SummaryCreator.Core
 
         public int Count => dataPoints.Count;
 
-        public string Id { get; private set; }
+        public string Id { get; }
 
         public DataPoint First => dataPoints.Values.FirstOrDefault();
 
@@ -49,7 +49,7 @@ namespace SummaryCreator.Core
             // if start date is after the last entry or the end date before first entry
             // then there is no entry in time range
             var keys = dataPoints.Keys;
-            if (keys.First() > end || start > keys.Last())
+            if (keys[0] > end || start > keys.Last())
             {
                 return false;
             }
@@ -60,7 +60,7 @@ namespace SummaryCreator.Core
         public double TotalUntil(DateTimeOffset pointInTime)
         {
             var closestPreviousDataPoint = FindClosestPreviousDataPoint(pointInTime);
-            return closestPreviousDataPoint == null ? 0.0 : closestPreviousDataPoint.Value;
+            return (closestPreviousDataPoint?.Value) ?? 0.0;
         }
 
         private DataPoint FindClosestPreviousDataPoint(DateTimeOffset pointInTime)

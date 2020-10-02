@@ -13,7 +13,7 @@ namespace SummaryCreator.Core
         private readonly SortedList<DateTimeOffset, DataPoint> dataPoints = new SortedList<DateTimeOffset, DataPoint>();
 
         /// <summary>
-        ///
+        /// Create a new time series with meteo data points.
         /// </summary>
         /// <param name="id"></param>
         /// <exception cref="ArgumentException"><paramref name="id"/> must contain a valid string value (not null or white space).</exception>
@@ -24,7 +24,7 @@ namespace SummaryCreator.Core
             Id = id;
         }
 
-        public string Id { get; private set; }
+        public string Id { get; }
 
         public int Count => dataPoints.Count;
 
@@ -49,7 +49,7 @@ namespace SummaryCreator.Core
             // if start date is after the last entry or the end date before first entry
             // then there is no entry in time range
             var keys = dataPoints.Keys;
-            if (keys.First() > end || start > keys.Last())
+            if (keys[0] > end || start > keys.Last())
             {
                 return false;
             }

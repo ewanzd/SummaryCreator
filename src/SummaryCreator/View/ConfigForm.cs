@@ -64,9 +64,7 @@ namespace SummaryCreator.View
 
             string excel = txbExcelPath.Text;
             string xml = txbXMLPath.Text;
-            string table = txbTableName.Text;
             string id = txbIdRow.Text;
-            string counter = txbCounterDirectory.Text;
 
             if (string.IsNullOrWhiteSpace(excel) || string.IsNullOrWhiteSpace(xml))
             {
@@ -75,7 +73,7 @@ namespace SummaryCreator.View
             }
             else
             {
-                txbExcelPath.BackColor = default(Color);
+                txbExcelPath.BackColor = default;
             }
 
             if (Path.GetExtension(excel) != ".xlsx")
@@ -85,18 +83,17 @@ namespace SummaryCreator.View
             }
             else
             {
-                txbExcelPath.BackColor = default(Color);
+                txbExcelPath.BackColor = default;
             }
 
-            int idInt;
-            if (!int.TryParse(id, out idInt))
+            if (!int.TryParse(id, out _))
             {
                 txbIdRow.BackColor = Color.RosyBrown;
                 return;
             }
             else
             {
-                txbIdRow.BackColor = default(Color);
+                txbIdRow.BackColor = default;
             }
 
             Presenter.OnSave();
@@ -113,7 +110,7 @@ namespace SummaryCreator.View
             }
             else
             {
-                await Presenter.OnRunAsync();
+                await Presenter.OnRunAsync().ConfigureAwait(false);
             }
         }
 
@@ -124,7 +121,7 @@ namespace SummaryCreator.View
         {
             if (restTime.TotalMilliseconds <= 0)
             {
-                await Presenter.OnRunAsync();
+                await Presenter.OnRunAsync().ConfigureAwait(false);
                 Presenter.OnStop();
             }
             else

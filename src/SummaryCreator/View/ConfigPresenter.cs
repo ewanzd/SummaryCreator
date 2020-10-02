@@ -90,7 +90,7 @@ namespace SummaryCreator.View
 
             try
             {
-                await Task.Run(() => OnRun());
+                await Task.Run(() => OnRun()).ConfigureAwait(false);
 
                 Logger.Info(CultureInfo.InvariantCulture, "Creation of summary finished.");
                 view.Status = Strings.ConfigPresenter_StatusFinished;

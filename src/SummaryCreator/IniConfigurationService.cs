@@ -85,7 +85,7 @@ namespace SummaryCreator
         }
 
         /// <summary>
-        ///
+        /// Create new configuration service with a ini file as persistence store.
         /// </summary>
         /// <param name="path">Path to ini file.</param>
         public IniConfigurationService(string path)

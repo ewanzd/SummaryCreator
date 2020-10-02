@@ -21,7 +21,7 @@ namespace SummaryCreator.Core
             get {
                 if (id == null) return null;
 
-                return timeSeries.FirstOrDefault(c => c.Id.Equals(id, StringComparison.InvariantCulture));
+                return timeSeries.Find(c => c.Id.Equals(id, StringComparison.InvariantCulture));
             }
         }
 
@@ -58,7 +58,7 @@ namespace SummaryCreator.Core
         }
 
         /// <summary>
-        ///
+        /// Add a time series to the group.
         /// </summary>
         /// <param name="timeSeries"></param>
         /// <exception cref="ArgumentNullException">Null is not allowed.</exception>
@@ -70,7 +70,7 @@ namespace SummaryCreator.Core
         }
 
         /// <summary>
-        ///
+        /// Add multiple time series at once to the group.
         /// </summary>
         /// <param name="timeSeries"></param>
         /// <exception cref="ArgumentNullException">Null is not allowed.</exception>

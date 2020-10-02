@@ -91,7 +91,7 @@ namespace SummaryCreator.IO.Csv
         private static IEnumerable<string> ReadFile(FileInfo file)
         {
             using StreamReader reader = file.OpenText();
-            while (reader.EndOfStream == false)
+            while (!reader.EndOfStream)
             {
                 yield return reader.ReadLine();
             }

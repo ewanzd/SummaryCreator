@@ -48,11 +48,7 @@ namespace SummaryCreator.IO.Xml
             foreach (var values in locationTimeSeries.Elements("values"))
             {
                 // get date and safe it
-                var dateStr = (string)values.Element("valid").Element("date");
-                if (dateStr == null)
-                {
-                    dateStr = (string)values.Element("valid").Element("end");
-                }
+                var dateStr = (string)values.Element("valid").Element("date") ?? (string)values.Element("valid").Element("end");
                 if (!DateTime.TryParse(dateStr, out DateTime date))
                 {
                     throw new InvalidDataException($"Invalid format: {dateStr}");
@@ -85,7 +81,7 @@ namespace SummaryCreator.IO.Xml
                         }
                         dataPoint.CapturedAt = date;
 
-                        var timeSeries = meteoTimeSeries.FirstOrDefault(x => x.Id.Equals(type, StringComparison.InvariantCultureIgnoreCase));
+                        var timeSeries = meteoTimeSeries.Find(x => x.Id.Equals(type, StringComparison.InvariantCultureIgnoreCase));
                         if (timeSeries == null)
                         {
                             timeSeries = new MeteoTimeSeries(type);

@@ -62,7 +62,7 @@ namespace SummaryCreator.IO.Csv
 
             var filePrefix = file.Name.Split(fileNameSeparator).FirstOrDefault();
 
-            return filePrefix != null && filePrefix.Equals(dbdataIdenticator, StringComparison.InvariantCulture);
+            return filePrefix?.Equals(dbdataIdenticator, StringComparison.InvariantCulture) == true;
         }
 
         private bool IsSelMeterSensor(FileInfo file)

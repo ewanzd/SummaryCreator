@@ -216,7 +216,7 @@ namespace SummaryCreator.IO.Excel
             {
                 var timeSeries = data[ids[0]];
 
-                if (timeSeries != null && timeSeries.AnyBetween(startDateTime, endDateTime))
+                if (timeSeries?.AnyBetween(startDateTime, endDateTime) == true)
                 {
                     return timeSeries.TotalUntil(endDateTime);
                 }
