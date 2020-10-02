@@ -22,7 +22,7 @@ namespace SummaryCreator.IO.Xml
             this.sourceFile = sourceFile;
         }
 
-        public IEnumerable<IContainer> Read()
+        public IEnumerable<ITimeSeries> Read()
         {
             var xDocument = XDocument.Load(sourceFile.OpenRead());
 
@@ -33,19 +33,19 @@ namespace SummaryCreator.IO.Xml
         /// Evaluate meteo data from xml tree.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<IContainer> Evaluation(XElement root)
+        private IEnumerable<ITimeSeries> Evaluation(XElement root)
         {
-            // list of data containers
-            var meteoDataContainers = new List<IContainer>();
+            // list of meteo time series
+            var meteoTimeSeries = new List<ITimeSeries>();
 
             // get base element
             IEnumerable<XElement> meteodata = root.Elements("meteodata");
 
             // find location data
-            IEnumerable<XElement> locationContainer = meteodata.Elements("location");
+            IEnumerable<XElement> locationTimeSeries = meteodata.Elements("location");
 
             // of data of this location
-            foreach (var values in locationContainer.Elements("values"))
+            foreach (var values in locationTimeSeries.Elements("values"))
             {
                 // get date and safe it
                 var dateStr = (string)values.Element("valid").Element("date");
@@ -85,18 +85,18 @@ namespace SummaryCreator.IO.Xml
                         }
                         dataPoint.CapturedAt = date;
 
-                        var container = meteoDataContainers.FirstOrDefault(x => x.Id.Equals(type, StringComparison.InvariantCultureIgnoreCase));
-                        if (container == null)
+                        var timeSeries = meteoTimeSeries.FirstOrDefault(x => x.Id.Equals(type, StringComparison.InvariantCultureIgnoreCase));
+                        if (timeSeries == null)
                         {
-                            container = new MeteoContainer(type);
-                            meteoDataContainers.Add(container);
+                            timeSeries = new MeteoTimeSeries(type);
+                            meteoTimeSeries.Add(timeSeries);
                         }
-                        container.Add(dataPoint);
+                        timeSeries.Add(dataPoint);
                     }
                 }
             }
 
-            return meteoDataContainers;
+            return meteoTimeSeries;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace SummaryCreator.Services
         /// </summary>
         /// <param name="sourceDirectory">Path to directory with sensor data.</param>
         /// <returns></returns>
-        public IEnumerable<IContainer> ReadSensorData(DirectoryInfo sourceDirectory)
+        public IEnumerable<ITimeSeries> ReadSensorData(DirectoryInfo sourceDirectory)
         {
             var reader = new DirectoryCsvReader(sourceDirectory);
 
@@ -29,7 +29,7 @@ namespace SummaryCreator.Services
         /// </summary>
         /// <param name="sourceFile"></param>
         /// <returns></returns>
-        public IEnumerable<IContainer> ReadMeteoData(FileInfo sourceFile)
+        public IEnumerable<ITimeSeries> ReadMeteoData(FileInfo sourceFile)
         {
             var reader = new MeteoXmlReader(sourceFile);
 
@@ -39,15 +39,15 @@ namespace SummaryCreator.Services
         /// <summary>
         /// Write all data to file.
         /// </summary>
-        /// <param name="containers"></param>
+        /// <param name="timeSeriesGroup"></param>
         /// <param name="destinationExcel"></param>
         /// <param name="sheetName"></param>
         /// <param name="idRow"></param>
-        public void WriteToExcel(IEnumerable<IContainer> containers, FileInfo destinationExcel, string sheetName, int idRow)
+        public void WriteToExcel(IEnumerable<ITimeSeries> timeSeriesGroup, FileInfo destinationExcel, string sheetName, int idRow)
         {
             var writer = new EppExcelWriter(destinationExcel, sheetName, idRow);
 
-            writer.Write(containers);
+            writer.Write(timeSeriesGroup);
         }
     }
 }

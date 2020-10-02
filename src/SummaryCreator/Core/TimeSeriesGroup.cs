@@ -6,28 +6,28 @@ using System.Linq;
 namespace SummaryCreator.Core
 {
     /// <summary>
-    /// Manage a group of containers.
+    /// Manage a group of time series.
     /// </summary>
-    public sealed class ContainerGroup : IEnumerable<IContainer>
+    public sealed class TimeSeriesGroup : IEnumerable<ITimeSeries>
     {
-        private readonly List<IContainer> containers = new List<IContainer>();
+        private readonly List<ITimeSeries> timeSeries = new List<ITimeSeries>();
 
         /// <summary>
-        /// Get container by Id.
+        /// Get time series by Id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IContainer this[string id] {
+        public ITimeSeries this[string id] {
             get {
                 if (id == null) return null;
 
-                return containers.FirstOrDefault(c => c.Id.Equals(id, StringComparison.InvariantCulture));
+                return timeSeries.FirstOrDefault(c => c.Id.Equals(id, StringComparison.InvariantCulture));
             }
         }
 
         public int Count {
             get {
-                return containers.Count;
+                return timeSeries.Count;
             }
         }
 
@@ -36,11 +36,11 @@ namespace SummaryCreator.Core
         /// </summary>
         public DataPoint FirstDataPoint {
             get {
-                if (containers.Count == 0)
+                if (timeSeries.Count == 0)
                 {
                     return null;
                 }
-                return containers.Select(x => x.First).Aggregate((dpMin, x) => (dpMin == null || (x?.CapturedAt ?? DateTime.MaxValue) < dpMin.CapturedAt ? x : dpMin));
+                return timeSeries.Select(x => x.First).Aggregate((dpMin, x) => (dpMin == null || (x?.CapturedAt ?? DateTime.MaxValue) < dpMin.CapturedAt ? x : dpMin));
             }
         }
 
@@ -49,43 +49,43 @@ namespace SummaryCreator.Core
         /// </summary>
         public DataPoint LastDataPoint {
             get {
-                if (containers.Count == 0)
+                if (timeSeries.Count == 0)
                 {
                     return null;
                 }
-                return containers.Select(x => x.Last).Aggregate((dpMax, x) => (dpMax == null || (x?.CapturedAt ?? DateTime.MinValue) > dpMax.CapturedAt ? x : dpMax));
+                return timeSeries.Select(x => x.Last).Aggregate((dpMax, x) => (dpMax == null || (x?.CapturedAt ?? DateTime.MinValue) > dpMax.CapturedAt ? x : dpMax));
             }
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="dataContainer"></param>
+        /// <param name="timeSeries"></param>
         /// <exception cref="ArgumentNullException">Null is not allowed.</exception>
-        public void Add(IContainer dataContainer)
+        public void Add(ITimeSeries timeSeries)
         {
-            if (dataContainer == null) throw new ArgumentNullException(nameof(dataContainer));
+            if (timeSeries == null) throw new ArgumentNullException(nameof(timeSeries));
 
-            containers.Add(dataContainer);
+            this.timeSeries.Add(timeSeries);
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="dataContainers"></param>
+        /// <param name="timeSeries"></param>
         /// <exception cref="ArgumentNullException">Null is not allowed.</exception>
         /// <exception cref="ArgumentException">IEnumerable contains null values.</exception>
-        public void AddRange(IEnumerable<IContainer> dataContainers)
+        public void AddRange(IEnumerable<ITimeSeries> timeSeries)
         {
-            if (dataContainers == null) throw new ArgumentNullException(nameof(dataContainers));
-            if (dataContainers.Any(x => x == null)) throw new ArgumentException($"{nameof(dataContainers)} cannot contain null values.");
+            if (timeSeries == null) throw new ArgumentNullException(nameof(timeSeries));
+            if (timeSeries.Any(x => x == null)) throw new ArgumentException($"{nameof(timeSeries)} cannot contain null values.");
 
-            containers.AddRange(dataContainers);
+            this.timeSeries.AddRange(timeSeries);
         }
 
         public bool AnyBetween(DateTimeOffset start, DateTimeOffset end)
         {
-            return containers.Any(container => container.AnyBetween(start, end));
+            return timeSeries.Any(timeSeries => timeSeries.AnyBetween(start, end));
         }
 
         /// <summary>
@@ -96,17 +96,17 @@ namespace SummaryCreator.Core
         /// <returns>Sum of all values in time range.</returns>
         public double Sum(DateTimeOffset start, DateTimeOffset end)
         {
-            return containers.Sum(x => x.Sum(start, end));
+            return timeSeries.Sum(x => x.Sum(start, end));
         }
 
-        public double Total(DateTimeOffset pointInTime)
+        public double TotalUntil(DateTimeOffset pointInTime)
         {
-            return containers.Sum(x => x.TotalUntil(pointInTime));
+            return timeSeries.Sum(x => x.TotalUntil(pointInTime));
         }
 
-        public IEnumerator<IContainer> GetEnumerator()
+        public IEnumerator<ITimeSeries> GetEnumerator()
         {
-            return containers.GetEnumerator();
+            return timeSeries.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

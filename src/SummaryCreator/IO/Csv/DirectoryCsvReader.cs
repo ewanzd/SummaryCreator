@@ -25,9 +25,9 @@ namespace SummaryCreator.IO.Csv
             this.sourceDirectory = sourceDirectory ?? throw new ArgumentNullException(nameof(sourceDirectory));
         }
 
-        public IEnumerable<IContainer> Read()
+        public IEnumerable<ITimeSeries> Read()
         {
-            List<IContainer> containers = new List<IContainer>();
+            List<ITimeSeries> timeSeriesGroup = new List<ITimeSeries>();
 
             foreach (var file in sourceDirectory.EnumerateFiles())
             {
@@ -39,21 +39,21 @@ namespace SummaryCreator.IO.Csv
                 if (IsDbdataSensor(file))
                 {
                     var reader = new DbdataSensorCsvReader(file);
-                    containers.AddRange(reader.Read());
+                    timeSeriesGroup.AddRange(reader.Read());
                 }
                 else if(IsSelMeterSensor(file))
                 {
                     var reader = new SelMeterCsvReader(file);
-                    containers.AddRange(reader.Read());
+                    timeSeriesGroup.AddRange(reader.Read());
                 }
                 else
                 {
                     var reader = new SensorCsvReader(file);
-                    containers.AddRange(reader.Read());
+                    timeSeriesGroup.AddRange(reader.Read());
                 }
             }
 
-            return containers;
+            return timeSeriesGroup;
         }
 
         private bool IsDbdataSensor(FileInfo file)

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace SummaryCreator.Core
 {
     /// <summary>
-    /// Container for data points of a specific sensor.
+    /// Time series of data points.
     /// </summary>
-    public interface IContainer : IEnumerable<DataPoint>
+    public interface ITimeSeries : IEnumerable<DataPoint>
     {
         /// <summary>
         /// Id of sensor.
@@ -14,7 +14,7 @@ namespace SummaryCreator.Core
         string Id { get; }
 
         /// <summary>
-        /// Total amount of data points in this container.
+        /// Total amount of data points in this time series.
         /// </summary>
         int Count { get; }
 
@@ -37,7 +37,7 @@ namespace SummaryCreator.Core
         bool AnyBetween(DateTimeOffset start, DateTimeOffset end);
 
         /// <summary>
-        /// Add a new data point to container.
+        /// Add a new data point to time series.
         /// </summary>
         /// <param name="dataPoint">Data point to add.</param>
         void Add(DataPoint dataPoint);

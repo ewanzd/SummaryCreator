@@ -1,18 +1,18 @@
-using SummaryCreator.Core;
+﻿using SummaryCreator.Core;
 using System;
 using Xunit;
 
 namespace SummaryCreator.UnitTests
 {
-    public class SensorContainerUnitTests
+    public class MeteoTimeSeriesUnitTests
     {
         private const double Accuracy = 0.000001;
 
         [Fact]
-        public void SensorContainer_Empty()
+        public void MeteoTimeSeries_Empty()
         {
             var id = "1234";
-            var container = new SensorContainer(id);
+            var container = new MeteoTimeSeries(id);
 
             Assert.Equal(id, container.Id);
             Assert.Equal(0, container.Count);
@@ -24,16 +24,16 @@ namespace SummaryCreator.UnitTests
         }
 
         [Fact]
-        public void SensorContainer_OneEntry()
+        public void MeteoTimeSeries_OneEntry()
         {
             var dataPoint = new DataPoint()
             {
-                CapturedAt = new DateTime(2019, 4, 29, 12, 0, 0),
+                CapturedAt = new DateTimeOffset(2019, 4, 29, 12, 0, 0, TimeSpan.FromHours(2)),
                 Value = 1000
             };
 
             var id = "1234";
-            var container = new SensorContainer(id);
+            var container = new MeteoTimeSeries(id);
             container.Add(dataPoint);
 
             Assert.Equal(id, container.Id);
@@ -43,7 +43,7 @@ namespace SummaryCreator.UnitTests
             Assert.True(container.AnyBetween(new DateTime(2019, 4, 29), new DateTime(2019, 4, 30)));
 
             Assert.InRange(container.Sum(DateTimeOffset.MinValue, new DateTime(2019, 4, 29)), 0.0 - Accuracy, 0.0 + Accuracy);
-            Assert.InRange(container.Sum(new DateTime(2019, 4, 30), DateTimeOffset.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
+            Assert.InRange(container.Sum(new DateTime(2019, 4, 30), DateTime.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
             Assert.Equal(dataPoint.Value, container.Sum(new DateTime(2019, 4, 29), new DateTime(2019, 4, 30)));
 
             Assert.InRange(container.TotalUntil(new DateTime(2019, 4, 29)), 0.0 - Accuracy, 0.0 + Accuracy);
@@ -52,7 +52,7 @@ namespace SummaryCreator.UnitTests
         }
 
         [Fact]
-        public void SensorContainer_MultipleEntry()
+        public void MeteoTimeSeries_MultipleEntry()
         {
             var dataPoint1 = new DataPoint()
             {
@@ -71,7 +71,7 @@ namespace SummaryCreator.UnitTests
             };
 
             var id = "1234";
-            var container = new SensorContainer(id);
+            var container = new MeteoTimeSeries(id);
             container.Add(dataPoint1);
             container.Add(dataPoint2);
             container.Add(dataPoint3);
@@ -86,15 +86,15 @@ namespace SummaryCreator.UnitTests
 
             Assert.InRange(container.Sum(DateTimeOffset.MinValue, new DateTime(2019, 4, 28)), 0.0 - Accuracy, 0.0 + Accuracy);
             Assert.InRange(container.Sum(new DateTime(2019, 5, 1), DateTimeOffset.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
-            var sum = dataPoint3.Value - dataPoint1.Value;
-            Assert.Equal(sum, container.Sum(new DateTime(2019, 4, 29), new DateTime(2019, 4, 30, 23, 0, 0)));
+            var sum = dataPoint1.Value + dataPoint2.Value + dataPoint3.Value;
+            Assert.Equal(sum, container.Sum(new DateTime(2019, 4, 28), new DateTime(2019, 4, 30, 23, 0, 0)));
             Assert.InRange(container.Sum(DateTimeOffset.MinValue, new DateTime(2019, 4, 28)), 0.0 - Accuracy, 0.0 + Accuracy);
             Assert.InRange(container.Sum(new DateTime(2019, 5, 01), DateTimeOffset.MaxValue), 0.0 - Accuracy, 0.0 + Accuracy);
 
             Assert.InRange(container.TotalUntil(new DateTime(2019, 4, 28)), 0.0 - Accuracy, 0.0 + Accuracy);
             Assert.Equal(dataPoint1.Value, container.TotalUntil(new DateTime(2019, 4, 29)));
-            Assert.Equal(dataPoint3.Value, container.TotalUntil(new DateTime(2019, 5, 01)));
-            Assert.Equal(dataPoint3.Value, container.TotalUntil(DateTimeOffset.MaxValue));
+            Assert.Equal(sum, container.TotalUntil(new DateTime(2019, 5, 01)));
+            Assert.Equal(sum, container.TotalUntil(DateTimeOffset.MaxValue));
         }
     }
 }

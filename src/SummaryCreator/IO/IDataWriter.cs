@@ -5,6 +5,6 @@ namespace SummaryCreator.IO
 {
     public interface IDataWriter
     {
-        void Write(IEnumerable<IContainer> containers);
+        void Write(IEnumerable<ITimeSeries> timeSeriesGroup);
     }
 }

@@ -20,9 +20,9 @@ namespace SummaryCreator.IO.Csv
             this.sourceFile = sourceFile ?? throw new ArgumentNullException(nameof(sourceFile));
         }
 
-        public IEnumerable<IContainer> Read()
+        public IEnumerable<ITimeSeries> Read()
         {
-            var containers = new Dictionary<string, IContainer>();
+            var timeSeriesDict = new Dictionary<string, ITimeSeries>();
 
             // get file content enumerator
             var fileEnumerator = ReadFile(sourceFile).GetEnumerator();
@@ -31,26 +31,26 @@ namespace SummaryCreator.IO.Csv
             fileEnumerator.MoveNext();
 
             // convert all row to objects
-            IContainer dataContainer;
+            ITimeSeries timeSeries;
             while (fileEnumerator.MoveNext())
             {
                 var row = fileEnumerator.Current;
                 var entry = ConvertToEntry(row, rowSeperator);
 
-                // check if id is available, otherwise create new container
-                if (containers.TryGetValue(entry.id, out dataContainer))
+                // check if id is available, otherwise create new time series
+                if (timeSeriesDict.TryGetValue(entry.id, out timeSeries))
                 {
-                    dataContainer.Add(entry.dp);
+                    timeSeries.Add(entry.dp);
                 }
                 else
                 {
-                    dataContainer = new SensorContainer(entry.id);
-                    dataContainer.Add(entry.dp);
-                    containers.Add(entry.id, dataContainer);
+                    timeSeries = new SensorTimeSeries(entry.id);
+                    timeSeries.Add(entry.dp);
+                    timeSeriesDict.Add(entry.id, timeSeries);
                 }
             }
 
-            return new List<IContainer>(containers.Values);
+            return new List<ITimeSeries>(timeSeriesDict.Values);
         }
 
         /// <summary>

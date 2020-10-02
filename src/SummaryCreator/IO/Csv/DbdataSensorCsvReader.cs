@@ -21,10 +21,10 @@ namespace SummaryCreator.IO.Csv
             this.sourceFile = sourceFile ?? throw new ArgumentNullException(nameof(sourceFile));
         }
 
-        public IEnumerable<IContainer> Read()
+        public IEnumerable<ITimeSeries> Read()
         {
             var id = ExtractId(sourceFile);
-            var dataContainer = new SensorContainer(id);
+            var sensorTimeSeries = new SensorTimeSeries(id);
 
             // get file content enumerator
             var fileEnumerator = ReadFile(sourceFile).GetEnumerator();
@@ -37,10 +37,10 @@ namespace SummaryCreator.IO.Csv
             {
                 var row = fileEnumerator.Current;
                 var dataPoint = ConvertToEntry(row, rowSeperator);
-                dataContainer.Add(dataPoint);
+                sensorTimeSeries.Add(dataPoint);
             }
 
-            return new List<IContainer>() { dataContainer };
+            return new List<ITimeSeries>() { sensorTimeSeries };
         }
 
         /// <summary>

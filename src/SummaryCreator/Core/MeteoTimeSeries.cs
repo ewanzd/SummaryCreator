@@ -6,9 +6,9 @@ using System.Linq;
 namespace SummaryCreator.Core
 {
     /// <summary>
-    /// Container for meteo data.
+    /// Time series for meteo data.
     /// </summary>
-    public sealed class MeteoContainer : IContainer
+    public sealed class MeteoTimeSeries : ITimeSeries
     {
         private readonly SortedList<DateTimeOffset, DataPoint> dataPoints = new SortedList<DateTimeOffset, DataPoint>();
 
@@ -17,7 +17,7 @@ namespace SummaryCreator.Core
         /// </summary>
         /// <param name="id"></param>
         /// <exception cref="ArgumentException"><paramref name="id"/> must contain a valid string value (not null or white space).</exception>
-        public MeteoContainer(string id)
+        public MeteoTimeSeries(string id)
         {
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException($"{nameof(id)} must contain a value.");
 

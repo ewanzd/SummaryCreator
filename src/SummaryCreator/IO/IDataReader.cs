@@ -5,6 +5,6 @@ namespace SummaryCreator.IO
 {
     public interface IDataReader
     {
-        IEnumerable<IContainer> Read();
+        IEnumerable<ITimeSeries> Read();
     }
 }

@@ -35,15 +35,15 @@ namespace SummaryCreator.IO.Excel
             excelIdRowIndex = idRow;
         }
 
-        public void Write(IEnumerable<IContainer> containers)
+        public void Write(IEnumerable<ITimeSeries> timeSeriesGroup)
         {
-            if (containers == null) throw new ArgumentNullException(nameof(containers));
-            if (containers.Any(x => x == null)) throw new ArgumentException("IEnumerable contains null values.", nameof(containers));
+            if (timeSeriesGroup == null) throw new ArgumentNullException(nameof(timeSeriesGroup));
+            if (timeSeriesGroup.Any(x => x == null)) throw new ArgumentException("IEnumerable contains null values.", nameof(timeSeriesGroup));
 
-            if (!(containers is ContainerGroup containerGroup))
+            if (!(timeSeriesGroup is TimeSeriesGroup timeSeriesGroupInstance))
             {
-                containerGroup = new ContainerGroup();
-                containerGroup.AddRange(containers);
+                timeSeriesGroupInstance = new TimeSeriesGroup();
+                timeSeriesGroupInstance.AddRange(timeSeriesGroup);
             }
 
             using var excelPack = new ExcelPackage(excelFile);
@@ -55,12 +55,12 @@ namespace SummaryCreator.IO.Excel
             }
 
             var edrWorksheet = new EppWorksheet(worksheet);
-            FillDataIntoTable(edrWorksheet, containerGroup);
+            FillDataIntoTable(edrWorksheet, timeSeriesGroupInstance);
 
             excelPack.Save();
         }
 
-        private void FillDataIntoTable(IWorksheet worksheet, ContainerGroup data)
+        private void FillDataIntoTable(IWorksheet worksheet, TimeSeriesGroup data)
         {
             DateTime start = data.FirstDataPoint.CapturedAt.Date;
             DateTime current = start;
@@ -85,7 +85,7 @@ namespace SummaryCreator.IO.Excel
             return value.Split(seperator).Select(x => x.Trim()).ToArray();
         }
 
-        private void InsertData(IWorksheet worksheet, ContainerGroup data, int rowIndex, DateTime startDateTime)
+        private void InsertData(IWorksheet worksheet, TimeSeriesGroup data, int rowIndex, DateTime startDateTime)
         {
             var colsCount = worksheet.Cols;
             for (int col = 1; col <= colsCount; col++)
@@ -98,12 +98,12 @@ namespace SummaryCreator.IO.Excel
                     continue;
                 }
 
-                if (ids.Length == 1 && data[ids[0]] is MeteoContainer)
+                if (ids.Length == 1 && data[ids[0]] is MeteoTimeSeries)
                 {
-                    var meteoContainer = data[ids[0]] as MeteoContainer;
+                    var meteoTimeSeries = data[ids[0]] as MeteoTimeSeries;
                     var endDateTime = startDateTime + TimeSpan.FromDays(1);
 
-                    var dataPoint = meteoContainer.FirstOrDefault(x =>
+                    var dataPoint = meteoTimeSeries.FirstOrDefault(x =>
                         x.CapturedAt >= startDateTime &&
                         x.CapturedAt < endDateTime &&
                         x.CapturedAt.ToUniversalTime().Hour == 12);
@@ -191,7 +191,7 @@ namespace SummaryCreator.IO.Excel
             return -1;
         }
 
-        private static DateTime NextDay(ContainerGroup dataPoints, DateTime currentDateTime)
+        private static DateTime NextDay(TimeSeriesGroup dataPoints, DateTime currentDateTime)
         {
             var tomorrow = currentDateTime + TimeSpan.FromDays(1);
 
@@ -200,31 +200,31 @@ namespace SummaryCreator.IO.Excel
                 return tomorrow;
             }
 
-            var leftContainers = dataPoints.OrderBy(x => x.Last.CapturedAt).SkipWhile(x => tomorrow > x.Last.CapturedAt);
-            return !leftContainers.Any() ?
+            var leftTimeSeries = dataPoints.OrderBy(x => x.Last.CapturedAt).SkipWhile(x => tomorrow > x.Last.CapturedAt);
+            return !leftTimeSeries.Any() ?
                 tomorrow :
-                leftContainers
+                leftTimeSeries
                     .Aggregate((minItem, nextItem) => minItem.First.CapturedAt < nextItem.First.CapturedAt ? minItem : nextItem)
                     .First.CapturedAt.Date;
         }
 
-        private static double GetTotalByIdAndDay(ContainerGroup data, string[] ids, DateTime startDateTime)
+        private static double GetTotalByIdAndDay(TimeSeriesGroup data, string[] ids, DateTime startDateTime)
         {
             var endDateTime = startDateTime + TimeSpan.FromDays(1);
 
             if (ids.Length == 1)
             {
-                var container = data[ids[0]];
+                var timeSeries = data[ids[0]];
 
-                if (container != null && container.AnyBetween(startDateTime, endDateTime))
+                if (timeSeries != null && timeSeries.AnyBetween(startDateTime, endDateTime))
                 {
-                    return container.TotalUntil(endDateTime);
+                    return timeSeries.TotalUntil(endDateTime);
                 }
             }
             else if (ids.Length > 1)
             {
-                // create a sub group of all containers
-                ContainerGroup group = new ContainerGroup();
+                // create a sub group of all time series
+                TimeSeriesGroup group = new TimeSeriesGroup();
                 foreach (var exId in ids)
                 {
                     var item = data[exId];
@@ -236,7 +236,7 @@ namespace SummaryCreator.IO.Excel
 
                 if (group.AnyBetween(startDateTime, endDateTime))
                 {
-                    return group.Total(endDateTime);
+                    return group.TotalUntil(endDateTime);
                 }
             }
 

@@ -115,20 +115,20 @@ namespace SummaryCreator.View
             var destinationExcel = new FileInfo(view.ExcelPath);
 
             // load data
-            var containers = new List<IContainer>();
+            var timeSeriesGroup = new List<ITimeSeries>();
 
             Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
-            containers.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
+            timeSeriesGroup.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
 
             if (meteoSourceFile.Exists)
             {
                 Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
-                containers.AddRange(dataService.ReadMeteoData(meteoSourceFile));
+                timeSeriesGroup.AddRange(dataService.ReadMeteoData(meteoSourceFile));
             }
 
             // write to excel
             Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
-            dataService.WriteToExcel(containers, destinationExcel, view.TableName, view.IdRow);
+            dataService.WriteToExcel(timeSeriesGroup, destinationExcel, view.TableName, view.IdRow);
         }
 
         public void OnStop()
