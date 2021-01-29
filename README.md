@@ -4,7 +4,7 @@ SummaryCreator collects time series data from `.csv` and meteorological data fro
 
 ## Requirements
 
-- .NET Core 3.1 SDK ([Download](https://dotnet.microsoft.com/download))
+- .NET 5.0 SDK ([Download](https://dotnet.microsoft.com/download))
 
 ## Build and Publish
 
