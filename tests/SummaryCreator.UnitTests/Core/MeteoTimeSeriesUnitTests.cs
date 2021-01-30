@@ -1,8 +1,7 @@
-﻿using SummaryCreator.Core;
-using System;
+﻿using System;
 using Xunit;
 
-namespace SummaryCreator.UnitTests
+namespace SummaryCreator.Core.UnitTests
 {
     public class MeteoTimeSeriesUnitTests
     {

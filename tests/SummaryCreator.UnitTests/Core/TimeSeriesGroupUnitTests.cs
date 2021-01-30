@@ -1,9 +1,8 @@
-﻿using SummaryCreator.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace SummaryCreator.UnitTests
+namespace SummaryCreator.Core.UnitTests
 {
     public class TimeSeriesGroupUnitTests
     {
