@@ -1,9 +1,10 @@
+using SummaryCreator.Configuration;
+using SummaryCreator.Configuration.Json;
 using SummaryCreator.Services;
-using SummaryCreator.View;
 using System;
 using System.Globalization;
 using System.IO;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace SummaryCreator
 {
@@ -13,62 +14,42 @@ namespace SummaryCreator
     internal static class Program
     {
         /// <summary>
-        /// Path to configuration file.
-        /// </summary>
-        private static readonly string IniPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "SummaryCreator",
-            "SummaryCreator.ini");
-
-        /// <summary>
         /// For logging.
         /// </summary>
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [STAThread]
-        private static void Main()
+        public static int Main(string[] args)
         {
-            Logger.Info(CultureInfo.InvariantCulture, "{0} started.", Application.ProductName);
-            Logger.Info(CultureInfo.InvariantCulture, "Path to configuration file: {0}", IniPath);
+            return MainAsync(args).GetAwaiter().GetResult();
+        }
 
+        private static async Task<int> MainAsync(string[] args)
+        {
             try
             {
-                Startup();
+                await RunAsync(args).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
-                throw;
+                return 1;
             }
-            finally
-            {
-                Logger.Info(CultureInfo.InvariantCulture, "{0} exited.", Application.ProductName);
-            }
+
+            return 0;
         }
 
-        private static void Startup()
+        private static async Task RunAsync(string[] args)
         {
-            // configure application for windows forms
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            if (args.Length < 1) throw new InvalidDataException("Missing path to configuration file");
 
-            // load configurations
-            var configuration = new IniConfigurationService(IniPath);
-            configuration.Reload();
+            var configurationFilePath = new FileInfo(args[0]);
 
-            // dependency injection
-            var dataService = new DataService();
-            var configView = new ConfigForm();
-            _ = new ConfigPresenter(configView, dataService, configuration);
+            Logger.Info(CultureInfo.InvariantCulture, "Path to configuration file: {0}", configurationFilePath);
 
-            // show windows
-            configView.Show();
+            var reader = new DefaultConfigurationReader(new JsonConfigurationConverter());
+            var configuration = await reader.LoadAsync(configurationFilePath).ConfigureAwait(false);
 
-            // run application until exit
-            Application.Run();
-
-            configView.Dispose();
+            new AppService(new DataService()).ProcessTimeSeriesData(configuration);
         }
     }
 }

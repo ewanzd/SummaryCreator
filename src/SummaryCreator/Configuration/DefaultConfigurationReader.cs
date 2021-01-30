@@ -14,10 +14,10 @@ namespace SummaryCreator.Configuration
             this.configurationConverter = configurationConverter ?? throw new ArgumentNullException(nameof(configurationConverter));
         }
 
-        public Task<SummaryCreatorConfig> LoadAsync(string filePath, CancellationToken cancellationToken = default)
+        public async Task<SummaryCreatorConfig> LoadAsync(FileInfo filePath, CancellationToken cancellationToken = default)
         {
-            using FileStream fileStream = File.Open(filePath, FileMode.Open);
-            return configurationConverter.ConvertAsync(fileStream, cancellationToken);
+            await using FileStream fileStream = filePath.OpenRead();
+            return await configurationConverter.ConvertAsync(fileStream, cancellationToken).ConfigureAwait(false);
         }
     }
 }
