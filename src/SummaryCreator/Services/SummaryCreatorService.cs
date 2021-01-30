@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace SummaryCreator.Services
 {
-    public class AppService
+    public class SummaryCreatorService
     {
-        public AppService(DataService dataService)
+        public SummaryCreatorService(DataService dataService)
         {
             this.dataService = dataService;
         }

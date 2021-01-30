@@ -49,7 +49,7 @@ namespace SummaryCreator
             var reader = new DefaultConfigurationReader(new JsonConfigurationConverter());
             var configuration = await reader.LoadAsync(configurationFilePath).ConfigureAwait(false);
 
-            new AppService(new DataService()).ProcessTimeSeriesData(configuration);
+            new SummaryCreatorService(new DataService()).ProcessTimeSeriesData(configuration);
         }
     }
 }
