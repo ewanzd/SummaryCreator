@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SummaryCreator.IO
 {
-    public interface IDataWriter
+    public interface ITimeSeriesWriter
     {
         void Write(IEnumerable<ITimeSeries> timeSeriesGroup);
     }

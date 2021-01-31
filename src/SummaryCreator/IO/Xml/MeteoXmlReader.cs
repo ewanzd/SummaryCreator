@@ -11,7 +11,7 @@ namespace SummaryCreator.IO.Xml
     /// <summary>
     /// Reader for meteo data.
     /// </summary>
-    public sealed class MeteoXmlReader : IDataReader
+    public sealed class MeteoXmlReader : ITimeSeriesReader
     {
         private readonly FileInfo sourceFile;
 

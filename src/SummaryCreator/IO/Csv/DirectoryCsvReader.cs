@@ -10,7 +10,7 @@ namespace SummaryCreator.IO.Csv
     /// <summary>
     /// Read every csv file in directory.
     /// </summary>
-    public sealed class DirectoryCsvReader : IDataReader
+    public sealed class DirectoryCsvReader : ITimeSeriesReader
     {
         private const char fileNameSeparator = '_';
         private const string fileExtension = ".csv";

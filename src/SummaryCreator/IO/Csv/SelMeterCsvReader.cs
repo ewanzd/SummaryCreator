@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace SummaryCreator.IO.Csv
 {
-    public class SelMeterCsvReader : IDataReader
+    public class SelMeterCsvReader : ITimeSeriesReader
     {
         private const char fileNameSeparator = '_';
         private const char rowSeperator = ';';

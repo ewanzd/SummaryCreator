@@ -9,7 +9,7 @@ namespace SummaryCreator.IO.Csv
     /// <summary>
     /// Read sensor data (old format).
     /// </summary>
-    public sealed class SensorCsvReader : IDataReader
+    public sealed class SensorCsvReader : ITimeSeriesReader
     {
         private const char rowSeperator = ';';
 

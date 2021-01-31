@@ -9,7 +9,7 @@ namespace SummaryCreator.IO.Csv
     /// <summary>
     /// Read sensor data file with new format (file name starts with dbdata, content is time series).
     /// </summary>
-    public sealed class DbdataSensorCsvReader : IDataReader
+    public sealed class DbdataSensorCsvReader : ITimeSeriesReader
     {
         private const char fileNameSeparator = '_';
         private const char rowSeperator = ',';

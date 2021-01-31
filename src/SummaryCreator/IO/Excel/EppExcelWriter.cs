@@ -13,7 +13,7 @@ namespace SummaryCreator.IO.Excel
     /// Write data to excel file.
     /// https://github.com/JanKallman/EPPlus
     /// </summary>
-    public sealed class EppExcelWriter : IDataWriter
+    public sealed class EppExcelWriter : ITimeSeriesWriter
     {
         private const int DATETIME_COLUMN = 1;
         private const char COL_SEPERATOR = ';';

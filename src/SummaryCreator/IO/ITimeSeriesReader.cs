@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SummaryCreator.IO
 {
-    public interface IDataReader
+    public interface ITimeSeriesReader
     {
         IEnumerable<ITimeSeries> Read();
     }
