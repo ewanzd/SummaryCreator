@@ -2,7 +2,7 @@
 
 namespace SummaryCreator.Utils
 {
-    public static class ReadOnlySpanExtensions
+    public static class StringExtensions
     {
         public static LineSplitEnumerator SplitLines(this string str)
         {
