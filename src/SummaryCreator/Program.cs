@@ -1,5 +1,8 @@
 using SummaryCreator.Configuration;
 using SummaryCreator.Configuration.Json;
+using SummaryCreator.IO;
+using SummaryCreator.IO.Excel;
+using SummaryCreator.IO.Xml;
 using SummaryCreator.Services;
 using System;
 using System.Globalization;
@@ -53,7 +56,10 @@ namespace SummaryCreator
             var configurations = await reader.ReadAsync(configurationFilePath).ConfigureAwait(false);
 
             Logger.Info(CultureInfo.InvariantCulture, "Initialize time series service");
-            var timeSeriesService = new TimeSeriesService();
+            var timeSeriesReaderFactory = new TimeSeriesReaderFactory();
+            var meteoReader = new MeteoXmlReader();
+            var excelWriter = new EppExcelWriter();
+            var timeSeriesService = new TimeSeriesService(timeSeriesReaderFactory, meteoReader, excelWriter);
 
             // read and write time series data
             Logger.Info(CultureInfo.InvariantCulture, "Read time series data from sources");
@@ -61,7 +67,7 @@ namespace SummaryCreator
 
             // write time series data to target excel files
             Logger.Info(CultureInfo.InvariantCulture, "Write time series data to target files");
-            await timeSeriesService.WriteAsnyc(configurations.Excel, timeSeries).ConfigureAwait(false);
+            await timeSeriesService.WriteAsync(timeSeries, configurations.Excel).ConfigureAwait(false);
         }
     }
 }

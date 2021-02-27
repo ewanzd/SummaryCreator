@@ -126,7 +126,7 @@ namespace SummaryCreator.Configuration
 
         public string Sheet { get; set; }
 
-        public long Row { get; set; }
+        public int Row { get; set; }
 
         public override bool Equals(object obj)
         {

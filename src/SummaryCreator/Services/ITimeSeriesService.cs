@@ -9,6 +9,6 @@ namespace SummaryCreator.Services
     {
         Task<IEnumerable<ITimeSeries>> ReadAsync(TimeSeriesConfig config);
 
-        Task WriteAsync(ExcelConfig excelConfig, IEnumerable<ITimeSeries> timeSeries);
+        Task WriteAsync(IEnumerable<ITimeSeries> timeSeries, IEnumerable<ExcelConfig> excelConfigs);
     }
 }

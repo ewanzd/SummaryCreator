@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using SummaryCreator.Configuration;
 using SummaryCreator.Core;
 using System;
 using System.Collections.Generic;
@@ -13,32 +14,20 @@ namespace SummaryCreator.IO.Excel
     /// Write data to excel file.
     /// https://github.com/JanKallman/EPPlus
     /// </summary>
-    public sealed class EppExcelWriter : ITimeSeriesWriter
+    public sealed class EppExcelWriter : IExcelWriter
     {
         private const int DATETIME_COLUMN = 1;
         private const char COL_SEPERATOR = ';';
 
-        private readonly FileInfo excelFile;
-        private readonly string excelSheetName;
-        private readonly int excelIdRowIndex;
-
         private int lastRow = 1;
 
-        public EppExcelWriter(FileInfo targetFile, string sheetName, int idRow)
-        {
-            if (targetFile == null) throw new ArgumentNullException(nameof(targetFile));
-            if (sheetName == null) throw new ArgumentNullException(nameof(sheetName));
-            if (idRow <= 0) throw new ArgumentOutOfRangeException(nameof(idRow), "Value must be higher than 0.");
-
-            excelFile = targetFile;
-            excelSheetName = sheetName;
-            excelIdRowIndex = idRow;
-        }
-
-        public void Write(IEnumerable<ITimeSeries> timeSeriesGroup)
+        public void Write(IEnumerable<ITimeSeries> timeSeriesGroup, Stream contentStream, ExcelConfig excelConfig)
         {
             if (timeSeriesGroup == null) throw new ArgumentNullException(nameof(timeSeriesGroup));
             if (timeSeriesGroup.Any(x => x == null)) throw new ArgumentException("IEnumerable contains null values.", nameof(timeSeriesGroup));
+
+            if (excelConfig.Sheet == null) throw new ArgumentNullException(nameof(excelConfig.Sheet));
+            if (excelConfig.Row <= 0) throw new ArgumentOutOfRangeException(nameof(excelConfig.Row), "Value must be higher than 0.");
 
             if (!(timeSeriesGroup is TimeSeriesGroup timeSeriesGroupInstance))
             {
@@ -46,21 +35,21 @@ namespace SummaryCreator.IO.Excel
                 timeSeriesGroupInstance.AddRange(timeSeriesGroup);
             }
 
-            using var excelPack = new ExcelPackage(excelFile);
+            using var excelPack = new ExcelPackage(contentStream);
 
-            var worksheet = excelPack.Workbook.Worksheets[excelSheetName];
+            var worksheet = excelPack.Workbook.Worksheets[excelConfig.Sheet];
             if (worksheet == null)
             {
-                throw new InvalidDataException($"Table '{excelSheetName}' not found.");
+                throw new InvalidDataException($"Table '{excelConfig.Sheet}' not found.");
             }
 
             var edrWorksheet = new EppWorksheet(worksheet);
-            FillDataIntoTable(edrWorksheet, timeSeriesGroupInstance);
+            FillDataIntoTable(edrWorksheet, timeSeriesGroupInstance, excelConfig.Row);
 
             excelPack.Save();
         }
 
-        private void FillDataIntoTable(IWorksheet worksheet, TimeSeriesGroup data)
+        private void FillDataIntoTable(IWorksheet worksheet, TimeSeriesGroup data, int excelIdRowIndex)
         {
             DateTime start = data.FirstDataPoint.CapturedAt.Date;
             DateTime current = start;
@@ -69,7 +58,7 @@ namespace SummaryCreator.IO.Excel
             while (current <= end)
             {
                 var rowIndex = GetOrCreateRowByDateTime(worksheet, current);
-                InsertData(worksheet, data, rowIndex, current);
+                InsertData(worksheet, data, rowIndex, current, excelIdRowIndex);
 
                 current = NextDay(data, current);
             }
@@ -85,7 +74,7 @@ namespace SummaryCreator.IO.Excel
             return value.Split(seperator).Select(x => x.Trim()).ToArray();
         }
 
-        private void InsertData(IWorksheet worksheet, TimeSeriesGroup data, int rowIndex, DateTime startDateTime)
+        private void InsertData(IWorksheet worksheet, TimeSeriesGroup data, int rowIndex, DateTime startDateTime, int excelIdRowIndex)
         {
             var colsCount = worksheet.Cols;
             for (int col = 1; col <= colsCount; col++)

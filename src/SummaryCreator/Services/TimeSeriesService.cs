@@ -5,54 +5,61 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SummaryCreator.Services
 {
-    public class TimeSeriesService : ITimeSeriesService
+    public sealed class TimeSeriesService : ITimeSeriesService
     {
-        /// <summary>
-        /// For logging.
-        /// </summary>
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public Task<IEnumerable<ITimeSeries>> ReadAsync(TimeSeriesConfig config)
+        private readonly ITimeSeriesReaderFactory timeSeriesReaderFactory;
+        private readonly ITimeSeriesReader meteoReader;
+        private readonly IExcelWriter excelWriter;
+
+        public TimeSeriesService(ITimeSeriesReaderFactory timeSeriesReaderFactory, ITimeSeriesReader meteoReader, IExcelWriter excelWriter)
         {
-            //var c = File.OpenRead("");
-            //c.re
-            //var content = await File.Read.ReadAllTextAsync("");
-
-
-            //var sensorSourceDirectory = new DirectoryInfo(config.TimeSeries.Sensors.First().Resource.OriginalString);
-            //var meteoSourceFile = new FileInfo(config.TimeSeries.Meteo.First().Resource.OriginalString);
-            //var destinationExcel = new FileInfo(config.Excel.First().Resource.OriginalString);
-
-            //// load data
-            //var timeSeriesGroup = new List<ITimeSeries>();
-
-            //Logger.Info(CultureInfo.InvariantCulture, "Load sensor data.");
-            //timeSeriesGroup.AddRange(dataService.ReadSensorData(sensorSourceDirectory));
-
-            //if (meteoSourceFile.Exists)
-            //{
-            //    Logger.Info(CultureInfo.InvariantCulture, "Load meteo data.");
-            //    timeSeriesGroup.AddRange(dataService.ReadMeteoData(meteoSourceFile));
-            //}
-
-            return Task.FromResult(Enumerable.Empty<ITimeSeries>());
+            this.timeSeriesReaderFactory = timeSeriesReaderFactory ?? throw new ArgumentNullException(nameof(timeSeriesReaderFactory));
+            this.meteoReader = meteoReader ?? throw new ArgumentNullException(nameof(meteoReader));
+            this.excelWriter = excelWriter ?? throw new ArgumentNullException(nameof(excelWriter));
         }
 
-        public Task WriteAsync(ExcelConfig excelConfig, IEnumerable<ITimeSeries> timeSeries)
+        public async Task<IEnumerable<ITimeSeries>> ReadAsync(TimeSeriesConfig config)
         {
-            // write to excel
-            Logger.Info(CultureInfo.InvariantCulture, "Write results to excel.");
-            //dataService.WriteToExcel(timeSeriesGroup, destinationExcel, config.Excel.First().Sheet, (int)config.Excel.First().Row);
-            return Task.FromResult(0);
+            var timeSeriesGroup = new List<ITimeSeries>();
+            
+            foreach (var sensorConfig in config.Sensors)
+            {
+                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0} with format {1}", sensorConfig.Resource, sensorConfig.Format.ToString());
+
+                var content = await File.ReadAllTextAsync(sensorConfig.Resource).ConfigureAwait(false);
+
+                var sensorReader = timeSeriesReaderFactory.CreateSensorReader(sensorConfig);
+                var sensorTimeSeries = sensorReader.Read(sensorConfig.Resource, content);
+                timeSeriesGroup.AddRange(sensorTimeSeries);
+            }
+
+            foreach (var meteoConfig in config.Meteo)
+            {
+                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0} with format {1}", meteoConfig.Resource);
+
+                var content = await File.ReadAllTextAsync(meteoConfig.Resource).ConfigureAwait(false);
+                var meteoTimeSeries = meteoReader.Read(meteoConfig.Resource, content);
+                timeSeriesGroup.AddRange(meteoTimeSeries);
+            }
+
+            return timeSeriesGroup;
         }
 
-        public Task WriteAsnyc(IEnumerable<ExcelConfig> excel, IEnumerable<ITimeSeries> timeSeries)
+        public Task WriteAsync(IEnumerable<ITimeSeries> timeSeries, IEnumerable<ExcelConfig> excelConfigs)
         {
+            foreach (var excelConfig in excelConfigs)
+            {
+                Logger.Info(CultureInfo.InvariantCulture, "Write results to {0}", excelConfig.Resource);
+                using var fileStream = File.Open(excelConfig.Resource, FileMode.Open, FileAccess.ReadWrite);
+                excelWriter.Write(timeSeries, fileStream, excelConfig);
+            }
+
             return Task.FromResult(0);
         }
     }
