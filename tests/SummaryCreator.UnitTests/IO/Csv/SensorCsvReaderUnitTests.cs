@@ -28,6 +28,30 @@ namespace SummaryCreator.IO.Csv.UnitTests
             Assert.Equal(id, timeSerie.Id);
         }
 
+        [Fact]
+        public void Read_TwoSensors()
+        {
+            var id1 = "2";
+            var id2 = "3";
+
+            var content = $";Serial number;;;;;;\n" +
+                $"10.12.2019 00:00:37;{id1};;;;;;;\n" +
+                $"10.12.2019 00:00:37;{id2};;;;;;;\n";
+
+            var reader = new SensorCsvReader();
+            var timeSeries = reader.Read(null, content);
+
+            Assert.Equal(2, timeSeries.Count());
+
+            var timeSerie1 = timeSeries.Where(x => id1.Equals(x.Id)).First();
+
+            Assert.Single(timeSerie1);
+
+            var timeSerie2 = timeSeries.Where(x => id2.Equals(x.Id)).First();
+
+            Assert.Single(timeSerie2);
+        }
+
         [Theory]
         [InlineData("2")]
         [InlineData("10.12.2019 00:00:37;2;")]
