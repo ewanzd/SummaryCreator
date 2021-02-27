@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SummaryCreator": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Danilo\\Projects\\SummaryCreator\\example.json"
+    }
+  }
+}

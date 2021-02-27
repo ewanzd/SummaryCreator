@@ -33,12 +33,12 @@ namespace SummaryCreator.Configuration.Json
 
         private static MeteoConfig ConvertToMeteoConfig(JsonMeteoModel meteoModel)
         {
-            if (!Uri.TryCreate(meteoModel.Resource, UriKind.RelativeOrAbsolute, out Uri resource))
+            if (!Uri.IsWellFormedUriString(meteoModel.Resource, UriKind.RelativeOrAbsolute))
                 throw new InvalidDataException($"'{meteoModel.Resource}' is not a valid uri format");
 
             return new MeteoConfig()
             {
-                Resource = resource
+                Resource = meteoModel.Resource
             };
         }
 
@@ -47,19 +47,20 @@ namespace SummaryCreator.Configuration.Json
             if (!Enum.TryParse(sensorModel.Format, out SensorContentFormat sensorContentFormat))
                 throw new InvalidDataException($"'{sensorModel.Format}' is not a valid value");
 
-            if (!Uri.TryCreate(sensorModel.Resource, UriKind.RelativeOrAbsolute, out Uri resource))
+            if (!Uri.IsWellFormedUriString(sensorModel.Resource, UriKind.RelativeOrAbsolute))
                 throw new InvalidDataException($"'{sensorModel.Resource}' is not a valid uri format");
 
             return new SensorConfig()
             {
                 Format = sensorContentFormat,
-                Resource = resource
+                Resource = sensorModel.Resource
             };
         }
 
         private static ExcelConfig ConvertToExcelConfig(JsonExcelModel excelModel)
         {
-            if (!Uri.TryCreate(excelModel.Resource, UriKind.RelativeOrAbsolute, out Uri resource))
+            
+            if (!Uri.IsWellFormedUriString(excelModel.Resource, UriKind.RelativeOrAbsolute))
                 throw new InvalidDataException($"'{excelModel.Resource}' is not a valid uri format");
 
             if (string.IsNullOrEmpty(excelModel.Sheet))
@@ -70,7 +71,7 @@ namespace SummaryCreator.Configuration.Json
 
             return new ExcelConfig()
             {
-                Resource = resource,
+                Resource = excelModel.Resource,
                 Sheet = excelModel.Sheet,
                 Row = excelModel.Row
             };

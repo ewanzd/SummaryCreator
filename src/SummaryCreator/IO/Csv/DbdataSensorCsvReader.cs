@@ -1,4 +1,5 @@
 ﻿using SummaryCreator.Core;
+using SummaryCreator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,30 +14,23 @@ namespace SummaryCreator.IO.Csv
     {
         private const char fileNameSeparator = '_';
         private const char rowSeperator = ',';
+        private const string dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+        private static readonly CultureInfo culture = CultureInfo.InvariantCulture;
 
-        private readonly FileInfo sourceFile;
-
-        public DbdataSensorCsvReader(FileInfo sourceFile)
+        public IEnumerable<ITimeSeries> Read(string resource, string content)
         {
-            this.sourceFile = sourceFile ?? throw new ArgumentNullException(nameof(sourceFile));
-        }
-
-        public IEnumerable<ITimeSeries> Read()
-        {
-            var id = ExtractId(sourceFile);
+            var id = ExtractId(resource, fileNameSeparator);
             var sensorTimeSeries = new SensorTimeSeries(id);
 
-            // get file content enumerator
-            var fileEnumerator = ReadFile(sourceFile).GetEnumerator();
+            var contentEnumerator = content.SplitLines();
 
-            // skip first line
-            fileEnumerator.MoveNext();
-
-            // convert all row to objects
-            while (fileEnumerator.MoveNext())
+            // skip first line of csv 
+            contentEnumerator.MoveNext();
+            
+            // convert all data to internal data structure
+            foreach (ReadOnlySpan<char> line in contentEnumerator)
             {
-                var row = fileEnumerator.Current;
-                var dataPoint = ConvertToEntry(row, rowSeperator);
+                var dataPoint = ConvertToEntry(line, rowSeperator);
                 sensorTimeSeries.Add(dataPoint);
             }
 
@@ -46,73 +40,66 @@ namespace SummaryCreator.IO.Csv
         /// <summary>
         /// Create a new row with data from string.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="separator"></param>
+        /// <param name="line">Csv content text line.</param>
+        /// <param name="separator">Line entry seperator.</param>
         /// <returns>Return a new full row.</returns>
-        private DataPoint ConvertToEntry(string row, char separator)
+        private static DataPoint ConvertToEntry(ReadOnlySpan<char> line, char separator)
         {
             DataPoint dataPoint = new DataPoint();
 
-            var fields = GetFields(row, separator);
+            var index = line.IndexOf(separator);
 
-            if (fields.Length != 2)
+            if(index == -1)
             {
-                throw new InvalidDataException($"Invalid format: {row}");
+                throw new InvalidDataException($"Invalid format: {line.ToString()}");
             }
 
+            var valueSpan = line.Slice(0, index).Trim();
+
             // convert value
-            if (double.TryParse(fields[0], NumberStyles.Any, CultureInfo.InvariantCulture, out double val))
+            if (double.TryParse(valueSpan, NumberStyles.Any, CultureInfo.InvariantCulture, out double val))
             {
                 dataPoint.Value = val;
             }
             else
             {
-                throw new InvalidDataException($"Invalid format: {fields[0]}");
+                throw new InvalidDataException($"Invalid format: {valueSpan.ToString()}");
             }
 
+            var dateTimeSpan = line[(index + 1)..].Trim();
+
             // convert date
-            if (DateTime.TryParse(fields[1], out DateTime dtTemp))
+            if (DateTime.TryParseExact(dateTimeSpan, dateTimeFormat, culture, DateTimeStyles.None, out DateTime dtTemp))
             {
                 dataPoint.CapturedAt = DateTime.SpecifyKind(dtTemp, DateTimeKind.Local);
             }
             else
             {
-                throw new InvalidDataException($"Invalid format: {fields[1]}");
+                throw new InvalidDataException($"Invalid format: {dateTimeSpan.ToString()}");
             }
 
             return dataPoint;
         }
 
         /// <summary>
-        /// Get all rows from file with IEnumerable.
-        /// </summary>
-        /// <param name="path">The path to the file.</param>
-        /// <returns>Return a row at array with cells as string[].</returns>
-        private static IEnumerable<string> ReadFile(FileInfo file)
-        {
-            using StreamReader reader = file.OpenText();
-            while (!reader.EndOfStream)
-            {
-                yield return reader.ReadLine();
-            }
-        }
-
-        private static string[] GetFields(string row, char separator)
-        {
-            return row.Split(separator);
-        }
-
-        /// <summary>
         /// Extract sensor id from file name.
         /// </summary>
         /// <param name="file">Path to file with data.</param>
+        /// <param name="separator"></param>
         /// <returns>Id of sensor.</returns>
-        private string ExtractId(FileInfo file)
+        private static string ExtractId(string file, char separator)
         {
             // id of the sensor in file name
             // Example: dbdata_6F5CBF4A-FC2F-4E67-99A6-3AFB3D9C2E46.csv
-            var fileName = Path.GetFileNameWithoutExtension(file.FullName);
-            return fileName.Split(fileNameSeparator)[1];
+            var fileName = Path.GetFileNameWithoutExtension(file);
+            var fileNameParts = fileName.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            if(fileNameParts.Length < 2)
+            {
+                throw new ArgumentException("Invalid file name", nameof(file));
+            }
+
+            return fileNameParts[1];
         }
     }
 }

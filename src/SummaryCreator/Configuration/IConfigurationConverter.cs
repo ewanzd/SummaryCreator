@@ -20,6 +20,13 @@ namespace SummaryCreator.Configuration
         Task<SummaryCreatorConfig> ConvertAsync(Stream contentStream, CancellationToken cancellationToken = default);
     }
 
+    public enum SensorContentFormat
+    {
+        Unknown,
+        Sel,
+        Selv2
+    }
+
     public class SummaryCreatorConfig : IEquatable<SummaryCreatorConfig>
     {
         public TimeSeriesConfig TimeSeries { get; set; }
@@ -70,7 +77,7 @@ namespace SummaryCreator.Configuration
 
     public class MeteoConfig : IEquatable<MeteoConfig>
     {
-        public Uri Resource { get; set; }
+        public string Resource { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -80,7 +87,7 @@ namespace SummaryCreator.Configuration
         public bool Equals(MeteoConfig other)
         {
             return other != null &&
-                   EqualityComparer<Uri>.Default.Equals(Resource, other.Resource);
+                   Resource == other.Resource;
         }
 
         public override int GetHashCode()
@@ -93,7 +100,7 @@ namespace SummaryCreator.Configuration
     {
         public SensorContentFormat Format { get; set; }
 
-        public Uri Resource { get; set; }
+        public string Resource { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -104,7 +111,7 @@ namespace SummaryCreator.Configuration
         {
             return other != null &&
                    Format == other.Format &&
-                   EqualityComparer<Uri>.Default.Equals(Resource, other.Resource);
+                   Resource == other.Resource;
         }
 
         public override int GetHashCode()
@@ -113,15 +120,10 @@ namespace SummaryCreator.Configuration
         }
     }
 
-    public enum SensorContentFormat
-    {
-        Sel,
-        Selv2
-    }
 
     public class ExcelConfig : IEquatable<ExcelConfig>
     {
-        public Uri Resource { get; set; }
+        public string Resource { get; set; }
 
         public string Sheet { get; set; }
 
@@ -135,8 +137,8 @@ namespace SummaryCreator.Configuration
         public bool Equals(ExcelConfig other)
         {
             return other != null &&
-                   EqualityComparer<Uri>.Default.Equals(Resource, other.Resource) &&
-                   string.Equals(Sheet, other.Sheet) &&
+                   Resource == other.Resource &&
+                   Sheet == other.Sheet &&
                    Row == other.Row;
         }
 

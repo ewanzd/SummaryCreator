@@ -29,6 +29,11 @@ namespace SummaryCreator.IO.Xml
             return Evaluation(xDocument.Root);
         }
 
+        public IEnumerable<ITimeSeries> Read(string resource, string content)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Evaluate meteo data from xml tree.
         /// </summary>

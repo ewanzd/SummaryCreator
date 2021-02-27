@@ -17,12 +17,12 @@ namespace SummaryCreator.Services
         /// </summary>
         /// <param name="sourceDirectory">Path to directory with sensor data.</param>
         /// <returns></returns>
-        public IEnumerable<ITimeSeries> ReadSensorData(DirectoryInfo sourceDirectory)
-        {
-            var reader = new DirectoryCsvReader(sourceDirectory);
+        //public IEnumerable<ITimeSeries> ReadSensorData(DirectoryInfo sourceDirectory)
+        //{
+        //    var reader = new DirectoryCsvReader(sourceDirectory);
 
-            return reader.Read();
-        }
+        //    return reader.Read();
+        //}
 
         /// <summary>
         /// Read meteo data from file.

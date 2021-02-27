@@ -1,4 +1,5 @@
 ﻿using SummaryCreator.Core;
+using SummaryCreator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,27 +13,22 @@ namespace SummaryCreator.IO.Csv
     public sealed class SensorCsvReader : ITimeSeriesReader
     {
         private const char rowSeperator = ';';
+        private const string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
+        private static readonly CultureInfo culture = CultureInfo.InvariantCulture;
 
-        private readonly FileInfo sourceFile;
-
-        public SensorCsvReader(FileInfo sourceFile)
-        {
-            this.sourceFile = sourceFile ?? throw new ArgumentNullException(nameof(sourceFile));
-        }
-
-        public IEnumerable<ITimeSeries> Read()
+        public IEnumerable<ITimeSeries> Read(string resource, string content)
         {
             var timeSeriesDict = new Dictionary<string, ITimeSeries>();
 
-            // get file content enumerator
-            var fileEnumerator = ReadFile(sourceFile).GetEnumerator();
+            var contentEnumerator = content.SplitLines();
 
-            // skip first line
-            fileEnumerator.MoveNext();
-            while (fileEnumerator.MoveNext())
+            // skip first line of csv 
+            contentEnumerator.MoveNext();
+
+            // convert all data to internal data structure
+            foreach (ReadOnlySpan<char> line in contentEnumerator)
             {
-                var row = fileEnumerator.Current;
-                var (id, dataPoint) = ConvertToEntry(row, rowSeperator);
+                var (id, dataPoint) = ConvertToEntry(line, rowSeperator);
 
                 // convert all row to objects
                 // check if id is available, otherwise create new time series
@@ -54,81 +50,114 @@ namespace SummaryCreator.IO.Csv
         /// <summary>
         /// Create a new row with data from string.
         /// </summary>
-        /// <param name="row"></param>
+        /// <param name="line"></param>
         /// <param name="separator"></param>
         /// <returns>Return a new full row.</returns>
-        private (string id, DataPoint dp) ConvertToEntry(string row, char separator)
+        private static (string id, DataPoint dp) ConvertToEntry(ReadOnlySpan<char> line, char separator)
         {
             DataPoint dataPoint = new DataPoint();
 
-            var fields = GetFields(row, separator);
+            var lineEntries = ExtractLineEntries(line, separator);
 
-            if (fields.Length < 8)
-            {
-                throw new InvalidDataException($"Invalid format: {row}");
-            }
+            dataPoint.CapturedAt = lineEntries.DateTimeEntry;
 
-            // convert date
-            if (DateTime.TryParse(fields[0], out DateTime dtTemp))
+            if(lineEntries.EnergyTotalEntry != default)
             {
-                dataPoint.CapturedAt = DateTime.SpecifyKind(dtTemp, DateTimeKind.Local);
+                dataPoint.Value = lineEntries.EnergyTotalEntry;
             }
             else
             {
-                throw new InvalidDataException($"Invalid format: {fields[0]}");
-            }
-
-            // get sensor id
-            string id = fields[1];
-
-            // convert total if available, otherwise calculate it
-            if (double.TryParse(fields[2], NumberStyles.Any, CultureInfo.InvariantCulture, out double total))
-            {
-                dataPoint.Value = total;
-            }
-            else
-            {
-                // convert second value
-                if (double.TryParse(fields[4], NumberStyles.Any, CultureInfo.InvariantCulture, out double val1))
+                if (lineEntries.EnergyTarif1Entry != default)
                 {
-                    dataPoint.Value = val1;
+                    dataPoint.Value = lineEntries.EnergyTarif1Entry;
                 }
-                else
+                if (lineEntries.EnergyTarif2Entry != default)
                 {
-                    throw new InvalidDataException($"Invalid format: {fields[4]}");
-                }
-
-                // convert second value
-                if (double.TryParse(fields[6], NumberStyles.Any, CultureInfo.InvariantCulture, out double val2))
-                {
-                    dataPoint.Value += val2;
-                }
-                else
-                {
-                    throw new InvalidDataException($"Invalid format: {fields[6]}");
+                    dataPoint.Value += lineEntries.EnergyTarif2Entry;
                 }
             }
 
-            return (id, dataPoint);
+            return (lineEntries.SerialNumberEntry, dataPoint);
         }
 
-        /// <summary>
-        /// Get all rows from file with IEnumerable.
-        /// </summary>
-        /// <param name="path">The path to the file.</param>
-        /// <returns>Return a row at array with cells as string[].</returns>
-        private static IEnumerable<string> ReadFile(FileInfo file)
+        private static LineEntries ExtractLineEntries(ReadOnlySpan<char> line, char separator)
         {
-            using StreamReader reader = file.OpenText();
-            while (!reader.EndOfStream)
+            LineEntries lineEntries = default;
+
+            for (int i = 0; i < 8; i++)
             {
-                yield return reader.ReadLine();
+                var index = line.IndexOf(separator);
+
+                if (index == -1)
+                {
+                    throw new InvalidDataException($"Invalid format: {line.ToString()}");
+                }
+
+                var entrySpan = line[(index + 1)..].Trim();
+
+                if (i == 0)
+                {
+                    // convert date
+                    if (DateTime.TryParseExact(entrySpan, dateTimeFormat, culture, DateTimeStyles.None, out DateTime dtTemp))
+                    {
+                        lineEntries.DateTimeEntry = DateTime.SpecifyKind(dtTemp, DateTimeKind.Local);
+                    }
+                    else
+                    {
+                        throw new InvalidDataException($"Invalid format: {entrySpan.ToString()}");
+                    }
+                }
+                else if (i == 1)
+                {
+                    // get sensor id
+                    lineEntries.SerialNumberEntry = entrySpan.ToString();
+                }
+                else if (i == 2)
+                {
+                    // convert total if available, otherwise calculate it
+                    if (double.TryParse(entrySpan, NumberStyles.Any, CultureInfo.InvariantCulture, out double total))
+                    {
+                        lineEntries.EnergyTotalEntry = total;
+                    }
+                }
+                else if (i == 4)
+                {
+                    // convert total if available, otherwise calculate it
+                    if (double.TryParse(entrySpan, NumberStyles.Any, CultureInfo.InvariantCulture, out double tarif1))
+                    {
+                        lineEntries.EnergyTarif1Entry = tarif1;
+                    }
+                    else
+                    {
+                        throw new InvalidDataException($"Invalid format: {entrySpan.ToString()}");
+                    }
+                }
+                else if (i == 6)
+                {
+                    // convert total if available, otherwise calculate it
+                    if (double.TryParse(entrySpan, NumberStyles.Any, CultureInfo.InvariantCulture, out double tarif2))
+                    {
+                        lineEntries.EnergyTarif2Entry = tarif2;
+                    }
+                    else
+                    {
+                        throw new InvalidDataException($"Invalid format: {entrySpan.ToString()}");
+                    }
+                }
+
+                line = line.Slice(index + 1);
             }
+
+            return lineEntries;
         }
 
-        private static string[] GetFields(string row, char separator)
+        private struct LineEntries
         {
-            return row.Split(separator);
+            public DateTime DateTimeEntry;
+            public string SerialNumberEntry;
+            public double EnergyTotalEntry;
+            public double EnergyTarif1Entry;
+            public double EnergyTarif2Entry;
         }
     }
 }

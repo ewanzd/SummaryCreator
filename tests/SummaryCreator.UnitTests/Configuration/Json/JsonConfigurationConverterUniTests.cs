@@ -1,13 +1,10 @@
-﻿using SummaryCreator.Configuration;
-using SummaryCreator.Configuration.Json;
-using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SummaryCreator.UnitTests.Configuration.Json
+namespace SummaryCreator.Configuration.Json.UnitTests
 {
     public class JsonConfigurationConverterUniTests
     {
@@ -62,8 +59,8 @@ namespace SummaryCreator.UnitTests.Configuration.Json
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
-            Assert.Contains(new MeteoConfig() { Resource = new Uri("any.json", UriKind.RelativeOrAbsolute) }, configuration.TimeSeries.Meteo);
-            Assert.Contains(new MeteoConfig() { Resource = new Uri("second.json", UriKind.RelativeOrAbsolute) }, configuration.TimeSeries.Meteo);
+            Assert.Contains(new MeteoConfig() { Resource = "any.json" }, configuration.TimeSeries.Meteo);
+            Assert.Contains(new MeteoConfig() { Resource = "second.json" }, configuration.TimeSeries.Meteo);
         }
 
         [Fact]
@@ -76,7 +73,7 @@ namespace SummaryCreator.UnitTests.Configuration.Json
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
             Assert.Contains(
-                new SensorConfig() { Format = SensorContentFormat.Sel, Resource = new Uri("heaven.json", UriKind.RelativeOrAbsolute) }, 
+                new SensorConfig() { Format = SensorContentFormat.Sel, Resource = "heaven.json" }, 
                 configuration.TimeSeries.Sensors);
         }
 
@@ -100,7 +97,7 @@ namespace SummaryCreator.UnitTests.Configuration.Json
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
-            Assert.Contains(new ExcelConfig() { Resource = new Uri("homer.xlsx", UriKind.RelativeOrAbsolute), Sheet = "atlantis", Row = 1 }, configuration.Excel);
+            Assert.Contains(new ExcelConfig() { Resource = "homer.xlsx", Sheet = "atlantis", Row = 1 }, configuration.Excel);
         }
 
         [Fact]

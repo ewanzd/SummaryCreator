@@ -15,6 +15,6 @@ namespace SummaryCreator.Configuration
         /// <param name="file">Path to configuration file.</param>
         /// <param name="cancellationToken">A token that may be used to cancel the read operation.</param>
         /// <returns>Filled configuration object.</returns>
-        Task<SummaryCreatorConfig> LoadAsync(FileInfo file, CancellationToken cancellationToken = default);
+        Task<SummaryCreatorConfig> ReadAsync(FileInfo file, CancellationToken cancellationToken = default);
     }
 }

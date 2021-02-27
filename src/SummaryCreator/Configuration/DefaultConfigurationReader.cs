@@ -14,7 +14,7 @@ namespace SummaryCreator.Configuration
             this.configurationConverter = configurationConverter ?? throw new ArgumentNullException(nameof(configurationConverter));
         }
 
-        public async Task<SummaryCreatorConfig> LoadAsync(FileInfo filePath, CancellationToken cancellationToken = default)
+        public async Task<SummaryCreatorConfig> ReadAsync(FileInfo filePath, CancellationToken cancellationToken = default)
         {
             await using FileStream fileStream = filePath.OpenRead();
             return await configurationConverter.ConvertAsync(fileStream, cancellationToken).ConfigureAwait(false);
