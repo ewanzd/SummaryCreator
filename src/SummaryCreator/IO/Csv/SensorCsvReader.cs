@@ -87,13 +87,13 @@ namespace SummaryCreator.IO.Csv
             for (int i = 0; i < 8; i++)
             {
                 var index = line.IndexOf(separator);
-                var entrySpan = ReadOnlySpan<char>.Empty;
+                ReadOnlySpan<char> entrySpan;
 
                 if (index == -1 && i < 7)
                 {
                     throw new InvalidDataException($"Invalid format: {line.ToString()}");
                 }
-                else if(index == -1 && i == 7)
+                else if (index == -1 && i == 7)
                 {
                     entrySpan = line.Trim();
                 }
@@ -144,7 +144,7 @@ namespace SummaryCreator.IO.Csv
                     }
                 }
 
-                line = line.Slice(index + 1);
+                line = line[(index + 1)..];
             }
 
             return lineEntries;

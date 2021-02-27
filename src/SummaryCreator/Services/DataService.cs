@@ -29,12 +29,12 @@ namespace SummaryCreator.Services
         /// </summary>
         /// <param name="sourceFile"></param>
         /// <returns></returns>
-        public IEnumerable<ITimeSeries> ReadMeteoData(FileInfo sourceFile)
-        {
-            var reader = new MeteoXmlReader(sourceFile);
+        //public IEnumerable<ITimeSeries> ReadMeteoData(FileInfo sourceFile)
+        //{
+        //    var reader = new MeteoXmlReader(sourceFile);
 
-            return reader.Read();
-        }
+        //    return reader.Read();
+        //}
 
         /// <summary>
         /// Write all data to file.
@@ -43,11 +43,11 @@ namespace SummaryCreator.Services
         /// <param name="destinationExcel"></param>
         /// <param name="sheetName"></param>
         /// <param name="idRow"></param>
-        public void WriteToExcel(IEnumerable<ITimeSeries> timeSeriesGroup, FileInfo destinationExcel, string sheetName, int idRow)
-        {
-            var writer = new EppExcelWriter(destinationExcel, sheetName, idRow);
+        //public void WriteToExcel(IEnumerable<ITimeSeries> timeSeriesGroup, FileInfo destinationExcel, string sheetName, int idRow)
+        //{
+        //    var writer = new EppExcelWriter(destinationExcel, sheetName, idRow);
 
-            writer.Write(timeSeriesGroup);
-        }
+        //    writer.Write(timeSeriesGroup);
+        //}
     }
 }

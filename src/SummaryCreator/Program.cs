@@ -51,17 +51,17 @@ namespace SummaryCreator
             // read data needed for processing time series data
             Logger.Info(CultureInfo.InvariantCulture, "Read configurations");
             var configurations = await reader.ReadAsync(configurationFilePath).ConfigureAwait(false);
-            
+
             Logger.Info(CultureInfo.InvariantCulture, "Initialize time series service");
             var timeSeriesService = new TimeSeriesService();
 
             // read and write time series data
             Logger.Info(CultureInfo.InvariantCulture, "Read time series data from sources");
-            var timeSeries = await timeSeriesService.ReadAsync(configurations.TimeSeries);
+            var timeSeries = await timeSeriesService.ReadAsync(configurations.TimeSeries).ConfigureAwait(false);
 
             // write time series data to target excel files
             Logger.Info(CultureInfo.InvariantCulture, "Write time series data to target files");
-            await timeSeriesService.WriteAsnyc(configurations.Excel, timeSeries);
+            await timeSeriesService.WriteAsnyc(configurations.Excel, timeSeries).ConfigureAwait(false);
         }
     }
 }

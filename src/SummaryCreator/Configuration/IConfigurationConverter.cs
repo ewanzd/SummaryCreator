@@ -120,7 +120,6 @@ namespace SummaryCreator.Configuration
         }
     }
 
-
     public class ExcelConfig : IEquatable<ExcelConfig>
     {
         public string Resource { get; set; }

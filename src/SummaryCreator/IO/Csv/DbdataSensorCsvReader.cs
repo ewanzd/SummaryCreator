@@ -26,7 +26,7 @@ namespace SummaryCreator.IO.Csv
 
             // skip first line of csv 
             contentEnumerator.MoveNext();
-            
+
             // convert all data to internal data structure
             foreach (ReadOnlySpan<char> line in contentEnumerator)
             {

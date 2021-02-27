@@ -34,18 +34,15 @@ namespace SummaryCreator.IO
             if (format == SensorContentFormat.Unknown)
                 format = EvaluateContentFormat(fileInfo);
 
-            switch (format)
+            return format switch
             {
-                case SensorContentFormat.Sel:
-                    return SelReader;
-                case SensorContentFormat.Selv2:
-                    return Selv2Reader;
-                default:
-                    throw new InvalidDataException($"Format {sensorConfig.Format} not found");
-            }
+                SensorContentFormat.Sel => SelReader,
+                SensorContentFormat.Selv2 => Selv2Reader,
+                _ => throw new InvalidDataException($"Format {sensorConfig.Format} not found"),
+            };
         }
 
-        private SensorContentFormat EvaluateContentFormat(FileInfo file)
+        private static SensorContentFormat EvaluateContentFormat(FileInfo file)
         {
             Debug.Assert(file != null, $"{nameof(file)} must not be null.");
 
@@ -59,7 +56,7 @@ namespace SummaryCreator.IO
             }
         }
 
-        private bool IsDbdataSensor(FileInfo file)
+        private static bool IsDbdataSensor(FileInfo file)
         {
             Debug.Assert(file != null, $"{nameof(file)} must not be null.");
 

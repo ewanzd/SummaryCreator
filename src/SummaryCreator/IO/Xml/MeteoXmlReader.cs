@@ -13,32 +13,18 @@ namespace SummaryCreator.IO.Xml
     /// </summary>
     public sealed class MeteoXmlReader : ITimeSeriesReader
     {
-        private readonly FileInfo sourceFile;
-
-        public MeteoXmlReader(FileInfo sourceFile)
-        {
-            if (sourceFile == null) throw new ArgumentNullException(nameof(sourceFile));
-
-            this.sourceFile = sourceFile;
-        }
-
-        public IEnumerable<ITimeSeries> Read()
-        {
-            var xDocument = XDocument.Load(sourceFile.OpenRead());
-
-            return Evaluation(xDocument.Root);
-        }
-
         public IEnumerable<ITimeSeries> Read(string resource, string content)
         {
-            throw new NotImplementedException();
+            var xDocument = XDocument.Parse(content);
+
+            return Evaluation(xDocument.Root);
         }
 
         /// <summary>
         /// Evaluate meteo data from xml tree.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<ITimeSeries> Evaluation(XElement root)
+        private static IEnumerable<ITimeSeries> Evaluation(XElement root)
         {
             // list of meteo time series
             var meteoTimeSeries = new List<ITimeSeries>();
