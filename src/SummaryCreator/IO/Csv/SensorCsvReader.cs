@@ -87,13 +87,20 @@ namespace SummaryCreator.IO.Csv
             for (int i = 0; i < 8; i++)
             {
                 var index = line.IndexOf(separator);
+                var entrySpan = ReadOnlySpan<char>.Empty;
 
-                if (index == -1)
+                if (index == -1 && i < 7)
                 {
                     throw new InvalidDataException($"Invalid format: {line.ToString()}");
                 }
-
-                var entrySpan = line[(index + 1)..].Trim();
+                else if(index == -1 && i == 7)
+                {
+                    entrySpan = line.Trim();
+                }
+                else
+                {
+                    entrySpan = line.Slice(0, index).Trim();
+                }
 
                 if (i == 0)
                 {
@@ -127,10 +134,6 @@ namespace SummaryCreator.IO.Csv
                     {
                         lineEntries.EnergyTarif1Entry = tarif1;
                     }
-                    else
-                    {
-                        throw new InvalidDataException($"Invalid format: {entrySpan.ToString()}");
-                    }
                 }
                 else if (i == 6)
                 {
@@ -138,10 +141,6 @@ namespace SummaryCreator.IO.Csv
                     if (double.TryParse(entrySpan, NumberStyles.Any, CultureInfo.InvariantCulture, out double tarif2))
                     {
                         lineEntries.EnergyTarif2Entry = tarif2;
-                    }
-                    else
-                    {
-                        throw new InvalidDataException($"Invalid format: {entrySpan.ToString()}");
                     }
                 }
 
