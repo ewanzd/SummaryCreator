@@ -22,12 +22,9 @@ namespace SummaryCreator.Configuration.Json
             // ToList to validate entries immediately
             return new SummaryCreatorConfig()
             {
-                TimeSeries = new TimeSeriesConfig()
-                {
-                    Meteo = (jsonModel?.Timeseries?.Meteo?.Select(x => ConvertToMeteoConfig(x)) ?? Enumerable.Empty<MeteoConfig>()).ToList(),
-                    Sensors = (jsonModel?.Timeseries?.Sensors?.Select(x => ConvertToSensorConfig(x)) ?? Enumerable.Empty<SensorConfig>()).ToList()
-                },
-                Excel = (jsonModel?.Excel?.Select(x => ConvertToExcelConfig(x)) ?? Enumerable.Empty<ExcelConfig>()).ToList()
+                MeteoConfigs = (jsonModel?.Meteo?.Select(x => ConvertToMeteoConfig(x)) ?? Enumerable.Empty<MeteoConfig>()).ToList(),
+                EnergyConfigs = (jsonModel?.Energy?.Select(x => ConvertToEnergyConfig(x)) ?? Enumerable.Empty<EnergyConfig>()).ToList(),
+                SummaryConfigs = (jsonModel?.Summary?.Select(x => ConvertToExcelConfig(x)) ?? Enumerable.Empty<SummaryConfig>()).ToList()
             };
         }
 
@@ -42,22 +39,22 @@ namespace SummaryCreator.Configuration.Json
             };
         }
 
-        private static SensorConfig ConvertToSensorConfig(JsonSensorModel sensorModel)
+        private static EnergyConfig ConvertToEnergyConfig(JsonEnergyModel energyModel)
         {
-            if (!Enum.TryParse(sensorModel.Format, out SensorContentFormat sensorContentFormat))
-                throw new InvalidDataException($"'{sensorModel.Format}' is not a valid value");
+            if (!Enum.TryParse(energyModel.Format, out EnergySourceFormat energySourceFormat))
+                throw new InvalidDataException($"'{energyModel.Format}' is not a valid value");
 
-            if (!Uri.IsWellFormedUriString(sensorModel.Resource, UriKind.RelativeOrAbsolute))
-                throw new InvalidDataException($"'{sensorModel.Resource}' is not a valid uri format");
+            if (!Uri.IsWellFormedUriString(energyModel.Resource, UriKind.RelativeOrAbsolute))
+                throw new InvalidDataException($"'{energyModel.Resource}' is not a valid uri format");
 
-            return new SensorConfig()
+            return new EnergyConfig()
             {
-                Format = sensorContentFormat,
-                Resource = sensorModel.Resource
+                Format = energySourceFormat,
+                Resource = energyModel.Resource
             };
         }
 
-        private static ExcelConfig ConvertToExcelConfig(JsonExcelModel excelModel)
+        private static SummaryConfig ConvertToExcelConfig(JsonExcelModel excelModel)
         {
             
             if (!Uri.IsWellFormedUriString(excelModel.Resource, UriKind.RelativeOrAbsolute))
@@ -69,47 +66,46 @@ namespace SummaryCreator.Configuration.Json
             if (excelModel.Row < 0)
                 throw new InvalidDataException($"'{excelModel.Row}' must be a positive value");
 
-            return new ExcelConfig()
+            return new SummaryConfig()
             {
                 Resource = excelModel.Resource,
                 Sheet = excelModel.Sheet,
                 Row = excelModel.Row
             };
         }
-    }
 
-    public class JsonSummaryCreatorModel
-    {
-        public JsonTimeseriesModel Timeseries { get; set; }
+        private class JsonSummaryCreatorModel
+        {
+            public JsonMeteoModel[] Meteo { get; set; }
 
-        public JsonExcelModel[] Excel { get; set; }
-    }
+            public JsonEnergyModel[] Energy { get; set; }
 
-    public class JsonExcelModel
-    {
-        public string Resource { get; set; }
+            public JsonExcelModel[] Summary { get; set; }
+        }
 
-        public string Sheet { get; set; }
+        private class JsonExcelModel
+        {
+            public string Resource { get; set; }
 
-        public int Row { get; set; }
-    }
+            public string Sheet { get; set; }
 
-    public class JsonTimeseriesModel
-    {
-        public JsonMeteoModel[] Meteo { get; set; }
+            public int Row { get; set; }
+        }
 
-        public JsonSensorModel[] Sensors { get; set; }
-    }
+        private class JsonMeteoModel
+        {
+            public string ResourceType { get; set; }
 
-    public class JsonMeteoModel
-    {
-        public string Resource { get; set; }
-    }
+            public string Resource { get; set; }
+        }
 
-    public class JsonSensorModel
-    {
-        public string Format { get; set; }
+        private class JsonEnergyModel
+        {
+            public string Format { get; set; }
 
-        public string Resource { get; set; }
+            public string ResourceType { get; set; }
+
+            public string Resource { get; set; }
+        }
     }
 }

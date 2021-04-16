@@ -21,7 +21,7 @@ namespace SummaryCreator.IO.Excel
 
         private int lastRow = 1;
 
-        public void Write(IEnumerable<ITimeSeries> timeSeriesGroup, Stream contentStream, ExcelConfig excelConfig)
+        public void Write(IEnumerable<ITimeSeries> timeSeriesGroup, Stream contentStream, SummaryConfig excelConfig)
         {
             if (timeSeriesGroup == null) throw new ArgumentNullException(nameof(timeSeriesGroup));
             if (timeSeriesGroup.Any(x => x == null)) throw new ArgumentException("IEnumerable contains null values.", nameof(timeSeriesGroup));

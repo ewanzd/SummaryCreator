@@ -7,8 +7,10 @@ namespace SummaryCreator.Services
 {
     public interface ITimeSeriesService
     {
-        Task<IEnumerable<ITimeSeries>> ReadAsync(TimeSeriesConfig config);
+        Task<IEnumerable<ITimeSeries>> ReadAsync(IEnumerable<MeteoConfig> config);
 
-        Task WriteAsync(IEnumerable<ITimeSeries> timeSeries, IEnumerable<ExcelConfig> excelConfigs);
+        Task<IEnumerable<ITimeSeries>> ReadAsync(IEnumerable<EnergyConfig> config);
+
+        Task WriteAsync(IEnumerable<ITimeSeries> timeSeries, IEnumerable<SummaryConfig> excelConfigs);
     }
 }

@@ -20,7 +20,7 @@ namespace SummaryCreator.IO.UnitTests
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new SensorConfig();
+            var config = new EnergyConfig();
             Assert.Throws<ArgumentException>(() => factory.CreateSensorReader(config));
         }
 
@@ -33,7 +33,7 @@ namespace SummaryCreator.IO.UnitTests
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new SensorConfig()
+            var config = new EnergyConfig()
             {
                 Resource = resource
             };
@@ -51,7 +51,7 @@ namespace SummaryCreator.IO.UnitTests
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new SensorConfig()
+            var config = new EnergyConfig()
             {
                 Resource = resource
             };
@@ -61,14 +61,14 @@ namespace SummaryCreator.IO.UnitTests
         }
 
         [Theory]
-        [InlineData(SensorContentFormat.Unknown, typeof(SensorCsvReader))]
-        [InlineData(SensorContentFormat.Sel, typeof(SensorCsvReader))]
-        [InlineData(SensorContentFormat.Selv2, typeof(DbdataSensorCsvReader))]
-        public void CreateSensorReader_ReturnReaderBySensorContentFormat(SensorContentFormat format, Type type)
+        [InlineData(EnergySourceFormat.Unknown, typeof(SensorCsvReader))]
+        [InlineData(EnergySourceFormat.Sel, typeof(SensorCsvReader))]
+        [InlineData(EnergySourceFormat.Selv2, typeof(DbdataSensorCsvReader))]
+        public void CreateSensorReader_ReturnReaderBySensorContentFormat(EnergySourceFormat format, Type type)
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new SensorConfig()
+            var config = new EnergyConfig()
             {
                 Format = format,
                 Resource = "any"

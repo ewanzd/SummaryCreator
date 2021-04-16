@@ -18,25 +18,9 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
             Assert.NotNull(configuration);
-            Assert.NotNull(configuration.TimeSeries);
-            Assert.Empty(configuration.TimeSeries.Meteo);
-            Assert.Empty(configuration.TimeSeries.Sensors);
-            Assert.Empty(configuration.Excel);
-        }
-
-        [Fact]
-        public async Task ConvertAsync_EmptyTimeSeries()
-        {
-            var json = "{ \"timeseries\": {}}";
-            using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
-
-            var configurationConverter = new JsonConfigurationConverter();
-            var configuration = await configurationConverter.ConvertAsync(jsonStream);
-
-            Assert.NotNull(configuration);
-            Assert.NotNull(configuration.TimeSeries);
-            Assert.Empty(configuration.TimeSeries.Meteo);
-            Assert.Empty(configuration.TimeSeries.Sensors);
+            Assert.Empty(configuration.MeteoConfigs);
+            Assert.Empty(configuration.EnergyConfigs);
+            Assert.Empty(configuration.SummaryConfigs);
         }
 
         [Fact]
@@ -53,34 +37,34 @@ namespace SummaryCreator.Configuration.Json.UnitTests
         [Fact]
         public async Task ConvertAsync_TwoMeteoEntries()
         {
-            var json = "{ \"timeseries\": { \"meteo\": [{ \"resource\": \"any.json\" }, { \"resource\": \"second.json\" }]}}";
+            var json = "{ \"meteo\": [{ \"resource\": \"any.json\" }, { \"resource\": \"second.json\" }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
-            Assert.Contains(new MeteoConfig() { Resource = "any.json" }, configuration.TimeSeries.Meteo);
-            Assert.Contains(new MeteoConfig() { Resource = "second.json" }, configuration.TimeSeries.Meteo);
+            Assert.Contains(new MeteoConfig() { Resource = "any.json" }, configuration.MeteoConfigs);
+            Assert.Contains(new MeteoConfig() { Resource = "second.json" }, configuration.MeteoConfigs);
         }
 
         [Fact]
         public async Task ConvertAsync_OneSensorEntry()
         {
-            var json = "{ \"timeseries\": { \"sensors\": [{ \"format\": \"Sel\", \"resource\": \"heaven.json\" }]}}";
+            var json = "{ \"energy\": [{ \"format\": \"Sel\", \"resource\": \"heaven.json\" }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
             Assert.Contains(
-                new SensorConfig() { Format = SensorContentFormat.Sel, Resource = "heaven.json" }, 
-                configuration.TimeSeries.Sensors);
+                new EnergyConfig() { Format = EnergySourceFormat.Sel, Resource = "heaven.json" }, 
+                configuration.EnergyConfigs);
         }
 
         [Fact]
         public async Task ConvertAsync_OneSensorEntry_InvalidFormatValue()
         {
-            var json = "{ \"timeseries\": { \"sensors\": [{ \"format\": \"swiss\", \"resource\": \"heaven.json\" }]}}";
+            var json = "{ \"energy\": [{ \"format\": \"swiss\", \"resource\": \"heaven.json\" }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
             var configurationConverter = new JsonConfigurationConverter();
@@ -91,19 +75,19 @@ namespace SummaryCreator.Configuration.Json.UnitTests
         [Fact]
         public async Task ConvertAsync_OneExcelEntry()
         {
-            var json = "{ \"excel\": [{ \"resource\": \"homer.xlsx\", \"sheet\": \"atlantis\", \"row\": 1 }]}";
+            var json = "{ \"summary\": [{ \"resource\": \"homer.xlsx\", \"sheet\": \"atlantis\", \"row\": 1 }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
-            Assert.Contains(new ExcelConfig() { Resource = "homer.xlsx", Sheet = "atlantis", Row = 1 }, configuration.Excel);
+            Assert.Contains(new SummaryConfig() { Resource = "homer.xlsx", Sheet = "atlantis", Row = 1 }, configuration.SummaryConfigs);
         }
 
         [Fact]
         public async Task ConvertAsync_OneExcelEntry_MissingSheet()
         {
-            var json = "{ \"excel\": [{ \"resource\": \"homer.xlsx\", \"row\": 1 }]}";
+            var json = "{ \"summary\": [{ \"resource\": \"homer.xlsx\", \"row\": 1 }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
             var configurationConverter = new JsonConfigurationConverter();

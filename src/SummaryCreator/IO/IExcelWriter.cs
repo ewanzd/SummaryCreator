@@ -7,6 +7,6 @@ namespace SummaryCreator.IO
 {
     public interface IExcelWriter
     {
-        void Write(IEnumerable<ITimeSeries> timeSeriesGroup, Stream contentStream, ExcelConfig excelConfig);
+        void Write(IEnumerable<ITimeSeries> timeSeriesGroup, Stream contentStream, SummaryConfig excelConfig);
     }
 }

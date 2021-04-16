@@ -15,7 +15,7 @@ namespace SummaryCreator.IO
         private const char fileNameSeparator = '_';
         private const string dbdataIdenticator = "dbdata";
 
-        public ITimeSeriesReader CreateSensorReader(SensorConfig sensorConfig)
+        public ITimeSeriesReader CreateSensorReader(EnergyConfig sensorConfig)
         {
             if (sensorConfig is null)
             {
@@ -31,28 +31,28 @@ namespace SummaryCreator.IO
             var fileInfo = new FileInfo(sensorConfig.Resource);
 
             // if sensor content format is unknown, try to evaluate it
-            if (format == SensorContentFormat.Unknown)
+            if (format == EnergySourceFormat.Unknown)
                 format = EvaluateContentFormat(fileInfo);
 
             return format switch
             {
-                SensorContentFormat.Sel => SelReader,
-                SensorContentFormat.Selv2 => Selv2Reader,
+                EnergySourceFormat.Sel => SelReader,
+                EnergySourceFormat.Selv2 => Selv2Reader,
                 _ => throw new InvalidDataException($"Format {sensorConfig.Format} not found"),
             };
         }
 
-        private static SensorContentFormat EvaluateContentFormat(FileInfo file)
+        private static EnergySourceFormat EvaluateContentFormat(FileInfo file)
         {
             Debug.Assert(file != null, $"{nameof(file)} must not be null.");
 
             if (IsDbdataSensor(file))
             {
-                return SensorContentFormat.Selv2;
+                return EnergySourceFormat.Selv2;
             }
             else
             {
-                return SensorContentFormat.Sel;
+                return EnergySourceFormat.Sel;
             }
         }
 

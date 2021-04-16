@@ -20,18 +20,28 @@ namespace SummaryCreator.Configuration
         Task<SummaryCreatorConfig> ConvertAsync(Stream contentStream, CancellationToken cancellationToken = default);
     }
 
-    public enum SensorContentFormat
+    public enum EnergySourceFormat
     {
         Unknown,
         Sel,
         Selv2
     }
 
+    public enum ResourceType
+    {
+        Unknown,
+        Directory,
+        File,
+        Web
+    }
+
     public class SummaryCreatorConfig : IEquatable<SummaryCreatorConfig>
     {
-        public TimeSeriesConfig TimeSeries { get; set; }
+        public IEnumerable<MeteoConfig> MeteoConfigs { get; set; }
 
-        public IEnumerable<ExcelConfig> Excel { get; set; }
+        public IEnumerable<EnergyConfig> EnergyConfigs { get; set; }
+
+        public IEnumerable<SummaryConfig> SummaryConfigs { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -41,37 +51,14 @@ namespace SummaryCreator.Configuration
         public bool Equals(SummaryCreatorConfig other)
         {
             return other != null &&
-                   EqualityComparer<TimeSeriesConfig>.Default.Equals(TimeSeries, other.TimeSeries) &&
-                   EqualityComparer<IEnumerable<ExcelConfig>>.Default.Equals(Excel, other.Excel);
+                   EqualityComparer<IEnumerable<MeteoConfig>>.Default.Equals(MeteoConfigs, other.MeteoConfigs) &&
+                   EqualityComparer<IEnumerable<EnergyConfig>>.Default.Equals(EnergyConfigs, other.EnergyConfigs) &&
+                   EqualityComparer<IEnumerable<SummaryConfig>>.Default.Equals(SummaryConfigs, other.SummaryConfigs);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(TimeSeries, Excel);
-        }
-    }
-
-    public class TimeSeriesConfig : IEquatable<TimeSeriesConfig>
-    {
-        public IEnumerable<MeteoConfig> Meteo { get; set; }
-
-        public IEnumerable<SensorConfig> Sensors { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as TimeSeriesConfig);
-        }
-
-        public bool Equals(TimeSeriesConfig other)
-        {
-            return other != null &&
-                   EqualityComparer<IEnumerable<MeteoConfig>>.Default.Equals(Meteo, other.Meteo) &&
-                   EqualityComparer<IEnumerable<SensorConfig>>.Default.Equals(Sensors, other.Sensors);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Meteo, Sensors);
+            return HashCode.Combine(MeteoConfigs, EnergyConfigs, SummaryConfigs);
         }
     }
 
@@ -96,21 +83,24 @@ namespace SummaryCreator.Configuration
         }
     }
 
-    public class SensorConfig : IEquatable<SensorConfig>
+    public class EnergyConfig : IEquatable<EnergyConfig>
     {
-        public SensorContentFormat Format { get; set; }
+        public EnergySourceFormat Format { get; set; }
+
+        public ResourceType ResourceType { get; set; }
 
         public string Resource { get; set; }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as SensorConfig);
+            return Equals(obj as EnergyConfig);
         }
 
-        public bool Equals(SensorConfig other)
+        public bool Equals(EnergyConfig other)
         {
             return other != null &&
                    Format == other.Format &&
+                   ResourceType == other.ResourceType &&
                    Resource == other.Resource;
         }
 
@@ -120,7 +110,7 @@ namespace SummaryCreator.Configuration
         }
     }
 
-    public class ExcelConfig : IEquatable<ExcelConfig>
+    public class SummaryConfig : IEquatable<SummaryConfig>
     {
         public string Resource { get; set; }
 
@@ -130,10 +120,10 @@ namespace SummaryCreator.Configuration
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as ExcelConfig);
+            return Equals(obj as SummaryConfig);
         }
 
-        public bool Equals(ExcelConfig other)
+        public bool Equals(SummaryConfig other)
         {
             return other != null &&
                    Resource == other.Resource &&

@@ -24,22 +24,11 @@ namespace SummaryCreator.Services
             this.excelWriter = excelWriter ?? throw new ArgumentNullException(nameof(excelWriter));
         }
 
-        public async Task<IEnumerable<ITimeSeries>> ReadAsync(TimeSeriesConfig config)
+        public async Task<IEnumerable<ITimeSeries>> ReadAsync(IEnumerable<MeteoConfig> config)
         {
             var timeSeriesGroup = new List<ITimeSeries>();
-            
-            foreach (var sensorConfig in config.Sensors)
-            {
-                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0} with format {1}", sensorConfig.Resource, sensorConfig.Format.ToString());
 
-                var content = await File.ReadAllTextAsync(sensorConfig.Resource).ConfigureAwait(false);
-
-                var sensorReader = timeSeriesReaderFactory.CreateSensorReader(sensorConfig);
-                var sensorTimeSeries = sensorReader.Read(sensorConfig.Resource, content);
-                timeSeriesGroup.AddRange(sensorTimeSeries);
-            }
-
-            foreach (var meteoConfig in config.Meteo)
+            foreach (var meteoConfig in config)
             {
                 Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0} with format {1}", meteoConfig.Resource);
 
@@ -51,7 +40,25 @@ namespace SummaryCreator.Services
             return timeSeriesGroup;
         }
 
-        public Task WriteAsync(IEnumerable<ITimeSeries> timeSeries, IEnumerable<ExcelConfig> excelConfigs)
+            public async Task<IEnumerable<ITimeSeries>> ReadAsync(IEnumerable<EnergyConfig> config)
+        {
+            var timeSeriesGroup = new List<ITimeSeries>();
+            
+            foreach (var sensorConfig in config)
+            {
+                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0} with format {1}", sensorConfig.Resource, sensorConfig.Format.ToString());
+
+                var content = await File.ReadAllTextAsync(sensorConfig.Resource).ConfigureAwait(false);
+
+                var sensorReader = timeSeriesReaderFactory.CreateSensorReader(sensorConfig);
+                var sensorTimeSeries = sensorReader.Read(sensorConfig.Resource, content);
+                timeSeriesGroup.AddRange(sensorTimeSeries);
+            }
+
+            return timeSeriesGroup;
+        }
+
+        public Task WriteAsync(IEnumerable<ITimeSeries> timeSeries, IEnumerable<SummaryConfig> excelConfigs)
         {
             foreach (var excelConfig in excelConfigs)
             {

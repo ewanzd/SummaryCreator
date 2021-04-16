@@ -9,6 +9,6 @@ namespace SummaryCreator.IO
         /// </summary>
         /// <param name="sensorConfig">Config of the sensor.</param>
         /// <returns>Sensor reader.</returns>
-        ITimeSeriesReader CreateSensorReader(SensorConfig sensorConfig);
+        ITimeSeriesReader CreateSensorReader(EnergyConfig sensorConfig);
     }
 }
