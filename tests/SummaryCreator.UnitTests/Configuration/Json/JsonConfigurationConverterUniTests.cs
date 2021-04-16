@@ -43,8 +43,8 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
-            Assert.Contains(new MeteoConfig() { Resource = "any.json" }, configuration.MeteoConfigs);
-            Assert.Contains(new MeteoConfig() { Resource = "second.json" }, configuration.MeteoConfigs);
+            Assert.Contains(new MeteoConfig("any.json"), configuration.MeteoConfigs);
+            Assert.Contains(new MeteoConfig("second.json"), configuration.MeteoConfigs);
         }
 
         [Fact]
@@ -56,9 +56,7 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
-            Assert.Contains(
-                new EnergyConfig() { Format = EnergySourceFormat.Sel, Resource = "heaven.json" }, 
-                configuration.EnergyConfigs);
+            Assert.Contains(new EnergyConfig("heaven.json", EnergySourceFormat.Sel), configuration.EnergyConfigs);
         }
 
         [Fact]
@@ -81,7 +79,7 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var configurationConverter = new JsonConfigurationConverter();
             var configuration = await configurationConverter.ConvertAsync(jsonStream);
 
-            Assert.Contains(new SummaryConfig() { Resource = "homer.xlsx", Sheet = "atlantis", Row = 1 }, configuration.SummaryConfigs);
+            Assert.Contains(new SummaryConfig("homer.xlsx", "atlantis", 1), configuration.SummaryConfigs);
         }
 
         [Fact]

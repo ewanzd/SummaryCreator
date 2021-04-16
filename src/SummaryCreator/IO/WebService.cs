@@ -3,13 +3,13 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SummaryCreator.Services
+namespace SummaryCreator.IO
 {
-    public class DownloadService
+    public class WebService
     {
         private readonly HttpClient httpClient;
 
-        public DownloadService(HttpClient httpClient)
+        public WebService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
         }

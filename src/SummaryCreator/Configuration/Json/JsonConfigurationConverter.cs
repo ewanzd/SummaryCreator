@@ -19,13 +19,11 @@ namespace SummaryCreator.Configuration.Json
 
         private static SummaryCreatorConfig ConvertJsonModelToConfig(JsonSummaryCreatorModel jsonModel)
         {
-            // ToList to validate entries immediately
-            return new SummaryCreatorConfig()
-            {
-                MeteoConfigs = (jsonModel?.Meteo?.Select(x => ConvertToMeteoConfig(x)) ?? Enumerable.Empty<MeteoConfig>()).ToList(),
-                EnergyConfigs = (jsonModel?.Energy?.Select(x => ConvertToEnergyConfig(x)) ?? Enumerable.Empty<EnergyConfig>()).ToList(),
-                SummaryConfigs = (jsonModel?.Summary?.Select(x => ConvertToExcelConfig(x)) ?? Enumerable.Empty<SummaryConfig>()).ToList()
-            };
+            var meteoConfigs = (jsonModel?.Meteo?.Select(x => ConvertToMeteoConfig(x)).ToHashSet() ?? Enumerable.Empty<MeteoConfig>()).ToHashSet();
+            var energyConfigs = (jsonModel?.Energy?.Select(x => ConvertToEnergyConfig(x)).ToHashSet() ?? Enumerable.Empty<EnergyConfig>()).ToHashSet();
+            var summaryConfigs = (jsonModel?.Summary?.Select(x => ConvertToExcelConfig(x)).ToHashSet() ?? Enumerable.Empty<SummaryConfig>()).ToHashSet();
+
+            return new SummaryCreatorConfig(meteoConfigs, energyConfigs, summaryConfigs);
         }
 
         private static MeteoConfig ConvertToMeteoConfig(JsonMeteoModel meteoModel)
@@ -33,10 +31,7 @@ namespace SummaryCreator.Configuration.Json
             if (!Uri.IsWellFormedUriString(meteoModel.Resource, UriKind.RelativeOrAbsolute))
                 throw new InvalidDataException($"'{meteoModel.Resource}' is not a valid uri format");
 
-            return new MeteoConfig()
-            {
-                Resource = meteoModel.Resource
-            };
+            return new MeteoConfig(meteoModel.Resource);
         }
 
         private static EnergyConfig ConvertToEnergyConfig(JsonEnergyModel energyModel)
@@ -47,11 +42,7 @@ namespace SummaryCreator.Configuration.Json
             if (!Uri.IsWellFormedUriString(energyModel.Resource, UriKind.RelativeOrAbsolute))
                 throw new InvalidDataException($"'{energyModel.Resource}' is not a valid uri format");
 
-            return new EnergyConfig()
-            {
-                Format = energySourceFormat,
-                Resource = energyModel.Resource
-            };
+            return new EnergyConfig(energyModel.Resource, energySourceFormat);
         }
 
         private static SummaryConfig ConvertToExcelConfig(JsonExcelModel excelModel)
@@ -66,12 +57,7 @@ namespace SummaryCreator.Configuration.Json
             if (excelModel.Row < 0)
                 throw new InvalidDataException($"'{excelModel.Row}' must be a positive value");
 
-            return new SummaryConfig()
-            {
-                Resource = excelModel.Resource,
-                Sheet = excelModel.Sheet,
-                Row = excelModel.Row
-            };
+            return new SummaryConfig(excelModel.Resource, excelModel.Sheet, excelModel.Row);
         }
 
         private class JsonSummaryCreatorModel

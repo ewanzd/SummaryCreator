@@ -15,15 +15,6 @@ namespace SummaryCreator.IO.UnitTests
             Assert.Throws<ArgumentNullException>(() => factory.CreateSensorReader(null));
         }
 
-        [Fact]
-        public void CreateSensorReader_ResourceIsNull_ThrowsException()
-        {
-            var factory = new TimeSeriesReaderFactory();
-
-            var config = new EnergyConfig();
-            Assert.Throws<ArgumentException>(() => factory.CreateSensorReader(config));
-        }
-
         [Theory]
         [InlineData("zeus.csv")]
         [InlineData("zeus.abc")]
@@ -33,10 +24,7 @@ namespace SummaryCreator.IO.UnitTests
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new EnergyConfig()
-            {
-                Resource = resource
-            };
+            var config = new EnergyConfig(resource, EnergySourceFormat.Unknown);
 
             var sensorReader = factory.CreateSensorReader(config);
             Assert.IsType<SensorCsvReader>(sensorReader);
@@ -51,10 +39,7 @@ namespace SummaryCreator.IO.UnitTests
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new EnergyConfig()
-            {
-                Resource = resource
-            };
+            var config = new EnergyConfig(resource, EnergySourceFormat.Unknown);
 
             var sensorReader = factory.CreateSensorReader(config);
             Assert.IsType<DbdataSensorCsvReader>(sensorReader);
@@ -68,11 +53,7 @@ namespace SummaryCreator.IO.UnitTests
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new EnergyConfig()
-            {
-                Format = format,
-                Resource = "any"
-            };
+            var config = new EnergyConfig("any", format);
 
             var sensorReader = factory.CreateSensorReader(config);
             Assert.IsType(type, sensorReader);
