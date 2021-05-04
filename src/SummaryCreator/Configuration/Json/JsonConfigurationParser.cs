@@ -7,26 +7,26 @@ using System.Threading.Tasks;
 
 namespace SummaryCreator.Configuration.Json
 {
-    public class JsonConfigurationConverter : IConfigurationConverter
+    public class JsonConfigurationParser : IConfigurationParser
     {
         public JsonSerializerOptions Options { get; set; } = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        public async Task<SummaryCreatorConfig> ConvertAsync(Stream contentStream, CancellationToken cancellationToken = default)
+        public async Task<SummaryCreatorConfig> ParseAsync(Stream contentStream, CancellationToken cancellationToken = default)
         {
             var jsonConfigModel = await JsonSerializer.DeserializeAsync<JsonRootModel>(contentStream, Options, cancellationToken).ConfigureAwait(false);
-            return ConvertJsonModelToConfig(jsonConfigModel);
+            return ParseJsonRootModel(jsonConfigModel);
         }
 
-        private static SummaryCreatorConfig ConvertJsonModelToConfig(JsonRootModel jsonModel)
+        private static SummaryCreatorConfig ParseJsonRootModel(JsonRootModel jsonModel)
         {
-            var meteoConfigs = (jsonModel?.Meteo?.Select(x => ConvertToMeteoConfig(x)).ToHashSet() ?? Enumerable.Empty<MeteoConfig>()).ToHashSet();
-            var energyConfigs = (jsonModel?.Energy?.Select(x => ConvertToEnergyConfig(x)).ToHashSet() ?? Enumerable.Empty<EnergyConfig>()).ToHashSet();
-            var summaryConfigs = (jsonModel?.Summary?.Select(x => ConvertToExcelConfig(x)).ToHashSet() ?? Enumerable.Empty<SummaryConfig>()).ToHashSet();
+            var meteoConfigs = (jsonModel?.Meteo?.Select(x => ParseJsonMeteoModel(x)).ToHashSet() ?? Enumerable.Empty<MeteoConfig>()).ToHashSet();
+            var energyConfigs = (jsonModel?.Energy?.Select(x => ParseJsonEnergyModel(x)).ToHashSet() ?? Enumerable.Empty<EnergyConfig>()).ToHashSet();
+            var summaryConfigs = (jsonModel?.Summary?.Select(x => ParseSummaryModel(x)).ToHashSet() ?? Enumerable.Empty<SummaryConfig>()).ToHashSet();
 
             return new SummaryCreatorConfig(meteoConfigs, energyConfigs, summaryConfigs);
         }
 
-        private static MeteoConfig ConvertToMeteoConfig(JsonMeteoModel meteoModel)
+        private static MeteoConfig ParseJsonMeteoModel(JsonMeteoModel meteoModel)
         {
             if (!Uri.IsWellFormedUriString(meteoModel.Resource, UriKind.RelativeOrAbsolute))
                 throw new InvalidDataException($"'{meteoModel.Resource}' is not a valid uri format");
@@ -34,7 +34,7 @@ namespace SummaryCreator.Configuration.Json
             return new MeteoConfig(meteoModel.Resource);
         }
 
-        private static EnergyConfig ConvertToEnergyConfig(JsonEnergyModel energyModel)
+        private static EnergyConfig ParseJsonEnergyModel(JsonEnergyModel energyModel)
         {
             if (!Enum.TryParse(energyModel.Format, out EnergySourceFormat energySourceFormat))
                 throw new InvalidDataException($"'{energyModel.Format}' is not a valid value");
@@ -45,19 +45,19 @@ namespace SummaryCreator.Configuration.Json
             return new EnergyConfig(energyModel.Resource, energySourceFormat);
         }
 
-        private static SummaryConfig ConvertToExcelConfig(JsonSummaryModel excelModel)
+        private static SummaryConfig ParseSummaryModel(JsonSummaryModel summaryModel)
         {
             
-            if (!Uri.IsWellFormedUriString(excelModel.Resource, UriKind.RelativeOrAbsolute))
-                throw new InvalidDataException($"'{excelModel.Resource}' is not a valid uri format");
+            if (!Uri.IsWellFormedUriString(summaryModel.Resource, UriKind.RelativeOrAbsolute))
+                throw new InvalidDataException($"'{summaryModel.Resource}' is not a valid uri format");
 
-            if (string.IsNullOrEmpty(excelModel.Sheet))
+            if (string.IsNullOrEmpty(summaryModel.Sheet))
                 throw new InvalidDataException("Missing sheet name");
 
-            if (excelModel.Row < 0)
-                throw new InvalidDataException($"'{excelModel.Row}' must be a positive value");
+            if (summaryModel.Row < 0)
+                throw new InvalidDataException($"'{summaryModel.Row}' must be a positive value");
 
-            return new SummaryConfig(excelModel.Resource, excelModel.Sheet, excelModel.Row);
+            return new SummaryConfig(summaryModel.Resource, summaryModel.Sheet, summaryModel.Row);
         }
 
         private class JsonRootModel

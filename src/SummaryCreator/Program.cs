@@ -49,7 +49,7 @@ namespace SummaryCreator
             Logger.Info(CultureInfo.InvariantCulture, "Path to configuration file: {0}", configurationFilePath);
 
             Logger.Info(CultureInfo.InvariantCulture, "Initialize configuration reader");
-            var reader = new DefaultConfigurationReader(new JsonConfigurationConverter());
+            var reader = new DefaultConfigurationReader(new JsonConfigurationParser());
 
             // read data needed for processing time series data
             Logger.Info(CultureInfo.InvariantCulture, "Read configurations");

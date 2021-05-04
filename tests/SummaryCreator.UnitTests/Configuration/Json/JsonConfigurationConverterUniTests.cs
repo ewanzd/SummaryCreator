@@ -14,8 +14,8 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var json = "{}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            var configurationConverter = new JsonConfigurationConverter();
-            var configuration = await configurationConverter.ConvertAsync(jsonStream);
+            var configurationConverter = new JsonConfigurationParser();
+            var configuration = await configurationConverter.ParseAsync(jsonStream);
 
             Assert.NotNull(configuration);
             Assert.Empty(configuration.MeteoConfigs);
@@ -29,9 +29,9 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var json = "{";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            var configurationConverter = new JsonConfigurationConverter();
+            var configurationConverter = new JsonConfigurationParser();
 
-            await Assert.ThrowsAsync<JsonException>(() => configurationConverter.ConvertAsync(jsonStream));
+            await Assert.ThrowsAsync<JsonException>(() => configurationConverter.ParseAsync(jsonStream));
         }
 
         [Fact]
@@ -40,8 +40,8 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var json = "{ \"meteo\": [{ \"resource\": \"any.json\" }, { \"resource\": \"second.json\" }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            var configurationConverter = new JsonConfigurationConverter();
-            var configuration = await configurationConverter.ConvertAsync(jsonStream);
+            var configurationConverter = new JsonConfigurationParser();
+            var configuration = await configurationConverter.ParseAsync(jsonStream);
 
             Assert.Contains(new MeteoConfig("any.json"), configuration.MeteoConfigs);
             Assert.Contains(new MeteoConfig("second.json"), configuration.MeteoConfigs);
@@ -53,8 +53,8 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var json = "{ \"energy\": [{ \"format\": \"Sel\", \"resource\": \"heaven.json\" }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            var configurationConverter = new JsonConfigurationConverter();
-            var configuration = await configurationConverter.ConvertAsync(jsonStream);
+            var configurationConverter = new JsonConfigurationParser();
+            var configuration = await configurationConverter.ParseAsync(jsonStream);
 
             Assert.Contains(new EnergyConfig("heaven.json", EnergySourceFormat.Sel), configuration.EnergyConfigs);
         }
@@ -65,9 +65,9 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var json = "{ \"energy\": [{ \"format\": \"swiss\", \"resource\": \"heaven.json\" }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            var configurationConverter = new JsonConfigurationConverter();
+            var configurationConverter = new JsonConfigurationParser();
 
-            await Assert.ThrowsAsync<InvalidDataException>(() => configurationConverter.ConvertAsync(jsonStream));
+            await Assert.ThrowsAsync<InvalidDataException>(() => configurationConverter.ParseAsync(jsonStream));
         }
 
         [Fact]
@@ -76,8 +76,8 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var json = "{ \"summary\": [{ \"resource\": \"homer.xlsx\", \"sheet\": \"atlantis\", \"row\": 1 }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            var configurationConverter = new JsonConfigurationConverter();
-            var configuration = await configurationConverter.ConvertAsync(jsonStream);
+            var configurationConverter = new JsonConfigurationParser();
+            var configuration = await configurationConverter.ParseAsync(jsonStream);
 
             Assert.Contains(new SummaryConfig("homer.xlsx", "atlantis", 1), configuration.SummaryConfigs);
         }
@@ -88,9 +88,9 @@ namespace SummaryCreator.Configuration.Json.UnitTests
             var json = "{ \"summary\": [{ \"resource\": \"homer.xlsx\", \"row\": 1 }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-            var configurationConverter = new JsonConfigurationConverter();
+            var configurationConverter = new JsonConfigurationParser();
 
-            await Assert.ThrowsAsync<InvalidDataException>(() => configurationConverter.ConvertAsync(jsonStream));
+            await Assert.ThrowsAsync<InvalidDataException>(() => configurationConverter.ParseAsync(jsonStream));
         }
     }
 }
