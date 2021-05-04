@@ -1,12 +1,13 @@
 using SummaryCreator.Configuration;
 using SummaryCreator.Configuration.Json;
 using SummaryCreator.Input;
-using SummaryCreator.Output.Excel;
 using SummaryCreator.Input.Xml;
+using SummaryCreator.Output.Excel;
 using SummaryCreator.Services;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SummaryCreator
@@ -48,26 +49,27 @@ namespace SummaryCreator
             var configurationFilePath = new FileInfo(args[0]);
             Logger.Info(CultureInfo.InvariantCulture, "Path to configuration file: {0}", configurationFilePath);
 
-            Logger.Info(CultureInfo.InvariantCulture, "Initialize configuration reader");
-            var reader = new DefaultConfigurationReader(new JsonConfigurationParser());
-
             // read data needed for processing time series data
             Logger.Info(CultureInfo.InvariantCulture, "Read configurations");
+            var reader = new DefaultConfigurationReader(new JsonConfigurationParser());
             var configurations = await reader.ReadAsync(configurationFilePath).ConfigureAwait(false);
 
-            Logger.Info(CultureInfo.InvariantCulture, "Initialize time series service");
             var timeSeriesReaderFactory = new TimeSeriesReaderFactory();
             var meteoReader = new MeteoXmlReader();
             var excelWriter = new EppExcelWriter();
             var timeSeriesService = new TimeSeriesService(timeSeriesReaderFactory, meteoReader, excelWriter);
 
             // read and write time series data
-            Logger.Info(CultureInfo.InvariantCulture, "Read time series data from sources");
-            var timeSeries = await timeSeriesService.ReadAsync(configurations.EnergyConfigs).ConfigureAwait(false);
+            Logger.Info(CultureInfo.InvariantCulture, "Read meteo data from sources");
+            var meteoSeries = await timeSeriesService.ReadAsync(configurations.MeteoConfigs).ConfigureAwait(false);
+            Logger.Info(CultureInfo.InvariantCulture, "Read energy data from sources");
+            var energySeries = await timeSeriesService.ReadAsync(configurations.EnergyConfigs).ConfigureAwait(false);
+
+            var summary = meteoSeries.Concat(energySeries);
 
             // write time series data to target excel files
             Logger.Info(CultureInfo.InvariantCulture, "Write time series data to target files");
-            await timeSeriesService.WriteAsync(timeSeries, configurations.SummaryConfigs).ConfigureAwait(false);
+            await timeSeriesService.WriteAsync(summary, configurations.SummaryConfigs).ConfigureAwait(false);
         }
     }
 }
