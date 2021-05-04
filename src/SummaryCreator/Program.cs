@@ -1,8 +1,8 @@
 using SummaryCreator.Configuration;
 using SummaryCreator.Configuration.Json;
-using SummaryCreator.IO;
-using SummaryCreator.IO.Excel;
-using SummaryCreator.IO.Xml;
+using SummaryCreator.Input;
+using SummaryCreator.Output.Excel;
+using SummaryCreator.Input.Xml;
 using SummaryCreator.Services;
 using System;
 using System.Globalization;

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
 
-namespace SummaryCreator.IO.Xml
+namespace SummaryCreator.Input.Xml
 {
     /// <summary>
     /// Reader for meteo data.

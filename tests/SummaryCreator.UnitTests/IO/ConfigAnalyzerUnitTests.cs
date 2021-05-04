@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SummaryCreator.IO.UnitTests
+namespace SummaryCreator.Input.UnitTests
 {
     public class ConfigAnalyzerUnitTests
     {

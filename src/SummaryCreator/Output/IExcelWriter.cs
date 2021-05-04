@@ -3,7 +3,7 @@ using SummaryCreator.Core;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SummaryCreator.IO
+namespace SummaryCreator.Output
 {
     public interface IExcelWriter
     {

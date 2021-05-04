@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
-namespace SummaryCreator.IO.Csv
+namespace SummaryCreator.Input.Csv
 {
     /// <summary>
     /// Read sensor data (old format).

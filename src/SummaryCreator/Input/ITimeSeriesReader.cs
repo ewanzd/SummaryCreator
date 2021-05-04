@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SummaryCreator.IO
+namespace SummaryCreator.Input
 {
     public interface ITimeSeriesReader
     {

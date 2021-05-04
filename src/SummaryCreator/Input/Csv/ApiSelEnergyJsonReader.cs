@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SummaryCreator.IO.Csv
+namespace SummaryCreator.Input.Csv
 {
     /// <summary>
     /// Convert json with energy data to <see cref="SensorTimeSeries"/>.

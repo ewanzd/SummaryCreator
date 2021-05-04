@@ -1,9 +1,9 @@
 ﻿using SummaryCreator.Configuration;
-using SummaryCreator.IO.Csv;
+using SummaryCreator.Input.Csv;
 using System;
 using System.IO;
 
-namespace SummaryCreator.IO
+namespace SummaryCreator.Input
 {
     public class TimeSeriesReaderFactory : ITimeSeriesReaderFactory
     {

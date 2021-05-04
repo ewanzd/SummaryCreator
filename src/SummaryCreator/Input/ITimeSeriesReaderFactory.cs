@@ -1,6 +1,6 @@
 ﻿using SummaryCreator.Configuration;
 
-namespace SummaryCreator.IO
+namespace SummaryCreator.Input
 {
     public interface ITimeSeriesReaderFactory
     {

@@ -8,7 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace SummaryCreator.IO.Excel
+namespace SummaryCreator.Output.Excel
 {
     /// <summary>
     /// Write data to excel file.

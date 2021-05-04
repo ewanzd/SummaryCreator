@@ -1,7 +1,7 @@
 ﻿using OfficeOpenXml;
 using System;
 
-namespace SummaryCreator.IO.Excel
+namespace SummaryCreator.Output.Excel
 {
     /// <summary>
     /// For easy access to

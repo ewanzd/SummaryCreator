@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace SummaryCreator.IO.Csv.UnitTests
+namespace SummaryCreator.Input.Csv.UnitTests
 {
     public class SensorCsvReaderUnitTests
     {

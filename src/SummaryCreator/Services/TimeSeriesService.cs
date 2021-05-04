@@ -1,6 +1,7 @@
 ﻿using SummaryCreator.Configuration;
 using SummaryCreator.Core;
-using SummaryCreator.IO;
+using SummaryCreator.Input;
+using SummaryCreator.Output;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace SummaryCreator.IO
+namespace SummaryCreator.Output
 {
     public class FileSystemService
     {

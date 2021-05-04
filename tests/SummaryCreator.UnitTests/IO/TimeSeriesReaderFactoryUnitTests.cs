@@ -1,9 +1,9 @@
 ﻿using SummaryCreator.Configuration;
-using SummaryCreator.IO.Csv;
+using SummaryCreator.Input.Csv;
 using System;
 using Xunit;
 
-namespace SummaryCreator.IO.UnitTests
+namespace SummaryCreator.Input.UnitTests
 {
     public class TimeSeriesReaderFactoryUnitTests
     {

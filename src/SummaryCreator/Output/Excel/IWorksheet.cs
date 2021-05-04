@@ -1,4 +1,4 @@
-﻿namespace SummaryCreator.IO.Excel
+﻿namespace SummaryCreator.Output.Excel
 {
     /// <summary>
     /// Simple interface to work with worksheets.
