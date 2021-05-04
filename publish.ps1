@@ -5,4 +5,4 @@ $targetProject = ".\src\SummaryCreator\SummaryCreator.csproj"
 dotnet restore
 dotnet build
 dotnet test
-dotnet publish -r win10-x64 /p:PublishSingleFile=true -o $publishDirectory.FullName $targetProject
+dotnet publish -r win-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o $publishDirectory.FullName $targetProject
