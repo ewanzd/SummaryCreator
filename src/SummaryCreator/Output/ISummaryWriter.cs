@@ -5,7 +5,7 @@ using System.IO;
 
 namespace SummaryCreator.Output
 {
-    public interface IExcelWriter
+    public interface ISummaryWriter
     {
         void Write(IEnumerable<ITimeSeries> timeSeriesGroup, Stream contentStream, SummaryConfig excelConfig);
     }

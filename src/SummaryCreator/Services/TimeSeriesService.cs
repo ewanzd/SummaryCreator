@@ -16,9 +16,9 @@ namespace SummaryCreator.Services
 
         private readonly ITimeSeriesReaderFactory timeSeriesReaderFactory;
         private readonly ITimeSeriesReader meteoReader;
-        private readonly IExcelWriter excelWriter;
+        private readonly ISummaryWriter excelWriter;
 
-        public TimeSeriesService(ITimeSeriesReaderFactory timeSeriesReaderFactory, ITimeSeriesReader meteoReader, IExcelWriter excelWriter)
+        public TimeSeriesService(ITimeSeriesReaderFactory timeSeriesReaderFactory, ITimeSeriesReader meteoReader, ISummaryWriter excelWriter)
         {
             this.timeSeriesReaderFactory = timeSeriesReaderFactory ?? throw new ArgumentNullException(nameof(timeSeriesReaderFactory));
             this.meteoReader = meteoReader ?? throw new ArgumentNullException(nameof(meteoReader));
