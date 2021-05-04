@@ -83,7 +83,7 @@ namespace SummaryCreator.Input.Csv.UnitTests
             var value = double.Parse(valueStr);
 
             var content = $"DateTime (Local Time);Serial number;Active Energy Import Total;Unit;;;;\n" +
-                $"{dateTime};2;{value};;;;;\n";
+                $"{dateTime:dd.MM.yyyy HH:mm:ss};2;{value};;;;;\n";
 
             var reader = new SensorCsvReader();
             var timeSeries = reader.Read(string.Empty, content);
@@ -112,7 +112,7 @@ namespace SummaryCreator.Input.Csv.UnitTests
             var value2 = double.Parse(value2Str);
 
             var content = $"DateTime (Local Time);Serial number;;;Energy Tariff 1;Unit;Energy Tariff 2;Unit\n" +
-                $"{dateTime};2;;;{value1};;{value2};\n";
+                $"{dateTime:dd.MM.yyyy HH:mm:ss};2;;;{value1};;{value2};\n";
 
             var reader = new SensorCsvReader();
             var timeSeries = reader.Read(string.Empty, content);
