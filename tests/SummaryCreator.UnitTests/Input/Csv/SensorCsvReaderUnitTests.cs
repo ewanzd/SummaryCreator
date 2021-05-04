@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -78,7 +79,7 @@ namespace SummaryCreator.Input.Csv.UnitTests
         [InlineData("31.12.2018 23:59:59", "6.0")]
         public void Read_FirstValueEntry(string dateTimeStr, string valueStr)
         {
-            var dateTime = DateTime.Parse(dateTimeStr);
+            var dateTime = DateTime.ParseExact(dateTimeStr, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None);
             var value = double.Parse(valueStr);
 
             var content = $"DateTime (Local Time);Serial number;Active Energy Import Total;Unit;;;;\n" +
@@ -106,7 +107,7 @@ namespace SummaryCreator.Input.Csv.UnitTests
         [InlineData("31.12.1999 23:59:59", "34", "0.0")]
         public void Read_SecondAndThirdValueEntry(string dateTimeStr, string value1Str, string value2Str)
         {
-            var dateTime = DateTime.Parse(dateTimeStr);
+            var dateTime = DateTime.ParseExact(dateTimeStr, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None);
             var value1 = double.Parse(value1Str);
             var value2 = double.Parse(value2Str);
 
