@@ -8,6 +8,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SummaryCreator
@@ -57,19 +58,20 @@ namespace SummaryCreator
             var timeSeriesReaderFactory = new TimeSeriesReaderFactory();
             var meteoReader = new MeteoXmlReader();
             var excelWriter = new EppExcelWriter();
-            var timeSeriesService = new TimeSeriesService(timeSeriesReaderFactory, meteoReader, excelWriter);
+            var fileService = new FileService();
+            var timeSeriesService = new TimeSeriesService(timeSeriesReaderFactory, meteoReader, excelWriter, fileService);
 
             // read and write time series data
             Logger.Info(CultureInfo.InvariantCulture, "Read meteo data from sources");
-            var meteoSeries = await timeSeriesService.ReadAsync(configurations.MeteoConfigs).ConfigureAwait(false);
+            var meteoSeries = await timeSeriesService.ReadAsync(configurations.MeteoConfigs, CancellationToken.None).ConfigureAwait(false);
             Logger.Info(CultureInfo.InvariantCulture, "Read energy data from sources");
-            var energySeries = await timeSeriesService.ReadAsync(configurations.EnergyConfigs).ConfigureAwait(false);
+            var energySeries = await timeSeriesService.ReadAsync(configurations.EnergyConfigs, CancellationToken.None).ConfigureAwait(false);
 
             var summary = meteoSeries.Concat(energySeries);
 
             // write time series data to target excel files
             Logger.Info(CultureInfo.InvariantCulture, "Write time series data to target files");
-            await timeSeriesService.WriteAsync(summary, configurations.SummaryConfigs).ConfigureAwait(false);
+            await timeSeriesService.WriteAsync(summary, configurations.SummaryConfigs, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
