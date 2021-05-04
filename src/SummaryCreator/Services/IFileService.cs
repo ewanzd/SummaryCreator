@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SummaryCreator.Input
+namespace SummaryCreator.Services
 {
     public interface IFileService
     {

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace SummaryCreator.Input
+namespace SummaryCreator.Services
 {
     public class FileService : IFileService
     {
