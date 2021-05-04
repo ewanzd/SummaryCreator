@@ -48,10 +48,5 @@ namespace SummaryCreator.Services
 
             return httpClient.GetStringAsync(requestUri, cancellationToken);
         }
-
-        public FileStream Open(string resource)
-        {
-            return File.Open(resource, FileMode.Open, FileAccess.ReadWrite);
-        }
     }
 }

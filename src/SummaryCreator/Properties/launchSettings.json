@@ -2,7 +2,7 @@
   "profiles": {
     "SummaryCreator": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Danilo\\Projects\\SummaryCreator\\example.json"
+      "commandLineArgs": "C:\\Danilo\\Projects\\SummaryCreator\\Testumgebung_5\\Source\\example.json"
     }
   }
 }

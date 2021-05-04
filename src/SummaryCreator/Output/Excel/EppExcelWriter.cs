@@ -21,7 +21,7 @@ namespace SummaryCreator.Output.Excel
 
         private int lastRow = 1;
 
-        public void Write(IEnumerable<ITimeSeries> timeSeriesGroup, Stream contentStream, SummaryConfig excelConfig)
+        public void Write(IEnumerable<ITimeSeries> timeSeriesGroup, string summaryFile, SummaryConfig excelConfig)
         {
             if (timeSeriesGroup == null) throw new ArgumentNullException(nameof(timeSeriesGroup));
             if (timeSeriesGroup.Any(x => x == null)) throw new ArgumentException("IEnumerable contains null values.", nameof(timeSeriesGroup));
@@ -35,18 +35,19 @@ namespace SummaryCreator.Output.Excel
                 timeSeriesGroupInstance.AddRange(timeSeriesGroup);
             }
 
-            using var excelPack = new ExcelPackage(contentStream);
-
-            var worksheet = excelPack.Workbook.Worksheets[excelConfig.Sheet];
-            if (worksheet == null)
+            using (var excelPack = new ExcelPackage(new FileInfo(summaryFile)))
             {
-                throw new InvalidDataException($"Table '{excelConfig.Sheet}' not found.");
+                var worksheet = excelPack.Workbook.Worksheets[excelConfig.Sheet];
+                if (worksheet == null)
+                {
+                    throw new InvalidDataException($"Table '{excelConfig.Sheet}' not found.");
+                }
+
+                var edrWorksheet = new EppWorksheet(worksheet);
+                FillDataIntoTable(edrWorksheet, timeSeriesGroupInstance, excelConfig.Row);
+
+                excelPack.Save();
             }
-
-            var edrWorksheet = new EppWorksheet(worksheet);
-            FillDataIntoTable(edrWorksheet, timeSeriesGroupInstance, excelConfig.Row);
-
-            excelPack.Save();
         }
 
         private void FillDataIntoTable(IWorksheet worksheet, TimeSeriesGroup data, int excelIdRowIndex)

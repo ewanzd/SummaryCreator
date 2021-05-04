@@ -69,8 +69,8 @@ namespace SummaryCreator.Services
             foreach (var excelConfig in excelConfigs)
             {
                 Logger.Info(CultureInfo.InvariantCulture, "Write results to {0}", excelConfig.Resource);
-                using var fileStream = fileService.Open(excelConfig.Resource);
-                excelWriter.Write(timeSeries, fileStream, excelConfig);
+                var uri = new Uri(excelConfig.Resource);
+                excelWriter.Write(timeSeries, uri.LocalPath, excelConfig);
             }
 
             return Task.FromResult(0);

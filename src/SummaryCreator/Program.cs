@@ -70,8 +70,10 @@ namespace SummaryCreator
             var summary = meteoSeries.Concat(energySeries);
 
             // write time series data to target excel files
-            Logger.Info(CultureInfo.InvariantCulture, "Write time series data to target files");
+            Logger.Info(CultureInfo.InvariantCulture, "Write data to target files");
             await timeSeriesService.WriteAsync(summary, configurations.SummaryConfigs, CancellationToken.None).ConfigureAwait(false);
+
+            Logger.Info(CultureInfo.InvariantCulture, "Successfully Finished");
         }
     }
 }
