@@ -13,11 +13,11 @@ namespace SummaryCreator.Configuration.Json
 
         public async Task<SummaryCreatorConfig> ConvertAsync(Stream contentStream, CancellationToken cancellationToken = default)
         {
-            var jsonConfigModel = await JsonSerializer.DeserializeAsync<JsonSummaryCreatorModel>(contentStream, Options, cancellationToken).ConfigureAwait(false);
+            var jsonConfigModel = await JsonSerializer.DeserializeAsync<JsonRootModel>(contentStream, Options, cancellationToken).ConfigureAwait(false);
             return ConvertJsonModelToConfig(jsonConfigModel);
         }
 
-        private static SummaryCreatorConfig ConvertJsonModelToConfig(JsonSummaryCreatorModel jsonModel)
+        private static SummaryCreatorConfig ConvertJsonModelToConfig(JsonRootModel jsonModel)
         {
             var meteoConfigs = (jsonModel?.Meteo?.Select(x => ConvertToMeteoConfig(x)).ToHashSet() ?? Enumerable.Empty<MeteoConfig>()).ToHashSet();
             var energyConfigs = (jsonModel?.Energy?.Select(x => ConvertToEnergyConfig(x)).ToHashSet() ?? Enumerable.Empty<EnergyConfig>()).ToHashSet();
@@ -45,7 +45,7 @@ namespace SummaryCreator.Configuration.Json
             return new EnergyConfig(energyModel.Resource, energySourceFormat);
         }
 
-        private static SummaryConfig ConvertToExcelConfig(JsonExcelModel excelModel)
+        private static SummaryConfig ConvertToExcelConfig(JsonSummaryModel excelModel)
         {
             
             if (!Uri.IsWellFormedUriString(excelModel.Resource, UriKind.RelativeOrAbsolute))
@@ -60,16 +60,16 @@ namespace SummaryCreator.Configuration.Json
             return new SummaryConfig(excelModel.Resource, excelModel.Sheet, excelModel.Row);
         }
 
-        private class JsonSummaryCreatorModel
+        private class JsonRootModel
         {
             public JsonMeteoModel[] Meteo { get; set; }
 
             public JsonEnergyModel[] Energy { get; set; }
 
-            public JsonExcelModel[] Summary { get; set; }
+            public JsonSummaryModel[] Summary { get; set; }
         }
 
-        private class JsonExcelModel
+        private class JsonSummaryModel
         {
             public string Resource { get; set; }
 
@@ -80,16 +80,12 @@ namespace SummaryCreator.Configuration.Json
 
         private class JsonMeteoModel
         {
-            public string ResourceType { get; set; }
-
             public string Resource { get; set; }
         }
 
         private class JsonEnergyModel
         {
             public string Format { get; set; }
-
-            public string ResourceType { get; set; }
 
             public string Resource { get; set; }
         }

@@ -16,37 +16,6 @@ namespace SummaryCreator.IO.UnitTests
         }
 
         [Theory]
-        [InlineData("zeus.csv")]
-        [InlineData("zeus.abc")]
-        [InlineData("zeus")]
-        [InlineData("z/e/u/s.csv")]
-        public void CreateSensorReader_ReturnSensorCsvReader(string resource)
-        {
-            var factory = new TimeSeriesReaderFactory();
-
-            var config = new EnergyConfig(resource, EnergySourceFormat.Unknown);
-
-            var sensorReader = factory.CreateSensorReader(config);
-            Assert.IsType<SensorCsvReader>(sensorReader);
-        }
-
-        [Theory]
-        [InlineData("dbdata_apollo.csv")]
-        [InlineData("dbdata.csv")]
-        [InlineData("apollo/dbdata.csv")]
-        [InlineData("dbdata_sel_meter_apollo.hij")]
-        public void CreateSensorReader_ReturnDbdataSensorCsvReader(string resource)
-        {
-            var factory = new TimeSeriesReaderFactory();
-
-            var config = new EnergyConfig(resource, EnergySourceFormat.Unknown);
-
-            var sensorReader = factory.CreateSensorReader(config);
-            Assert.IsType<DbdataSensorCsvReader>(sensorReader);
-        }
-
-        [Theory]
-        [InlineData(EnergySourceFormat.Unknown, typeof(SensorCsvReader))]
         [InlineData(EnergySourceFormat.Sel, typeof(SensorCsvReader))]
         [InlineData(EnergySourceFormat.Selv2, typeof(DbdataSensorCsvReader))]
         public void CreateSensorReader_ReturnReaderBySensorContentFormat(EnergySourceFormat format, Type type)
