@@ -36,7 +36,7 @@ namespace SummaryCreator.Services
 
             foreach (var meteoConfig in config)
             {
-                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0} with format {1}", meteoConfig.Resource);
+                Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0}", meteoConfig.Resource);
 
                 var content = await fileService.LoadAsync(meteoConfig.Resource, from, to, cancellationToken).ConfigureAwait(false);
                 var meteoTimeSeries = meteoReader.Read(meteoConfig.Resource, content);
