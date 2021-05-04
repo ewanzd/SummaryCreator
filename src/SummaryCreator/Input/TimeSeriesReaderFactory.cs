@@ -9,6 +9,7 @@ namespace SummaryCreator.Input
     {
         private static readonly ITimeSeriesReader SelReader = new SensorCsvReader();
         private static readonly ITimeSeriesReader Selv2Reader = new DbdataSensorCsvReader();
+        private static readonly ITimeSeriesReader Selv3Reader = new ApiSelEnergyJsonReader();
 
         public ITimeSeriesReader CreateSensorReader(EnergyConfig sensorConfig)
         {
@@ -27,6 +28,7 @@ namespace SummaryCreator.Input
             {
                 EnergySourceFormat.Sel => SelReader,
                 EnergySourceFormat.Selv2 => Selv2Reader,
+                EnergySourceFormat.Selv3 => Selv3Reader,
                 _ => throw new InvalidDataException($"Format {sensorConfig.Format} not found"),
             };
         }
