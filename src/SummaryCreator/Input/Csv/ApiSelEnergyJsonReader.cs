@@ -29,14 +29,13 @@ namespace SummaryCreator.Input.Csv
     /// </example>
     public class ApiSelEnergyJsonReader : ITimeSeriesReader
     {
-        private const char resourceSeperator = '/';
         private static readonly JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
 
-        public IEnumerable<ITimeSeries> Read(string resource, string content)
+        public IEnumerable<ITimeSeries> Read(string id, string content)
         {
-            if (string.IsNullOrWhiteSpace(resource))
+            if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentException($"'{nameof(resource)}' cannot be null or whitespace.", nameof(resource));
+                throw new ArgumentException($"'{nameof(id)}' cannot be null or whitespace.", nameof(id));
             }
 
             if (string.IsNullOrWhiteSpace(content))
@@ -44,7 +43,6 @@ namespace SummaryCreator.Input.Csv
                 throw new ArgumentException($"'{nameof(content)}' cannot be null or whitespace.", nameof(content));
             }
 
-            var id = ExtractId(resource, resourceSeperator);
             var sensorTimeSeries = new SensorTimeSeries(id);
 
             var jsonSelEnergyModel = JsonSerializer.Deserialize<JsonSelEnergyRootModel>(content, options);
@@ -60,21 +58,6 @@ namespace SummaryCreator.Input.Csv
             }
 
             return new List<ITimeSeries>() { sensorTimeSeries };
-        }
-
-        private string ExtractId(string resource, char seperator)
-        {
-            Debug.Assert(resource != null);
-            Debug.Assert(seperator != default(char));
-
-            var resourceParts = resource.Split(seperator);
-
-            if (resourceParts.Length < 5)
-            {
-                throw new ArgumentException("Invalid resource", nameof(resource));
-            }
-
-            return resourceParts[5];
         }
 
         private class JsonSelEnergyRootModel

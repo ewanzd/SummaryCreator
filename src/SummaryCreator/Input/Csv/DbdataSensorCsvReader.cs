@@ -12,14 +12,12 @@ namespace SummaryCreator.Input.Csv
     /// </summary>
     public sealed class DbdataSensorCsvReader : ITimeSeriesReader
     {
-        private const char fileNameSeparator = '_';
         private const char rowSeperator = ',';
         private const string dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         private static readonly CultureInfo culture = CultureInfo.InvariantCulture;
 
-        public IEnumerable<ITimeSeries> Read(string resource, string content)
+        public IEnumerable<ITimeSeries> Read(string id, string content)
         {
-            var id = ExtractId(resource, fileNameSeparator);
             var sensorTimeSeries = new SensorTimeSeries(id);
 
             var contentEnumerator = content.SplitLines();
@@ -79,27 +77,6 @@ namespace SummaryCreator.Input.Csv
             }
 
             return dataPoint;
-        }
-
-        /// <summary>
-        /// Extract sensor id from file name.
-        /// </summary>
-        /// <param name="file">Path to file with data.</param>
-        /// <param name="separator"></param>
-        /// <returns>Id of sensor.</returns>
-        private static string ExtractId(string file, char separator)
-        {
-            // id of the sensor in file name
-            // Example: dbdata_6F5CBF4A-FC2F-4E67-99A6-3AFB3D9C2E46.csv
-            var fileName = Path.GetFileNameWithoutExtension(file);
-            var fileNameParts = fileName.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            if(fileNameParts.Length < 2)
-            {
-                throw new ArgumentException("Invalid file name", nameof(file));
-            }
-
-            return fileNameParts[1];
         }
     }
 }

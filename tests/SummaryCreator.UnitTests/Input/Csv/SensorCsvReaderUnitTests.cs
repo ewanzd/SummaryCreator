@@ -8,49 +8,23 @@ namespace SummaryCreator.Input.Csv.UnitTests
 {
     public class SensorCsvReaderUnitTests
     {
-        [Theory]
-        [InlineData("2")]
-        [InlineData("26345643")]
-        [InlineData("abgadsfd3")]
-        [InlineData("2_443-7")]
-        public void Read_ExtractId(string id)
+        [Fact]
+        public void Read_Sensor()
         {
+            var id = "2";
+
             var content = $";Serial number;;;;;;\n" +
-                $"10.12.2019 00:00:37;{id};;;;;;;\n";
+                $"10.12.2019 00:00:37;{id};;;;;;;\n" +
+                $"10.12.2019 00:00:38;{id};;;;;;;\n";
 
             var reader = new SensorCsvReader();
-            var timeSeries = reader.Read(null, content);
+            var timeSeries = reader.Read(id, content);
 
             Assert.Single(timeSeries);
 
-            var timeSerie = timeSeries.First();
+            var timeSerie1 = timeSeries.Where(x => id.Equals(x.Id)).First();
 
-            Assert.Single(timeSerie);
-            Assert.Equal(id, timeSerie.Id);
-        }
-
-        [Fact]
-        public void Read_TwoSensors()
-        {
-            var id1 = "2";
-            var id2 = "3";
-
-            var content = $";Serial number;;;;;;\n" +
-                $"10.12.2019 00:00:37;{id1};;;;;;;\n" +
-                $"10.12.2019 00:00:37;{id2};;;;;;;\n";
-
-            var reader = new SensorCsvReader();
-            var timeSeries = reader.Read(null, content);
-
-            Assert.Equal(2, timeSeries.Count());
-
-            var timeSerie1 = timeSeries.Where(x => id1.Equals(x.Id)).First();
-
-            Assert.Single(timeSerie1);
-
-            var timeSerie2 = timeSeries.Where(x => id2.Equals(x.Id)).First();
-
-            Assert.Single(timeSerie2);
+            Assert.Equal(2, timeSerie1.Count);
         }
 
         [Theory]
@@ -68,7 +42,7 @@ namespace SummaryCreator.Input.Csv.UnitTests
 
             var reader = new SensorCsvReader();
 
-            Assert.Throws<InvalidDataException>(() => reader.Read(string.Empty, content));
+            Assert.Throws<InvalidDataException>(() => reader.Read("anyId", content));
         }
 
         [Theory]
@@ -86,7 +60,7 @@ namespace SummaryCreator.Input.Csv.UnitTests
                 $"{dateTime:dd.MM.yyyy HH:mm:ss};2;{value};;;;;\n";
 
             var reader = new SensorCsvReader();
-            var timeSeries = reader.Read(string.Empty, content);
+            var timeSeries = reader.Read("2", content);
 
             Assert.Single(timeSeries);
 
@@ -115,7 +89,7 @@ namespace SummaryCreator.Input.Csv.UnitTests
                 $"{dateTime:dd.MM.yyyy HH:mm:ss};2;;;{value1};;{value2};\n";
 
             var reader = new SensorCsvReader();
-            var timeSeries = reader.Read(string.Empty, content);
+            var timeSeries = reader.Read("2", content);
 
             Assert.Single(timeSeries);
 

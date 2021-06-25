@@ -22,7 +22,7 @@ namespace SummaryCreator.Input.UnitTests
         {
             var factory = new TimeSeriesReaderFactory();
 
-            var config = new EnergyConfig("any", format);
+            var config = new EnergyConfig("any", "any", format);
 
             var sensorReader = factory.CreateSensorReader(config);
             Assert.IsType(type, sensorReader);

@@ -6,38 +6,6 @@ namespace SummaryCreator.Input.Csv.UnitTests
 {
     public class DbdataSensorCsvReaderUnitTests
     {
-        [Theory]
-        [InlineData("dbdata_123.csv", "123")]
-        [InlineData("dbdata_456", "456")]
-        [InlineData("dbdata_6E5CBF4B-FC2F-4E67-99A6-3CFB3D1C2E46.csv", "6E5CBF4B-FC2F-4E67-99A6-3CFB3D1C2E46")]
-        [InlineData("test_123-456-789.zzz", "123-456-789")]
-        public void Read_ExtractId(string fileName, string id)
-        {
-            var reader = new DbdataSensorCsvReader();
-
-            var timeSeries = reader.Read(fileName, string.Empty);
-
-            Assert.Single(timeSeries);
-
-            var timeSerie = timeSeries.First();
-
-            Assert.Empty(timeSerie);
-            Assert.Equal(id, timeSerie.Id);
-        }
-
-        [Theory]
-        [InlineData("dbdata.csv")]
-        [InlineData("dbdata__.csv")]
-        [InlineData("dbdata_ ")]
-        [InlineData(".bbb")]
-        [InlineData("")]
-        public void Read_ExtractId_ThrowsArgumentException(string fileName)
-        {
-            var reader = new DbdataSensorCsvReader();
-
-            Assert.Throws<ArgumentException>(() => reader.Read(fileName, string.Empty));
-        }
-
         [Fact]
         public void Read_ContentWithTitleOnly()
         {

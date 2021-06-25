@@ -12,7 +12,7 @@ namespace SummaryCreator.Input.Xml
     /// </summary>
     public sealed class MeteoXmlReader : ITimeSeriesReader
     {
-        public IEnumerable<ITimeSeries> Read(string resource, string content)
+        public IEnumerable<ITimeSeries> Read(string id, string content)
         {
             var xDocument = XDocument.Parse(content);
 

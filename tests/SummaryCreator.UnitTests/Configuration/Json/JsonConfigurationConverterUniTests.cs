@@ -50,13 +50,13 @@ namespace SummaryCreator.Configuration.Json.UnitTests
         [Fact]
         public async Task ConvertAsync_OneSensorEntry()
         {
-            var json = "{ \"energy\": [{ \"format\": \"Sel\", \"resource\": \"heaven.json\" }]}";
+            var json = "{ \"energy\": [{ \"id\": \"heaven\", \"format\": \"Sel\", \"resource\": \"heaven.json\" }]}";
             using var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
             var configurationConverter = new JsonConfigurationParser();
             var configuration = await configurationConverter.ParseAsync(jsonStream);
 
-            Assert.Contains(new EnergyConfig("heaven.json", EnergySourceFormat.Sel), configuration.EnergyConfigs);
+            Assert.Contains(new EnergyConfig("heaven", "heaven.json", EnergySourceFormat.Sel), configuration.EnergyConfigs);
         }
 
         [Fact]

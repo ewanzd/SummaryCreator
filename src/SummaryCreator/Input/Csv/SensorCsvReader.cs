@@ -16,9 +16,9 @@ namespace SummaryCreator.Input.Csv
         private const string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
         private static readonly CultureInfo culture = CultureInfo.InvariantCulture;
 
-        public IEnumerable<ITimeSeries> Read(string resource, string content)
+        public IEnumerable<ITimeSeries> Read(string id, string content)
         {
-            var timeSeriesDict = new Dictionary<string, ITimeSeries>();
+            var timeSeries = new SensorTimeSeries(id);
 
             var contentEnumerator = content.SplitLines();
 
@@ -28,23 +28,11 @@ namespace SummaryCreator.Input.Csv
             // convert all data to internal data structure
             foreach (ReadOnlySpan<char> line in contentEnumerator)
             {
-                var (id, dataPoint) = ConvertToEntry(line, rowSeperator);
-
-                // convert all row to objects
-                // check if id is available, otherwise create new time series
-                if (timeSeriesDict.TryGetValue(id, out ITimeSeries timeSeries))
-                {
-                    timeSeries.Add(dataPoint);
-                }
-                else
-                {
-                    timeSeries = new SensorTimeSeries(id);
-                    timeSeries.Add(dataPoint);
-                    timeSeriesDict.Add(id, timeSeries);
-                }
+                var dataPoint = ConvertToEntry(line, rowSeperator);
+                timeSeries.Add(dataPoint);
             }
 
-            return new List<ITimeSeries>(timeSeriesDict.Values);
+            return new List<ITimeSeries>() { timeSeries };
         }
 
         /// <summary>
@@ -53,7 +41,7 @@ namespace SummaryCreator.Input.Csv
         /// <param name="line"></param>
         /// <param name="separator"></param>
         /// <returns>Return a new full row.</returns>
-        private static (string id, DataPoint dp) ConvertToEntry(ReadOnlySpan<char> line, char separator)
+        private static DataPoint ConvertToEntry(ReadOnlySpan<char> line, char separator)
         {
             DataPoint dataPoint = new DataPoint();
 
@@ -77,7 +65,7 @@ namespace SummaryCreator.Input.Csv
                 }
             }
 
-            return (lineEntries.SerialNumberEntry, dataPoint);
+            return dataPoint;
         }
 
         private static LineEntries ExtractLineEntries(ReadOnlySpan<char> line, char separator)

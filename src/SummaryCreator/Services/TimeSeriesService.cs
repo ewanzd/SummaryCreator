@@ -39,7 +39,7 @@ namespace SummaryCreator.Services
                 Logger.Info(CultureInfo.InvariantCulture, "Load sensor data from {0}", meteoConfig.Resource);
 
                 var content = await fileService.LoadAsync(meteoConfig.Resource, from, to, cancellationToken).ConfigureAwait(false);
-                var meteoTimeSeries = meteoReader.Read(meteoConfig.Resource, content);
+                var meteoTimeSeries = meteoReader.Read(string.Empty, content);
                 timeSeriesGroup.AddRange(meteoTimeSeries);
             }
 
@@ -57,7 +57,7 @@ namespace SummaryCreator.Services
                 var content = await fileService.LoadAsync(sensorConfig.Resource, from, to, cancellationToken).ConfigureAwait(false);
 
                 var sensorReader = timeSeriesReaderFactory.CreateSensorReader(sensorConfig);
-                var sensorTimeSeries = sensorReader.Read(sensorConfig.Resource, content);
+                var sensorTimeSeries = sensorReader.Read(sensorConfig.Id, content);
                 timeSeriesGroup.AddRange(sensorTimeSeries);
             }
 

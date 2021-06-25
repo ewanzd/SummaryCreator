@@ -36,13 +36,16 @@ namespace SummaryCreator.Configuration.Json
 
         private static EnergyConfig ParseJsonEnergyModel(JsonEnergyModel energyModel)
         {
+            if (string.IsNullOrEmpty(energyModel.Id))
+                throw new InvalidDataException($"Id must have a valid value");
+
             if (!Enum.TryParse(energyModel.Format, out EnergySourceFormat energySourceFormat))
                 throw new InvalidDataException($"'{energyModel.Format}' is not a valid value");
 
             if (!Uri.IsWellFormedUriString(energyModel.Resource, UriKind.RelativeOrAbsolute))
                 throw new InvalidDataException($"'{energyModel.Resource}' is not a valid uri format");
 
-            return new EnergyConfig(energyModel.Resource, energySourceFormat);
+            return new EnergyConfig(energyModel.Id, energyModel.Resource, energySourceFormat);
         }
 
         private static SummaryConfig ParseSummaryModel(JsonSummaryModel summaryModel)
@@ -85,6 +88,8 @@ namespace SummaryCreator.Configuration.Json
 
         private class JsonEnergyModel
         {
+            public string Id { get; set; }
+
             public string Format { get; set; }
 
             public string Resource { get; set; }

@@ -4,12 +4,14 @@ namespace SummaryCreator.Configuration
 {
     public class EnergyConfig : IEquatable<EnergyConfig>
     {
-        public EnergyConfig(string resource, EnergySourceFormat format)
+        public EnergyConfig(string id, string resource, EnergySourceFormat format)
         {
-            
+            Id = id ?? throw new ArgumentNullException(nameof(id));
             Resource = resource ?? throw new ArgumentNullException(nameof(resource));
             Format = format;
         }
+
+        public string Id { get; }
 
         public string Resource { get; }
 

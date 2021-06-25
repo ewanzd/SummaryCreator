@@ -6,6 +6,6 @@ namespace SummaryCreator.Input
 {
     public interface ITimeSeriesReader
     {
-        IEnumerable<ITimeSeries> Read(string resource, string content);
+        IEnumerable<ITimeSeries> Read(string id, string content);
     }
 }
